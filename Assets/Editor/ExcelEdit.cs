@@ -66,7 +66,7 @@ namespace ExcelEdit
         /// <summary> CS생성기 </summary>
         private ScriptGenerator scGenerator = new ScriptGenerator();
 
-        [MenuItem("GameTool/ExcelEditor")]
+        [MenuItem("Tools/ExcelEditor")]
         public static void ExcelConverter()
         {
             //에디터 대상 클래스 획득
