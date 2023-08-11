@@ -14,6 +14,7 @@ namespace GEnum
         OptionMgr,
         InputMgr,
         SoundMgr,
+        MapMgr,
     }
     #endregion 게임 매니저
 
