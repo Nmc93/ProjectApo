@@ -88,4 +88,30 @@ namespace GEnum
         Effect,
     }
     #endregion 사운드
+
+    #region 유닛
+
+    /// <summary> 유닛의 타입 </summary>
+    public enum eUnitType
+    {
+        /// <summary> 내게 속해있는 유닛 </summary>
+        MyUnit,
+        /// <summary> 적 유닛 </summary>
+        Enemy,
+        /// <summary> 중립, 우호 유닛 </summary>
+        Npc,
+    }
+
+    /// <summary> 유닛의 무기 타입 </summary>
+    public enum eWeaponType
+    {
+        /// <summary> 맨손 </summary>
+        Hand,
+        /// <summary> 한손총 </summary>
+        Gun,
+        /// <summary> 소총 </summary>
+        LongGun,
+    }
+
+    #endregion 유닛
 }
