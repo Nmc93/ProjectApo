@@ -60,12 +60,12 @@ public class GameManager : MonoBehaviour
         MapMgrObj.name = "MapMgr";
         mgrDic.Add(eMgr.MapMgr, MapMgrObj.AddComponent<MapMgr>());
 
-        #region 추후 추가
+        //유닛 매니저
+        GameObject UnitMgrObj = new GameObject();
+        UnitMgrObj.name = "UnitMgr";
+        mgrDic.Add(eMgr.UnitMgr, UnitMgrObj.AddComponent<UnitMgr>());
 
-        ////유닛 매니저
-        //GameObject UnitMgrObj = new GameObject();
-        //UnitMgrObj.name = "UnitMgr";
-        //mgrDic.Add(eMgr.UnitMgr, UnitMgrObj.AddComponent<UnitMgr>());
+        #region 추후 추가
 
         ////세이브 매니저
         //GameObject saveMgrObj = new GameObject();

@@ -15,6 +15,7 @@ namespace GEnum
         InputMgr,
         SoundMgr,
         MapMgr,
+        UnitMgr,
     }
     #endregion 게임 매니저
 
@@ -94,6 +95,8 @@ namespace GEnum
     /// <summary> 유닛의 타입 </summary>
     public enum eUnitType
     {
+        /// <summary> 에러 타입 </summary>
+        None,
         /// <summary> 내게 속해있는 유닛 </summary>
         MyUnit,
         /// <summary> 적 유닛 </summary>
@@ -111,6 +114,19 @@ namespace GEnum
         Gun,
         /// <summary> 소총 </summary>
         LongGun,
+    }
+
+    /// <summary>유닛의 행동 타입 </summary>
+    public enum eUintState
+    {
+        /// <summary> 대기 </summary>
+        Idle,
+        /// <summary> 이동 </summary>
+        Move,
+        /// <summary> 경계 </summary>
+        Alert,
+        /// <summary> 공격 </summary>
+        Attack,
     }
 
     #endregion 유닛
