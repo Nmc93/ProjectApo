@@ -92,17 +92,15 @@ namespace GEnum
 
     #region 유닛
 
-    /// <summary> 유닛의 타입 </summary>
+    /// <summary> 유닛의 종족 타입 </summary>
     public enum eUnitType
     {
         /// <summary> 에러 타입 </summary>
         None,
-        /// <summary> 내게 속해있는 유닛 </summary>
-        MyUnit,
-        /// <summary> 적 유닛 </summary>
-        Enemy,
-        /// <summary> 중립, 우호 유닛 </summary>
-        Npc,
+        /// <summary> 인간 </summary>
+        Human,
+        /// <summary> 좀비 </summary>
+        Zombie,
     }
 
     /// <summary> 유닛의 무기 타입 </summary>

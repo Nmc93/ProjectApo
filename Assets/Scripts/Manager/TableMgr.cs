@@ -44,6 +44,9 @@ public class TableMgr : MgrBase
 
         //InputKeyTableData 세팅
         dicTable.Add("InputKeyTableData", LoadTable<InputKeyTableData>());
+
+        //UnitStatTableData 세팅
+        dicTable.Add("UnitStatTableData", LoadTable<UnitStatTableData>());
     }
 
     /// <summary> 지정된 테이블을 로드 </summary>

@@ -13,19 +13,23 @@ public class AssetsMgr : MgrBase
         instance = this;
     }
 
-    #region 프리팹
-
+    #region 기본 경로
     /// <summary> 프리팹 기본 경로 </summary>
     private const string UIPrefabPath = "Prefab/";
-    
-    #region UI 프리팹 로드
+    /// <summary> 아틀라스 기본 경로 </summary>
+    private const string AtlasPath = "Image/";
+    /// <summary> 애니메이터 컨트롤러 기본 경로 </summary>
+    private const string AniCtlrPath = "Ani/";
+    #endregion 기본 경로
 
-    /// <summary> 경로를 받아서 UI 프리팹을 로드해서 반환 </summary>
+    #region 프리팹
+
+    /// <summary> 경로에 있는 프리팹을 복사해서 반환 </summary>
     /// <param name="path"> 오브젝트 경로 </param>
-    public static GameObject LoadResourcesUIPrefab(string path)
+    public static GameObject LoadResourcesPrefab(string path)
     {
         path = $"{UIPrefabPath}{path}";
-        GameObject obj = Resources.Load<GameObject>(path);
+        GameObject obj = Instantiate(Resources.Load<GameObject>(path));
 
         if (obj == null)
         {
@@ -35,14 +39,13 @@ public class AssetsMgr : MgrBase
         return obj;
     }
 
-    /// <summary> 경로를 받아서 UI 프리팹을 로드해서 반환 </summary>
+    /// <summary> 경로에 있는 프리팹을 복사해서 obj에 저장하고 성공 여부를 반환 </summary>
     /// <param name="path"> 오브젝트 경로 </param>
-    public static bool LoadResourcesUIPrefab(string path, out GameObject obj)
+    public static bool LoadResourcesPrefab(string path, out GameObject obj)
     {
         path = $"{UIPrefabPath}{path}";
         
-        //obj = PrefabUtility.InstantiatePrefab(Resources.Load(path)) as GameObject;
-        obj = Resources.Load<GameObject>(path);
+        obj = Instantiate(Resources.Load<GameObject>(path));
 
         if (obj == null)
         {
@@ -52,16 +55,12 @@ public class AssetsMgr : MgrBase
         return obj != null;
     }
 
-    #endregion UI 프리팹 로드
-
     #endregion 프리팹
 
     #region 아틀라스
 
-    /// <summary> 아틀라스 기본 경로 </summary>
-    private const string AtlasPath = "Image/";
     /// <summary> 아틀라스 저장 딕셔너리 <br/>[Key : 아틀라스 내 스프라이트 경로] </summary>
-    private static Dictionary<string, SpriteAtlas> dicAtlas;
+    private static Dictionary<string, SpriteAtlas> dicAtlas = new Dictionary<string, SpriteAtlas>();
 
     /// <summary> 해당 아틀라스 </summary>
     /// <param name="atlasPath"> SpriteAtlas 경로 </param>
@@ -99,4 +98,18 @@ public class AssetsMgr : MgrBase
 
     #endregion 아틀라스
 
+    #region 애니메이터 컨트롤러
+
+    /// <summary> Animator의 컨트롤러를 반환 </summary>
+    /// <param name="path"> 경로 </param>
+    public static RuntimeAnimatorController GetRuntimeAnimatorController(string path)
+    {
+        path = $"{AniCtlrPath}{path}";
+
+        RuntimeAnimatorController ctlr = Resources.Load<RuntimeAnimatorController>(path); ;
+
+        return ctlr;
+    }
+
+    #endregion 애니메이터 컨트롤러 
 }

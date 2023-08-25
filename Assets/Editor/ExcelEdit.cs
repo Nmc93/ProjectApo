@@ -18,6 +18,7 @@ namespace ExcelEdit
         String,
         Int,
         Long,
+        Float,
         Bool,
     }
 
@@ -504,6 +505,9 @@ namespace ExcelEdit
                                     case eDataType.String:
                                         valueList.Add(string.Empty);
                                         break;
+                                    case eDataType.Float:
+                                        valueList.Add(0.0f);
+                                        break;
                                 }
                             }
 
@@ -590,6 +594,7 @@ namespace ExcelEdit
                 eDataType.Int => "int",
                 eDataType.Long => "long",
                 eDataType.Bool => "bool",
+                eDataType.Float => "float",
                 _ => string.Empty,
             };
         }
@@ -603,6 +608,7 @@ namespace ExcelEdit
                 "int" => eDataType.Int,
                 "long" => eDataType.Long,
                 "bool" => eDataType.Bool,
+                "float"=> eDataType.Float,
                 _ => eDataType.None,
             };
         }
@@ -623,6 +629,8 @@ namespace ExcelEdit
                     return value;
                 case eDataType.Bool :
                     return bool.Parse(value);
+                case eDataType.Float:
+                    return float.Parse(value);
                 default:
                     return value;
             }

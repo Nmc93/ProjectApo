@@ -163,7 +163,7 @@ public class UIMgr : MgrBase
             if (uiBase == null)
             {
                 // 1-1-1. UI 로드에 성공했을 경우 데이터 저장
-                if(AssetsMgr.LoadResourcesUIPrefab(data.path,out GameObject obj))
+                if(AssetsMgr.LoadResourcesPrefab(data.path,out GameObject obj))
                 {
                     data.uiClass = Instantiate(obj, uiPool).GetComponent<UIBase>();
                     uiBase = data.uiClass;

@@ -6,7 +6,7 @@ AnimationClip:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: H2-Arm-Idle-NoWeafon
+  m_Name: H1-Arm-Idle-NoWeapon
   serializedVersion: 7
   m_Legacy: 0
   m_Compressed: 0
@@ -156,8 +156,17 @@ AnimationClip:
         outSlope: 0
         tangentMode: 136
         weightedMode: 0
-        inWeight: 0
-        outWeight: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 1
+        value: 0.22
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 136
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
@@ -177,8 +186,17 @@ AnimationClip:
         outSlope: 0
         tangentMode: 136
         weightedMode: 0
-        inWeight: 0
-        outWeight: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 1
+        value: 0.56
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 136
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
@@ -191,9 +209,9 @@ AnimationClip:
   - serializedVersion: 2
     curve:
     - time: 0
-      value: {fileID: 21300000, guid: 9bb260ca0a6fcc740ba043fc10ccff61, type: 3}
+      value: {fileID: 21300000, guid: 3b1fe770fb9d9954f85597b2d3f522e4, type: 3}
     - time: 1
-      value: {fileID: 21300000, guid: 9bb260ca0a6fcc740ba043fc10ccff61, type: 3}
+      value: {fileID: 21300000, guid: 3b1fe770fb9d9954f85597b2d3f522e4, type: 3}
     attribute: m_Sprite
     path: body/Arm/Back-Arm
     classID: 212
@@ -202,9 +220,9 @@ AnimationClip:
   - serializedVersion: 2
     curve:
     - time: 0
-      value: {fileID: 21300000, guid: 5ccafe95fd197824bb0cd3149208880e, type: 3}
+      value: {fileID: 21300000, guid: 9f84e79032d69e940a034ec99dbba561, type: 3}
     - time: 1
-      value: {fileID: 21300000, guid: 5ccafe95fd197824bb0cd3149208880e, type: 3}
+      value: {fileID: 21300000, guid: 9f84e79032d69e940a034ec99dbba561, type: 3}
     attribute: m_Sprite
     path: body/Arm/Front-Arm
     classID: 212
@@ -290,10 +308,10 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     pptrCurveMapping:
-    - {fileID: 21300000, guid: 9bb260ca0a6fcc740ba043fc10ccff61, type: 3}
-    - {fileID: 21300000, guid: 9bb260ca0a6fcc740ba043fc10ccff61, type: 3}
-    - {fileID: 21300000, guid: 5ccafe95fd197824bb0cd3149208880e, type: 3}
-    - {fileID: 21300000, guid: 5ccafe95fd197824bb0cd3149208880e, type: 3}
+    - {fileID: 21300000, guid: 3b1fe770fb9d9954f85597b2d3f522e4, type: 3}
+    - {fileID: 21300000, guid: 3b1fe770fb9d9954f85597b2d3f522e4, type: 3}
+    - {fileID: 21300000, guid: 9f84e79032d69e940a034ec99dbba561, type: 3}
+    - {fileID: 21300000, guid: 9f84e79032d69e940a034ec99dbba561, type: 3}
   m_AnimationClipSettings:
     serializedVersion: 2
     m_AdditiveReferencePoseClip: {fileID: 0}
@@ -620,8 +638,17 @@ AnimationClip:
         outSlope: 0
         tangentMode: 136
         weightedMode: 0
-        inWeight: 0
-        outWeight: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 1
+        value: 0.22
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 136
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
@@ -641,8 +668,17 @@ AnimationClip:
         outSlope: 0
         tangentMode: 136
         weightedMode: 0
-        inWeight: 0
-        outWeight: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 1
+        value: 0.56
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 136
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4

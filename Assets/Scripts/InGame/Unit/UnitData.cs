@@ -16,9 +16,10 @@ public class UnitData
     /// <summary> 무기 ID </summary>
     public int weaponID;
     
-    #region 외형 정보
     /// <summary> 유닛 이름 </summary>
     public string name;
+    
+    #region 외형 정보
     /// <summary> 모자 타입 </summary>
     public int hatType;
     /// <summary> 머리카락 타입 </summary>
@@ -27,6 +28,8 @@ public class UnitData
     public int backHairType;
     /// <summary> 가면,부착물 타입 </summary>
     public int maskType;
+    /// <summary> 얼굴 장식 타입(콧수염 등) </summary>
+    public int faceDecoType;
     /// <summary> 몸 타입 </summary>
     public int bodyType;
     #endregion 외형 정보 
