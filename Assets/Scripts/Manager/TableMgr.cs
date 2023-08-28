@@ -164,7 +164,7 @@ public class TableData
         {
             if(!dicTable.TryGetValue(key,out TableBase table))
             {
-                UnityEngine.Debug.LogError($"{key}의 값을 가진 데이터가 없습니다.");
+                Debug.LogError($"{key}의 값을 가진 데이터가 없습니다.");
             }
 
             return table;

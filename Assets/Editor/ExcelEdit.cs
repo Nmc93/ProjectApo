@@ -457,8 +457,16 @@ namespace ExcelEdit
                         }
                         else
                         {
-                            EditorUtility.DisplayDialog("바이너리 생성/갱신", $"실패 : {i}번째 열에 설명이 없습니다.", "확인");
-                            return;
+                            //해당 열이 설명타입일 경우 다음으로 넘어감
+                            if (selectColumnTypeList[i] == eDataType.None)
+                            {
+                                continue;
+                            }
+                            else
+                            {
+                                EditorUtility.DisplayDialog("바이너리 생성/갱신", $"실패 : {i}번째 열에 설명이 없습니다.", "확인");
+                                return;
+                            }
                         }
                     }
 
@@ -471,6 +479,10 @@ namespace ExcelEdit
                     //더 저장할 데이터가 없을 때 까지 진행
                     while (reader.Read())
                     {
+                        //0번, ID가 오는 곳이 비어있다면 다음으로 넘어감
+                        if (reader[0] == null)
+                            continue;
+
                         //테이블 정보의 값 목록
                         List<object> valueList = new List<object>();
                         //테이블 정보 저장
@@ -497,16 +509,20 @@ namespace ExcelEdit
                                 {
                                     case eDataType.Bool:
                                         valueList.Add(false);
+                                        item = false;
                                         break;
                                     case eDataType.Int:
                                     case eDataType.Long:
                                         valueList.Add(0);
+                                        item = 0;
                                         break;
                                     case eDataType.String:
                                         valueList.Add(string.Empty);
+                                        item = string.Empty;
                                         break;
                                     case eDataType.Float:
                                         valueList.Add(0.0f);
+                                        item = 0.0f;
                                         break;
                                 }
                             }
