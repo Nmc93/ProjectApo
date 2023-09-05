@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using GEnum;
+using System;
 
 public class UnitMgr : MgrBase
 {
@@ -21,6 +22,9 @@ public class UnitMgr : MgrBase
     private static Queue<Unit> unitPool = new Queue<Unit>();
     /// <summary> 비활성 좀비 목록 </summary>
     private static Queue<Unit> zombiePool = new Queue<Unit>();
+
+    /// <summary> 한번 사용된 랜덤 목록을 캐싱 </summary>
+    private static Dictionary<int, UnitRandomData> dicRandomData = new Dictionary<int, UnitRandomData>();
 
     private void Awake()
     {
@@ -101,12 +105,48 @@ public class UnitMgr : MgrBase
     {
         UnitData unitData = null;
 
-        if(TableMgr.Get(unitRanID, out UnitRandomTableData data))
+        Func<string,List<int>> CreateIntList = item =>
         {
-            //data.
+            string[] strs = item.Split("/");
+            List<int> list = new List<int>();
+
+            if (strs.Length != 0 && strs[0] != "0")
+            {
+                for(int i = 0; i < strs.Length; ++i)
+                {
+                    if(int.TryParse(strs[i],out int result))
+                    {
+                        list.Add(result);
+                    }
+                    else
+                    {
+                        Debug.LogError($"{strs[i]}는 int로 타입변경할 수 없습니다.");
+                    }
+                }
+
+                return list;
+            }
+            else
+            {
+                return null;
+            }
+        };
+
+        //해당 ID의 랜덤데이터 검색 - 없을 경우 생성 후 캐싱
+        if(!dicRandomData.TryGetValue(unitRanID, out UnitRandomData ranData))
+        {
+            if (TableMgr.Get(unitRanID, out UnitRandomTableData tbl))
+            {
+                ranData = new UnitRandomData(tbl);
+                dicRandomData.Add(unitRanID, ranData);
+            }
+            else
+            {
+                Debug.LogError($"[{unitRanID}]의 ID를 가진 랜덤데이터를 테이블에서 찾을 수 없습니다.");
+            }
         }
 
-
+        //데이터를 랜덤으로 삽입
 
         return unitData;
     }
@@ -132,4 +172,64 @@ public class UnitMgr : MgrBase
 
         return null;
     }
+}
+
+/// <summary> 유닛 랜덤 데이터 </summary>
+public class UnitRandomData
+{
+    public UnitRandomData(UnitRandomTableData tbl)
+    {
+        if (tbl == null)
+        {
+            Debug.LogError("유닛랜덤테이블이 null입니다.");
+            return;
+        }
+
+        id = tbl.ID;
+        unitType = tbl.UnitType;
+
+        hairs = Convert(tbl.Hair);
+        backHairs = Convert(tbl.BackHair);
+        faces = Convert(tbl.Face);
+        faceDecos = Convert(tbl.FaceDeco);
+        hats = Convert(tbl.Hat);
+        bodys = Convert(tbl.Body);
+        stats = Convert(tbl.Stat);
+    }
+
+    public int[] Convert(string str)
+    {
+        string[] strs = str.Split("/");
+        int[] result = new int[strs.Length];
+
+        int value;
+        for(int i = 0; i < strs.Length; ++i)
+        {
+            if(!int.TryParse(strs[i],out value))
+            {
+                Debug.LogError("{strs[i]}를 int로 변환할 수 없어서 테이블의 수정이 필요합니다.");
+                value = 0;
+            }
+            result[i] = value;
+        }
+        return result;
+    }
+
+    public int id;
+    public int unitType;
+    public int hairCount => hairs.Length;
+    public int backHairCount => backHairs.Length;
+    public int faceCount => faces.Length;
+    public int faceDecoCount => faceDecos.Length;
+    public int hatCount => hats.Length;
+    public int bodyCount => bodys.Length;
+    public int statCount => stats.Length;
+
+    public int[] hairs;
+    public int[] backHairs;
+    public int[] faces;
+    public int[] faceDecos;
+    public int[] hats;
+    public int[] bodys;
+    public int[] stats;
 }

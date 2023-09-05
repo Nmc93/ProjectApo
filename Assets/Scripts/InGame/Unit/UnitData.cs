@@ -27,7 +27,7 @@ public class UnitData
     /// <summary> 뒷머리 타입 </summary>
     public int backHairType;
     /// <summary> 가면,부착물 타입 </summary>
-    public int maskType;
+    public int faceType;
     /// <summary> 얼굴 장식 타입(콧수염 등) </summary>
     public int faceDecoType;
     /// <summary> 몸 타입 </summary>
