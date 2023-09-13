@@ -8,6 +8,41 @@ using GEnum;
 [Serializable]
 public class UnitData
 {
+    public UnitData(
+        int unitType,
+        int hatType,
+        int hairType,
+        int backHairType,
+        int faceType,
+        int faceDecoType,
+        int bodyType,
+        int maxHp,
+        int attack,
+        int defence,
+        float attackSpeed,
+        float moveSpeed)
+    {
+        switch(unitType)
+        {
+            case 0: this.unitType = eUnitType.None; break;
+            case 1: this.unitType = eUnitType.Human; break;
+            case 2: this.unitType = eUnitType.Zombie; break;
+        }
+
+        this.hatType = hatType;
+        this.hairType = hairType;
+        this.hairType = hairType;
+        this.backHairType = backHairType;
+        this.faceType = faceType;
+        this.faceDecoType = faceDecoType;
+        this.bodyType = bodyType;
+        this.maxHp = maxHp;
+        this.attack = attack;
+        this.defence = defence;
+        this.attackSpeed = attackSpeed;
+        this.moveSpeed = moveSpeed;
+    }
+
     /// <summary> À¯´Ö Å¸ÀÔ </summary>
     public eUnitType unitType;
 
@@ -26,7 +61,7 @@ public class UnitData
     public int hairType;
     /// <summary> µÞ¸Ó¸® Å¸ÀÔ </summary>
     public int backHairType;
-    /// <summary> °¡¸é,ºÎÂø¹° Å¸ÀÔ </summary>
+    /// <summary> ¾ó±¼ Å¸ÀÔ </summary>
     public int faceType;
     /// <summary> ¾ó±¼ Àå½Ä Å¸ÀÔ(Äà¼ö¿° µî) </summary>
     public int faceDecoType;

@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using GEnum;
-using System;
 
 public class UnitMgr : MgrBase
 {
@@ -55,10 +54,12 @@ public class UnitMgr : MgrBase
             string path = unitType == eUnitType.Human ? "Char/Human" : "Char/Zombie";
             GameObject unitObj = Instantiate(AssetsMgr.LoadResourcesPrefab(path));
             unitObj.transform.SetParent(instance.transform);
+            //unitObj.name = 
+
+            unit = unitObj.GetComponent<Unit>();
         }
 
-        //unit.Init(unitData,);
-
+        //생성된 유닛을 활성화된 유닛 리스트에 세팅
         unitList.Add(unit);
     }
 
@@ -105,33 +106,6 @@ public class UnitMgr : MgrBase
     {
         UnitData unitData = null;
 
-        Func<string,List<int>> CreateIntList = item =>
-        {
-            string[] strs = item.Split("/");
-            List<int> list = new List<int>();
-
-            if (strs.Length != 0 && strs[0] != "0")
-            {
-                for(int i = 0; i < strs.Length; ++i)
-                {
-                    if(int.TryParse(strs[i],out int result))
-                    {
-                        list.Add(result);
-                    }
-                    else
-                    {
-                        Debug.LogError($"{strs[i]}는 int로 타입변경할 수 없습니다.");
-                    }
-                }
-
-                return list;
-            }
-            else
-            {
-                return null;
-            }
-        };
-
         //해당 ID의 랜덤데이터 검색 - 없을 경우 생성 후 캐싱
         if(!dicRandomData.TryGetValue(unitRanID, out UnitRandomData ranData))
         {
@@ -143,10 +117,25 @@ public class UnitMgr : MgrBase
             else
             {
                 Debug.LogError($"[{unitRanID}]의 ID를 가진 랜덤데이터를 테이블에서 찾을 수 없습니다.");
+                return null;
             }
         }
 
+        int[] stats = ranData.GetRanStats;
         //데이터를 랜덤으로 삽입
+        unitData = new UnitData(
+            ranData.unitType,
+            ranData.GetRanHat,
+            ranData.GetRanHair,
+            ranData.GetRanBackHair,
+            ranData.GetRanFace,
+            ranData.GetRanFaceDeco,
+            ranData.GetRanBody,
+            stats[0],
+            stats[1],
+            stats[2],
+            (float)stats[3] / 100,
+            (float)stats[4] / 100);
 
         return unitData;
     }
@@ -156,7 +145,7 @@ public class UnitMgr : MgrBase
     /// <returns> 유닛 데이터를 반환 </returns>
     private static UnitData CreateRandomUnitData(eUnitType unitType)
     {
-        UnitData unitData = new UnitData();
+        //UnitData unitData = new UnitData();
 
         switch(unitType)
         {
@@ -224,6 +213,35 @@ public class UnitRandomData
     public int hatCount => hats.Length;
     public int bodyCount => bodys.Length;
     public int statCount => stats.Length;
+
+    public int GetRanHair => hairs[Random.Range(0, hairs.Length)];
+    public int GetRanBackHair => backHairs[Random.Range(0, backHairs.Length)];
+    public int GetRanFace => faces[Random.Range(0, faces.Length)];
+    public int GetRanFaceDeco => faceDecos[Random.Range(0, faceDecos.Length)];
+    public int GetRanHat => hats[Random.Range(0, hats.Length)];
+    public int GetRanBody => bodys[Random.Range(0, bodys.Length)];
+
+    /// <summary> [0 : 피]<br/>[1 : 공]<br/>[2 : 방]<br/>[3 : 공속]<br/>[4 : 이속] </summary>
+    public int[] GetRanStats
+    {
+        get
+        {
+            if (!TableMgr.Get(Random.Range(0, stats.Length), out UnitStatTableData tbl))
+            {
+                return null;
+            }
+
+            int[] statArray = new int[5];
+
+            statArray[0] = Random.Range(tbl.MinHp, tbl.MaxHp);              //체력
+            statArray[1] = Random.Range(tbl.MinDmg, tbl.MaxDmg);            //공격력
+            statArray[2] = Random.Range(tbl.MinDef, tbl.MaxDef);            //방어력
+            statArray[3] = Random.Range(tbl.MinAttSpeed, tbl.MaxAttSpeed);  //공격속도
+            statArray[4] = Random.Range(tbl.MinMoveSpeed, tbl.MaxMoveSpeed);//이동속도
+
+            return statArray;
+        }
+    }
 
     public int[] hairs;
     public int[] backHairs;

@@ -11,7 +11,7 @@ public class Unit : MonoBehaviour
     [Tooltip("유닛 애니메이션")]
     [SerializeField] private Animator animator;
 
-    [Header("유닛 스프라이트 정보")]
+    [Header("[유닛 스프라이트 정보]")]
     [Tooltip("머리")]
     [SerializeField] private SpriteRenderer head;
     [Tooltip("얼굴")]
