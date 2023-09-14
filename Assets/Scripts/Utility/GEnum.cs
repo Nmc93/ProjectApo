@@ -128,4 +128,12 @@ namespace GEnum
     }
 
     #endregion 유닛
+
+    #region 아틀라스, 스프라이트
+    public enum eAtlasType
+    {
+        /// <summary> 인간 캐릭터 관련 이미지 아틀라스 </summary>
+        Unit_Human = 0,
+    }
+    #endregion 아틀라스, 스프라이트
 }

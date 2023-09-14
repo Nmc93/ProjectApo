@@ -1,3 +1,4 @@
+using GEnum;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
@@ -63,12 +64,12 @@ public class AssetsMgr : MgrBase
     private static Dictionary<string, SpriteAtlas> dicAtlas = new Dictionary<string, SpriteAtlas>();
 
     /// <summary> 해당 아틀라스 </summary>
-    /// <param name="atlasPath"> SpriteAtlas 경로 </param>
+    /// <param name="atlasType"> SpriteAtlas 경로 </param>
     /// <param name="spritePath"> SpriteAtlas에 캐싱된 Sprite 경로 </param>
-    public static Sprite GetSprite(string atlasPath, string spritePath)
+    public static Sprite GetSprite(eAtlasType atlasType, string spritePath)
     {
         //경로, 아틀라스 딕셔너리 키
-        string key = $"{AtlasPath}{atlasPath}";
+        string key = $"{AtlasPath}{ConvertEnumToPathStr(atlasType)}";
 
         if (!dicAtlas.TryGetValue(key, out SpriteAtlas atlas))
         {
@@ -77,7 +78,7 @@ public class AssetsMgr : MgrBase
             //해당 경로에 아틀라스가 없을 경우
             if(atlas == null)
             {
-                Debug.LogError($"{atlasPath}의 경로에 해당 스프라이트 아틀라스가 없습니다.");
+                Debug.LogError($"{atlasType}에 지정된 경로에 해당 스프라이트 아틀라스가 없습니다.");
                 return null;
             }
 
@@ -89,16 +90,43 @@ public class AssetsMgr : MgrBase
 
         if (sprite == null)
         {
-            Debug.LogError($"{atlasPath}의 아틀라스에 {spritePath}의 경로에 해당 스프라이트가 없습니다.");
+            Debug.LogError($"{atlasType}타입의 아틀라스에 {spritePath}의 경로에 해당 스프라이트가 없습니다.");
             return null;
         }
 
         return sprite;
     }
 
+    /// <summary> eAtlasType를 지정된 아틀라스 경로 string으로 변환 </summary>
+    /// <returns></returns>
+    private static string ConvertEnumToPathStr(eAtlasType type)
+    {
+        switch(type)
+        {
+            case eAtlasType.Unit_Human:
+                return "Human";
+            default:
+                return string.Empty;
+        }
+    }
+
     #endregion 아틀라스
 
     #region 애니메이터 컨트롤러
+
+    /// <summary> Animator의 컨트롤러를 반환 </summary>
+    /// <param name="unitType"> 유닛 타입 </param>
+    /// <param name="bodyType"> 몸통에 따라 </param>
+    public static RuntimeAnimatorController GetUnitRuntimeAnimatorController(int bodyType)
+    {
+        if(!TableMgr.Get(bodyType,out UnitAppearanceTableData tbl))
+        {
+            Debug.LogError($"{bodyType}의 ID를 가진 UnitAppearanceTableData가 없습니다.");
+            return null;
+        }
+
+        return GetRuntimeAnimatorController(tbl.Path);
+    }
 
     /// <summary> Animator의 컨트롤러를 반환 </summary>
     /// <param name="path"> 경로 </param>

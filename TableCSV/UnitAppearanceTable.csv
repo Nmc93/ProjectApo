@@ -13,9 +13,5 @@
 11,0,1,1,Human/Hair/hair09
 12,0,1,1,Human/Hair/hair10
 13,0,1,2,Human/Hair/backhair01
-14,1,1,6,Human/Boy/body-idle
-15,1,1,7,Human/Boy/front-arm1
-16,1,1,8,Human/Boy/back-arm1
-17,2,1,6,Human/Girl/body-idle
-18,2,1,7,Human/Girl/front-arm1
-19,2,1,8,Human/Girl/back-arm1
+14,1,1,6,Human1
+15,2,1,6,Human2

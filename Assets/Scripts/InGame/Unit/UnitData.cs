@@ -10,6 +10,7 @@ public class UnitData
 {
     public UnitData(
         int unitType,
+        int headType,
         int hatType,
         int hairType,
         int backHairType,
@@ -29,6 +30,7 @@ public class UnitData
             case 2: this.unitType = eUnitType.Zombie; break;
         }
 
+        this.headType = headType;
         this.hatType = hatType;
         this.hairType = hairType;
         this.hairType = hairType;
@@ -43,6 +45,12 @@ public class UnitData
         this.moveSpeed = moveSpeed;
     }
 
+    /// <summary> 무기 데이터 세팅 </summary>
+    public void SetWeaponData(int weaponID)
+    {
+
+    }
+
     /// <summary> 유닛 타입 </summary>
     public eUnitType unitType;
 
@@ -53,8 +61,10 @@ public class UnitData
     
     /// <summary> 유닛 이름 </summary>
     public string name;
-    
+
     #region 외형 정보
+    /// <summary> 머리 타입 </summary>
+    public int headType;
     /// <summary> 모자 타입 </summary>
     public int hatType;
     /// <summary> 머리카락 타입 </summary>

@@ -33,17 +33,10 @@ public class UnitMgr : MgrBase
 
     #region 유닛 생성
 
-    ///// <summary> 기본으로 지정된 유닛 생성 </summary>
-    //public static void CreateDefaultUnit(eUnitType unitType)
-    //{
-    //    //기본 인간, 좀비 타입 ID 세팅
-    //    int unitID = unitType == eUnitType.Human ? 0 : 1;
-    //
-    //    CreateUnit(unitID);
-    //}
-
     /// <summary> 테이블의 ID에 맞는 유닛을 생성 </summary>
-    public static void CreateUnit(int id)
+    /// <param name="id"> UnitRandomTableData 테이블 ID </param>
+    /// <param name="weaponID"> 무기 ID 없을 경우 맨손 </param>
+    public static void CreateUnit(int id,int weaponID = 0)
     {
         UnitData unitData = CreateUnitData(id);
         eUnitType unitType = unitData.unitType;
@@ -51,13 +44,16 @@ public class UnitMgr : MgrBase
         //놀고 있는 유닛을 찾아서 세팅, 없다면 생성
         if (!GetDeActiveUnit(unitType,out Unit unit))
         {
+            //유닛 생성
             string path = unitType == eUnitType.Human ? "Char/Human" : "Char/Zombie";
             GameObject unitObj = Instantiate(AssetsMgr.LoadResourcesPrefab(path));
             unitObj.transform.SetParent(instance.transform);
-            //unitObj.name = 
 
             unit = unitObj.GetComponent<Unit>();
         }
+
+        //유닛 정보 세팅
+        unit.Init(unitData);
 
         //생성된 유닛을 활성화된 유닛 리스트에 세팅
         unitList.Add(unit);
@@ -125,6 +121,7 @@ public class UnitMgr : MgrBase
         //데이터를 랜덤으로 삽입
         unitData = new UnitData(
             ranData.unitType,
+            ranData.GetRanHeads,
             ranData.GetRanHat,
             ranData.GetRanHair,
             ranData.GetRanBackHair,
@@ -139,29 +136,9 @@ public class UnitMgr : MgrBase
 
         return unitData;
     }
-
-    /// <summary> 무작위 유닛 정보 생성 후 반환 </summary>
-    /// <param name="unitType"> 생성할 유닛의 종류 </param>
-    /// <returns> 유닛 데이터를 반환 </returns>
-    private static UnitData CreateRandomUnitData(eUnitType unitType)
-    {
-        //UnitData unitData = new UnitData();
-
-        switch(unitType)
-        {
-            case eUnitType.Human:
-                {
-                }
-                break;
-            case eUnitType.Zombie:
-                {
-                }
-                break;
-        }
-
-        return null;
-    }
 }
+
+#region 데이터 클래스
 
 /// <summary> 유닛 랜덤 데이터 </summary>
 public class UnitRandomData
@@ -177,6 +154,7 @@ public class UnitRandomData
         id = tbl.ID;
         unitType = tbl.UnitType;
 
+        heads = Convert(tbl.Head);
         hairs = Convert(tbl.Hair);
         backHairs = Convert(tbl.BackHair);
         faces = Convert(tbl.Face);
@@ -206,14 +184,17 @@ public class UnitRandomData
 
     public int id;
     public int unitType;
-    public int hairCount => hairs.Length;
-    public int backHairCount => backHairs.Length;
-    public int faceCount => faces.Length;
-    public int faceDecoCount => faceDecos.Length;
-    public int hatCount => hats.Length;
-    public int bodyCount => bodys.Length;
-    public int statCount => stats.Length;
 
+    public int[] heads;
+    public int[] hairs;
+    public int[] backHairs;
+    public int[] faces;
+    public int[] faceDecos;
+    public int[] hats;
+    public int[] bodys;
+    public int[] stats;
+
+    public int GetRanHeads => hairs[Random.Range(0, heads.Length)];
     public int GetRanHair => hairs[Random.Range(0, hairs.Length)];
     public int GetRanBackHair => backHairs[Random.Range(0, backHairs.Length)];
     public int GetRanFace => faces[Random.Range(0, faces.Length)];
@@ -242,12 +223,6 @@ public class UnitRandomData
             return statArray;
         }
     }
-
-    public int[] hairs;
-    public int[] backHairs;
-    public int[] faces;
-    public int[] faceDecos;
-    public int[] hats;
-    public int[] bodys;
-    public int[] stats;
 }
+
+#endregion 데이터 클래스
