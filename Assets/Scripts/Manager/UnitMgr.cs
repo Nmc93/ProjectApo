@@ -36,7 +36,7 @@ public class UnitMgr : MgrBase
     /// <summary> 테이블의 ID에 맞는 유닛을 생성 </summary>
     /// <param name="id"> UnitRandomTableData 테이블 ID </param>
     /// <param name="weaponID"> 무기 ID 없을 경우 맨손 </param>
-    public static void CreateUnit(int id,int weaponID = 0)
+    public static void CreateUnit(Vector3 pos, int id,int weaponID = 0)
     {
         UnitData unitData = CreateUnitData(id);
         eUnitType unitType = unitData.unitType;
@@ -46,7 +46,7 @@ public class UnitMgr : MgrBase
         {
             //유닛 생성
             string path = unitType == eUnitType.Human ? "Char/Human" : "Char/Zombie";
-            GameObject unitObj = Instantiate(AssetsMgr.LoadResourcesPrefab(path));
+            GameObject unitObj = AssetsMgr.LoadResourcesPrefab(path);
             unitObj.transform.SetParent(instance.transform);
 
             unit = unitObj.GetComponent<Unit>();
@@ -55,6 +55,8 @@ public class UnitMgr : MgrBase
         //유닛 정보 세팅
         unit.Init(unitData);
 
+        //생성 지점 세팅
+        unit.transform.position = pos;
         //생성된 유닛을 활성화된 유닛 리스트에 세팅
         unitList.Add(unit);
     }
@@ -194,7 +196,7 @@ public class UnitRandomData
     public int[] bodys;
     public int[] stats;
 
-    public int GetRanHeads => hairs[Random.Range(0, heads.Length)];
+    public int GetRanHeads => heads[Random.Range(0, heads.Length)];
     public int GetRanHair => hairs[Random.Range(0, hairs.Length)];
     public int GetRanBackHair => backHairs[Random.Range(0, backHairs.Length)];
     public int GetRanFace => faces[Random.Range(0, faces.Length)];

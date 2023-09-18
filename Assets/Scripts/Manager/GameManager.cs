@@ -100,4 +100,47 @@ public class GameManager : MonoBehaviour
     }
 
     #endregion Get
+
+    #region 테스트
+
+    public bool isTest = false;
+    float count;
+    bool btnActive;
+
+    private void Update()
+    {
+        //테스트중일 경우에만 사용
+        if (isTest)
+        {
+            if (!btnActive && count >= 2)
+            {
+                btnActive = true;
+                count = 0;
+            }
+            else if (!btnActive && count < 2)
+            {
+                count += Time.deltaTime;
+            }
+
+            if (SceneMgr.instance.CurScene == eScene.GameScene)
+            {
+                if (btnActive && Input.GetMouseButtonDown(0))
+                {
+                    TestSummonUnit();
+                }
+            }
+        }
+    }
+
+    //유닛 생성 테스트
+    public void TestSummonUnit()
+    {
+        Vector3 v3 = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        v3.z = 0;
+
+        UnitMgr.CreateUnit(v3, 0);
+        btnActive = false;
+    }
+
+    #endregion 테스트
 }

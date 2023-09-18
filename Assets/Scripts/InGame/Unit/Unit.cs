@@ -33,7 +33,7 @@ public class Unit : MonoBehaviour
     public UnitData data;
 
     /// <summary> 현재 유닛의 행동 </summary>
-    public eUintState state;
+    public eUintState uState;
 
     /// <summary> 데이터 및 기초 세팅 </summary>
     public void Init(UnitData data)
@@ -41,48 +41,18 @@ public class Unit : MonoBehaviour
         //유닛 데이터 세팅
         this.data = data;
 
-        //스프라이트 세팅용 테이블
-        UnitAppearanceTableData tbl;
-
         // 머리 세팅
-        if (TableMgr.Get(data.headID,out tbl))
-        {
-            head.sprite = AssetsMgr.GetSprite(eAtlasType.Unit_Human, tbl.Path);
-        }
-
+        ChangeSprite(head, data.headID);
         // 얼굴
-        if (TableMgr.Get(data.faceID, out tbl))
-        {
-            face.sprite = AssetsMgr.GetSprite(eAtlasType.Unit_Human, tbl.Path);
-        }
-
+        ChangeSprite(face, data.faceID);
         //얼굴 장식
-        if (TableMgr.Get(data.faceDecoID, out tbl))
-        {
-            faceDeco.sprite = AssetsMgr.GetSprite(eAtlasType.Unit_Human, tbl.Path);
-        }
-        faceDeco.gameObject.SetActive(tbl != null);
-
+        ChangeSprite(faceDeco, data.faceDecoID);
         //머리카락 세팅
-        if (TableMgr.Get(data.hairID, out tbl))
-        {
-            hair.sprite = AssetsMgr.GetSprite(eAtlasType.Unit_Human, tbl.Path);
-        }
-        hair.gameObject.SetActive(tbl != null);
-
+        ChangeSprite(hair, data.hairID);
         //뒷머리 세팅
-        if (TableMgr.Get(data.backHairID, out tbl))
-        {
-            backHair.sprite = AssetsMgr.GetSprite(eAtlasType.Unit_Human, tbl.Path);
-        }
-        backHair.gameObject.SetActive(tbl != null);
-
+        ChangeSprite(backHair, data.backHairID);
         //모자 세팅
-        if (TableMgr.Get(data.hatID, out tbl))
-        {
-            hat.sprite = AssetsMgr.GetSprite(eAtlasType.Unit_Human, tbl.Path);
-        }
-        hat.gameObject.SetActive(tbl != null);
+        ChangeSprite(hat, data.hatID);
 
         //무기 세팅(맨손일 경우 세팅하지 않음)
         if(data.weaponTbl.Path == "None")
@@ -99,16 +69,18 @@ public class Unit : MonoBehaviour
         animator.runtimeAnimatorController = AssetsMgr.GetUnitRuntimeAnimatorController(data.bodyID);
     }
 
-    public void ChangeSprite(Sprite sprite, UnitAppearanceTableData tbl)
+    public void ChangeSprite(SpriteRenderer renderer, int id)
     {
-        //테이블이 없을 경우 종료함
-        if(tbl == null)
+        //테이블이 없거나 None일 경우 비활성화 후 종료
+        if(!TableMgr.Get(id, out UnitAppearanceTableData tbl) || tbl.Path == "None")
         {
+            renderer.gameObject.SetActive(false);
             return;
         }
 
         //이미지 및 애니메이션 변경
-        sprite = AssetsMgr.GetSprite(eAtlasType.Unit_Human, tbl.Path);
+        renderer.sprite = AssetsMgr.GetSprite(eAtlasType.Unit_Human, tbl.Path);
+        renderer.gameObject.SetActive(true);
     }
 
     /// <summary> 무기 변경 </summary>

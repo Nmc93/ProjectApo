@@ -45,8 +45,21 @@ public class TableMgr : MgrBase
         //InputKeyTableData 세팅
         dicTable.Add("InputKeyTableData", LoadTable<InputKeyTableData>());
 
-        //UnitStatTableData 세팅
+        #region 유닛 관련
+
+        //UnitRandomTableData 세팅(랜덤 유닛 생성 테이블)
+        dicTable.Add("UnitRandomTableData", LoadTable<UnitRandomTableData>());
+
+        //UnitStatTableData 세팅(유닛의 스탯 테이블)
         dicTable.Add("UnitStatTableData", LoadTable<UnitStatTableData>());
+
+        //UnitAppearanceTableData 세팅(유닛의 외형 정보 테이블)
+        dicTable.Add("UnitAppearanceTableData", LoadTable<UnitAppearanceTableData>());
+
+        //UnitWeaponTableData 세팅(무기 정보 테이블)
+        dicTable.Add("UnitWeaponTableData", LoadTable<UnitWeaponTableData>());
+
+        #endregion 유닛 관련
     }
 
     /// <summary> 지정된 테이블을 로드 </summary>

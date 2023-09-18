@@ -68,6 +68,11 @@ public class AssetsMgr : MgrBase
     /// <param name="spritePath"> SpriteAtlas에 캐싱된 Sprite 경로 </param>
     public static Sprite GetSprite(eAtlasType atlasType, string spritePath)
     {
+        if(spritePath == "None")
+        {
+            return null;
+        }
+
         //경로, 아틀라스 딕셔너리 키
         string key = $"{AtlasPath}{ConvertEnumToPathStr(atlasType)}";
 

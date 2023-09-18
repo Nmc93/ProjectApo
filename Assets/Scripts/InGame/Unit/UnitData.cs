@@ -36,7 +36,6 @@ public class UnitData
         this.headID = headID;
         this.hatID = hatID;
         this.hairID = hairID;
-        this.hairID = hairID;
         this.backHairID = backHairID;
         this.faceID = faceID;
         this.faceDecoID = faceDecoID;
