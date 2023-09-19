@@ -62,8 +62,8 @@ public class NormalHumanAI : UnitAI
                 break;
         }
 
-        //
-        if(!string.IsNullOrEmpty(actionKey))
+        //[0 : ÁÖ¸Ô],[1 : ±ÇÃÑ],[2 : ¹ÝÀÚµ¿],[3 : ÀÚµ¿]
+        if (!string.IsNullOrEmpty(actionKey))
         {
             animator.SetInteger(actionKey,unitData.weaponTbl.WeaponType);
         }
