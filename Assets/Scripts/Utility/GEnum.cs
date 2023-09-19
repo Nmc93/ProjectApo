@@ -127,6 +127,13 @@ namespace GEnum
         Attack,
     }
 
+    /// <summary> 유닛의 상호작용 이벤트 </summary>
+    public enum eUnitActionEvent : byte
+    {
+        NoEvent = 0,
+        EnemySearch,
+    }
+
     #endregion 유닛
 
     #region 아틀라스, 스프라이트
