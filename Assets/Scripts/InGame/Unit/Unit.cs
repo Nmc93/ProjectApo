@@ -35,6 +35,9 @@ public class Unit : MonoBehaviour
     /// <summary> 현재 유닛의 행동 </summary>
     public eUintState uState;
 
+    /// <summary> 해당 유닛의 AI </summary>
+    public UnitAI ai;
+
     /// <summary> 데이터 및 기초 세팅 </summary>
     public void Init(UnitData data)
     {
@@ -55,7 +58,7 @@ public class Unit : MonoBehaviour
         ChangeSprite(hat, data.hatID);
 
         //무기 세팅(맨손일 경우 세팅하지 않음)
-        if(data.weaponTbl.Path == "None")
+        if (data.weaponTbl.Path == "None")
         {
             weapon.sprite = AssetsMgr.GetSprite(eAtlasType.Unit_Human, data.weaponTbl.Path);
             weapon.gameObject.SetActive(true);
@@ -67,9 +70,50 @@ public class Unit : MonoBehaviour
 
         //몸, 팔 세팅 (애니메이션 컨트롤러)
         animator.runtimeAnimatorController = AssetsMgr.GetUnitRuntimeAnimatorController(data.bodyID);
+
+        //AI 세팅
+        SetAI();
     }
 
-    public void ChangeSprite(SpriteRenderer renderer, int id)
+    /// <summary> 캐릭터 스탯 계산 </summary>
+    private void RefreshStat()
+    {
+        data.RefreshStat();
+    }
+
+    #region AI
+
+    //행동 함수 - 여기선 행동 타입이 정해졌을때 행동할 함수들, 타입은 ai에서 결정함
+    //이동 함수
+    //경계 함수 경계 범위 같은 함수 필요
+    //공격 함수 같은 것도 필요? - 무기 함수 생각해봐야할듯
+
+    /// <summary> 타입에 맞는 AI를 생성 및 세팅 </summary>
+    private void SetAI()
+    {
+        //타입에 맞는 AI 세팅
+        ai = null;
+        switch (data.unitType)
+        {
+            case eUnitType.Human:
+                ai = new NormalHumanAI();
+                break;
+            case eUnitType.Zombie:
+                //ai = 
+                break;
+        }
+
+        //ai 세팅
+        ai.Setting(data, animator);
+    }
+
+    #endregion AI
+
+    #region 이미지 변경
+    /// <summary> 스프라이트랜더러의 스프라이트를 변경 </summary>
+    /// <param name="renderer"> 변경할 스프라이트 랜더러 </param>
+    /// <param name="id"> UnitAppearanceTableData의 ID 참조 </param>
+    private void ChangeSprite(SpriteRenderer renderer, int id)
     {
         //테이블이 없거나 None일 경우 비활성화 후 종료
         if(!TableMgr.Get(id, out UnitAppearanceTableData tbl) || tbl.Path == "None")
@@ -85,7 +129,7 @@ public class Unit : MonoBehaviour
 
     /// <summary> 무기 변경 </summary>
     /// <param name="weaponID"> 무기의 ID </param>
-    public void ChangeWeapon(int weaponID)
+    private void ChangeWeapon(int weaponID)
     {
         //무기 정보 변경
         data.SetWeaponData(weaponID);
@@ -101,10 +145,5 @@ public class Unit : MonoBehaviour
             weapon.gameObject.SetActive(false);
         }
     }
-
-    /// <summary> 캐릭터 스탯 계산 </summary>
-    private void RefreshStat()
-    {
-        data.RefreshStat();
-    }
+    #endregion 이미지 변경
 }

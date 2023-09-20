@@ -131,7 +131,10 @@ namespace GEnum
     public enum eUnitActionEvent : byte
     {
         NoEvent = 0,
+        Move,
         EnemySearch,
+        EnemyAttack,
+        Die,
     }
 
     #endregion РЏДж

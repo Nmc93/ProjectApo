@@ -33,7 +33,7 @@ public abstract class UnitAI
     /// <summary> 현재 상황에 맞게 상태 갱신 </summary>
     /// <param name="eventType"> 유닛의 월드와 한 상호작용 타입 </param>
     /// <returns> 흠... </returns>
-    public abstract string Refresh(eUnitActionEvent eventType);
+    public abstract bool Refresh(eUnitActionEvent eventType);
 }
 
 /// <summary> 인간형 보스 고티죠? </summary>
@@ -45,29 +45,57 @@ public class NormalHumanAI : UnitAI
         base.Setting(unitData, animator);
     }
 
-    public override string Refresh(eUnitActionEvent EventType)
+    public override bool Refresh(eUnitActionEvent EventType)
     {
+        //[0 : 주먹],[1 : 권총],[2 : 반자동],[3 : 자동]
         string actionKey = string.Empty;
+        bool isDetailCheck = true;
         switch(EventType)
         {
-            case eUnitActionEvent.NoEvent:
-                {
-                    actionKey = "";
-                }
+            case eUnitActionEvent.NoEvent:      // 대기 상태
+                actionKey = "Idle"; 
                 break;
-            case eUnitActionEvent.EnemySearch:
-                {
-                    actionKey = "";
-                }
+            case eUnitActionEvent.Move:         // 이동
+                actionKey = "Run"; 
+                break;
+            case eUnitActionEvent.EnemySearch:  // 적 발견
+                actionKey = "BattleReady"; 
+                break;
+            case eUnitActionEvent.EnemyAttack:  // 적 공격
+                actionKey = "BattleReady"; 
+                break;
+            case eUnitActionEvent.Die:          // 사망
+                actionKey = "Die";
+                isDetailCheck = false;
                 break;
         }
 
-        //[0 : 주먹],[1 : 권총],[2 : 반자동],[3 : 자동]
+        //상세 세팅이 필요할 경우
+        if (isDetailCheck)
+        {
+            //착용중인 무기 타입에 따라 세팅
+            switch (unitData.weaponTbl.WeaponType)
+            {
+                case 0: // 맨손
+                    actionKey = string.Format("{0}_NoWeapon", actionKey);
+                    break;
+                case 1: // 권총
+                    actionKey = string.Format("{0}_Pistal", actionKey);
+                    break;
+                case 2: // 반자동
+                case 3: // 연사총
+                    actionKey = string.Format("{0}_NoWeapon", actionKey);
+                    break;
+            }
+        }
+
+        //유의미한 키가 있을 경우에 애니메이션 변경
         if (!string.IsNullOrEmpty(actionKey))
         {
-            animator.SetInteger(actionKey,unitData.weaponTbl.WeaponType);
+            animator.SetTrigger(actionKey);
+            return true;
         }
 
-        return actionKey;
+        return false;
     }
 }
