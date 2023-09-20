@@ -29,14 +29,21 @@ public class Unit : MonoBehaviour
 
     #endregion 인스펙터
 
+    #region 데이터
+
+    /// <summary> 유닛의 TID </summary>
+    public int TID;
+
     /// <summary> 해당 유닛의 정보 </summary>
     public UnitData data;
+    /// <summary> 해당 유닛의 AI </summary>
+    public UnitAI ai;
 
     /// <summary> 현재 유닛의 행동 </summary>
     public eUintState uState;
 
-    /// <summary> 해당 유닛의 AI </summary>
-    public UnitAI ai;
+    /// <summary> 서치 범위안에 있는 적 ID </summary>
+    private List<int> searchEnemyID = new List<int>();
 
     /// <summary> 데이터 및 기초 세팅 </summary>
     public void Init(UnitData data)
@@ -81,12 +88,62 @@ public class Unit : MonoBehaviour
         data.RefreshStat();
     }
 
+    #endregion 데이터
+
+    #region 유니티 오버라이드
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if(!int.TryParse(collision.name, out int tid))
+        {
+            Debug.LogError($"유닛의 이름 {collision.name}은 TID로 이름을 넣는 규약에 어긋납니다.");
+            return;
+        }
+
+        //대상의 tid로 이미 검색된 적인지 체크
+        if(!searchEnemyID.Contains(tid))
+        {
+            searchEnemyID.Add(tid);
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (!int.TryParse(collision.name, out int tid))
+        {
+            Debug.LogError($"유닛의 이름 {collision.name}은 TID로 이름을 넣는 규약에 어긋납니다.");
+            return;
+        }
+
+        if (searchEnemyID.Contains(tid))
+        {
+            searchEnemyID.Remove(tid);
+            //tid를 이용해서 추적 및 탐색을 할지 선택함
+        }
+    }
+
+    #endregion 유니티 오버라이드
+
     #region AI
 
     //행동 함수 - 여기선 행동 타입이 정해졌을때 행동할 함수들, 타입은 ai에서 결정함
-    //이동 함수
-    //경계 함수 경계 범위 같은 함수 필요
-    //공격 함수 같은 것도 필요? - 무기 함수 생각해봐야할듯
+    /// <summary> 이동 </summary>
+    private void Move()
+    {
+
+    }
+
+    /// <summary> 탐색 </summary>
+    private void Searching()
+    {
+
+    }
+
+    /// <summary> 공격 </summary>
+    private void Attack()
+    {
+
+    }
 
     /// <summary> 타입에 맞는 AI를 생성 및 세팅 </summary>
     private void SetAI()

@@ -25,6 +25,9 @@ public class UnitMgr : MgrBase
     /// <summary> 한번 사용된 랜덤 목록을 캐싱 </summary>
     private static Dictionary<int, UnitRandomData> dicRandomData = new Dictionary<int, UnitRandomData>();
 
+    /// <summary> 다음 만들어질 캐릭터의 UID </summary>
+    private static int NextCharUID;
+
     private void Awake()
     {
         DontDestroyOnLoad(gameObject);
@@ -44,12 +47,16 @@ public class UnitMgr : MgrBase
         //놀고 있는 유닛을 찾아서 세팅, 없다면 생성
         if (!GetDeActiveUnit(unitType,out Unit unit))
         {
-            //유닛 생성
+            // 유닛 생성
             string path = unitType == eUnitType.Human ? "Char/Human" : "Char/Zombie";
             GameObject unitObj = AssetsMgr.LoadResourcesPrefab(path);
             unitObj.transform.SetParent(instance.transform);
-
             unit = unitObj.GetComponent<Unit>();
+
+            // 캐릭터 오브젝트의 이름은 지정된 TID로 세팅(유닛을 구분하는데 사용할 예정)
+            unitObj.name = NextCharUID.ToString();
+            unit.TID = NextCharUID;
+            NextCharUID++;
         }
 
         //유닛 정보 세팅
