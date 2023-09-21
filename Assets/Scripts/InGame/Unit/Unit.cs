@@ -10,6 +10,9 @@ public class Unit : MonoBehaviour
     [Header("[유닛 애니메이션]"),Tooltip("유닛 애니메이션")]
     [SerializeField] private Animator animator;
 
+    [Header("탐색 범위")]
+    [SerializeField] private BoxCollider2D searchArea;
+
     [Header("[유닛 스프라이트 정보]")]
     [Tooltip("머리")]
     [SerializeField] private SpriteRenderer head;
@@ -75,6 +78,9 @@ public class Unit : MonoBehaviour
             weapon.gameObject.SetActive(false);
         }
 
+        //스탯 계산 및 적용
+        RefreshStat();
+
         //몸, 팔 세팅 (애니메이션 컨트롤러)
         animator.runtimeAnimatorController = AssetsMgr.GetUnitRuntimeAnimatorController(data.bodyID);
 
@@ -82,15 +88,25 @@ public class Unit : MonoBehaviour
         SetAI();
     }
 
-    /// <summary> 캐릭터 스탯 계산 </summary>
+    /// <summary> 캐릭터 스탯 계산 및 적용 </summary>
     private void RefreshStat()
     {
+        //스탯 계산
         data.RefreshStat();
+
+        // 탐색 범위 적용
+        searchArea.size = new Vector2(data.sSize, 1);
+        searchArea.offset = new Vector2(-(data.sSize / 2), 0);
     }
 
     #endregion 데이터
 
     #region 유니티 오버라이드
+
+    private void Update()
+    {
+        //지정된 녀석들을 검사해서 검사된 녀석을 공격
+    }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -100,7 +116,7 @@ public class Unit : MonoBehaviour
             return;
         }
 
-        //대상의 tid로 이미 검색된 적인지 체크
+        //발견된 대상을 목록에 추가
         if(!searchEnemyID.Contains(tid))
         {
             searchEnemyID.Add(tid);
@@ -115,6 +131,7 @@ public class Unit : MonoBehaviour
             return;
         }
 
+        //벗어난 대상을 목록에서 제거
         if (searchEnemyID.Contains(tid))
         {
             searchEnemyID.Remove(tid);
@@ -130,11 +147,11 @@ public class Unit : MonoBehaviour
     /// <summary> 이동 </summary>
     private void Move()
     {
-
+        // 
     }
 
     /// <summary> 탐색 </summary>
-    private void Searching()
+    private void Search()
     {
 
     }

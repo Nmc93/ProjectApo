@@ -7,7 +7,7 @@ public class UnitStatTableData : TableBase
 	public override string TableName { get => "UnitStatTable"; }
 	public override object GetKey { get => id; }
 
-	public UnitStatTableData (int id, int unittype, int maxhp, int minhp, int maxdmg, int mindmg, int maxdef, int mindef, int maxattspeed, int minattspeed, int maxmovespeed, int minmovespeed) 
+	public UnitStatTableData (int id, int unittype, int maxhp, int minhp, int maxdmg, int mindmg, int maxdef, int mindef, int maxattspeed, int minattspeed, int maxmovespeed, int minmovespeed, int maxsearchsize, int minsearchsize) 
 	{
 		this.id = id;
 		this.unittype = unittype;
@@ -21,6 +21,8 @@ public class UnitStatTableData : TableBase
 		this.minattspeed = minattspeed;
 		this.maxmovespeed = maxmovespeed;
 		this.minmovespeed = minmovespeed;
+		this.maxsearchsize = maxsearchsize;
+		this.minsearchsize = minsearchsize;
 	}
 	
 	[SerializeField]
@@ -70,4 +72,12 @@ public class UnitStatTableData : TableBase
 	[SerializeField]
 	private int minmovespeed;
 	public int MinMoveSpeed { get => minmovespeed; }
+	
+	[SerializeField]
+	private int maxsearchsize;
+	public int MaxSearchSize { get => maxsearchsize; }
+	
+	[SerializeField]
+	private int minsearchsize;
+	public int MinSearchSize { get => minsearchsize; }
 }

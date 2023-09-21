@@ -137,11 +137,12 @@ public class UnitMgr : MgrBase
             ranData.GetRanFace,
             ranData.GetRanFaceDeco,
             ranData.GetRanBody,
-            stats[0],
-            stats[1],
-            stats[2],
-            (float)stats[3] / 100,
-            (float)stats[4] / 100);
+            stats[0],               //피
+            stats[1],               //공
+            stats[2],               //방
+            (float)stats[3] / 100,  //공속
+            (float)stats[4] / 100,  //이속
+            stats[5]);              //탐색범위
 
         return unitData;
     }
@@ -221,13 +222,14 @@ public class UnitRandomData
                 return null;
             }
 
-            int[] statArray = new int[5];
+            int[] statArray = new int[6];
 
-            statArray[0] = Random.Range(tbl.MinHp, tbl.MaxHp);              //체력
-            statArray[1] = Random.Range(tbl.MinDmg, tbl.MaxDmg);            //공격력
-            statArray[2] = Random.Range(tbl.MinDef, tbl.MaxDef);            //방어력
-            statArray[3] = Random.Range(tbl.MinAttSpeed, tbl.MaxAttSpeed);  //공격속도
-            statArray[4] = Random.Range(tbl.MinMoveSpeed, tbl.MaxMoveSpeed);//이동속도
+            statArray[0] = Random.Range(tbl.MinHp, tbl.MaxHp);                  //체력
+            statArray[1] = Random.Range(tbl.MinDmg, tbl.MaxDmg);                //공격력
+            statArray[2] = Random.Range(tbl.MinDef, tbl.MaxDef);                //방어력
+            statArray[3] = Random.Range(tbl.MinAttSpeed, tbl.MaxAttSpeed);      //공격속도
+            statArray[4] = Random.Range(tbl.MinMoveSpeed, tbl.MaxMoveSpeed);    //이동속도
+            statArray[5] = Random.Range(tbl.MinSearchSize, tbl.MaxSearchSize);  //탐색범위
 
             return statArray;
         }

@@ -22,6 +22,7 @@ public class UnitData
         int defence,
         float attackSpeed,
         float moveSpeed,
+        int searchSize,
         int weaponID = 0)
     {
         //유닛의 타입 세팅
@@ -47,6 +48,7 @@ public class UnitData
         this.defence = defence;
         this.attackSpeed = attackSpeed;
         this.moveSpeed = moveSpeed;
+        this.searchSize = searchSize;
 
         //무기 세팅
         weaponTbl = TableMgr.Get<UnitWeaponTableData>(weaponID);
@@ -108,10 +110,11 @@ public class UnitData
     public float attackSpeed;
     /// <summary> 유닛의 이동속도 </summary>
     public float moveSpeed;
+    /// <summary> 유닛의 탐색범위 </summary>
+    public int searchSize;
     #endregion 기본 스탯
 
     #region 적용 스탯
-    #endregion 적용 스탯
 
     /// <summary> 유닛 현재 체력 </summary>
     public int curMaxHp;
@@ -127,6 +130,11 @@ public class UnitData
     /// <summary> 현재 이동속도 </summary>
     public float mSpeed;
 
+    /// <summary> 탐색 범위 </summary>
+    public int sSize;
+
+    #endregion 적용 스탯
+
     #endregion 스텟 정보
 
     /// <summary> 현재 기본 스탯을 기반으로 스탯 계산 </summary>
@@ -140,5 +148,7 @@ public class UnitData
 
         aSpeed = attackSpeed; // 장비 특성에 따라 비율 조절 추가
         mSpeed = moveSpeed; // 장비 특성에 따라 비율 조절 추가
+
+        sSize = searchSize; // 장비나 특성에 따라 비율 조절 추가
     }
 }
