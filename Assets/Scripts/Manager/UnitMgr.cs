@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -32,6 +33,17 @@ public class UnitMgr : MgrBase
     {
         DontDestroyOnLoad(gameObject);
         instance = this;
+    }
+
+    /// <summary> 캐릭터의 업데이트문 이벤트 </summary>
+    public static List<Action> charUpdateList = new List<Action>();
+    private void Update()
+    {
+        //커스텀 업데이트
+        foreach(var item in charUpdateList)
+        {
+            item();
+        }
     }
 
     #region 유닛 생성

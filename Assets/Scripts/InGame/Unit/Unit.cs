@@ -103,9 +103,14 @@ public class Unit : MonoBehaviour
 
     #region 유니티 오버라이드
 
-    private void Update()
+    private void OnEnable()
     {
-        //지정된 녀석들을 검사해서 검사된 녀석을 공격
+        
+    }
+
+    private void OnDisable()
+    {
+        
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
