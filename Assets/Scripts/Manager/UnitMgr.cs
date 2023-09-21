@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -36,7 +35,7 @@ public class UnitMgr : MgrBase
     }
 
     /// <summary> 캐릭터의 업데이트문 이벤트 </summary>
-    public static List<Action> charUpdateList = new List<Action>();
+    public static List<System.Action> charUpdateList = new List<System.Action>();
     private void Update()
     {
         //커스텀 업데이트
