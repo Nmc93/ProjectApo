@@ -42,9 +42,6 @@ public class Unit : MonoBehaviour
     /// <summary> 해당 유닛의 AI </summary>
     public UnitAI ai;
 
-    /// <summary> 현재 유닛의 행동 </summary>
-    public eUintState uState;
-
     /// <summary> 서치 범위안에 있는 적 ID </summary>
     private List<int> searchEnemyID = new List<int>();
 
@@ -105,12 +102,14 @@ public class Unit : MonoBehaviour
 
     private void OnEnable()
     {
-        
+        //업데이트 등록
+        UnitMgr.AddUpdateEvent(UnitUpdate);
     }
 
     private void OnDisable()
     {
-        
+        //업데이트 해제
+        UnitMgr.RemoveUpdateEvent(UnitUpdate);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -148,34 +147,21 @@ public class Unit : MonoBehaviour
 
     #region AI
 
-    //행동 함수 - 여기선 행동 타입이 정해졌을때 행동할 함수들, 타입은 ai에서 결정함
-    /// <summary> 이동 </summary>
-    private void Move()
-    {
-        // 
-    }
-
-    /// <summary> 탐색 </summary>
-    private void Search()
-    {
-
-    }
-
-    /// <summary> 공격 </summary>
-    private void Attack()
-    {
-
-    }
+    /// <summary> 현재 유닛의 행동 </summary>
+    public eUnitActionEvent uState;
 
     /// <summary> 타입에 맞는 AI를 생성 및 세팅 </summary>
     private void SetAI()
     {
+        //기본 상태로 변경 
+        uState = eUnitActionEvent.Idle;
         //타입에 맞는 AI 세팅
         ai = null;
         switch (data.unitType)
         {
             case eUnitType.Human:
                 ai = new NormalHumanAI();
+                ai.SetStateAction(Idle, Move, Attack, Die);
                 break;
             case eUnitType.Zombie:
                 //ai = 
@@ -184,7 +170,37 @@ public class Unit : MonoBehaviour
 
         //ai 세팅
         ai.Setting(data, animator);
+        ai.Refresh(eUnitActionEvent.Idle);
     }
+
+    /// <summary> 유닛 업데이트 함수 </summary>
+    private void UnitUpdate()
+    {
+    }
+
+    #region 행동
+
+    /// <summary> 대기 </summary>
+    private void Idle()
+    {
+    }
+
+    /// <summary> 이동 </summary>
+    public void Move()
+    {
+    }
+
+    /// <summary> 공격 </summary>
+    private void Attack()
+    {
+    }
+
+    private void Die()
+    {
+
+    }
+
+    #endregion 행동
 
     #endregion AI
 

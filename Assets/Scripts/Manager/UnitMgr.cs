@@ -34,6 +34,8 @@ public class UnitMgr : MgrBase
         instance = this;
     }
 
+    #region 유닛 업데이트
+
     /// <summary> 캐릭터의 업데이트문 이벤트 </summary>
     public static List<System.Action> charUpdateList = new List<System.Action>();
     private void Update()
@@ -44,6 +46,28 @@ public class UnitMgr : MgrBase
             item();
         }
     }
+
+    /// <summary> 유닛의 업데이트 이벤트를 등록 </summary>
+    /// <param name="updateAction"> 업데이트 함수 </param>
+    public static void AddUpdateEvent(System.Action updateAction)
+    {
+        if(!charUpdateList.Contains(updateAction))
+        {
+            charUpdateList.Add(updateAction);
+        }
+    }
+
+    /// <summary> 유닛의 업데이트 이벤트를 해제 </summary>
+    /// <param name="updateAction"> 업데이트 함수 </param>
+    public static void RemoveUpdateEvent(System.Action updateAction)
+    {
+        if(charUpdateList.Contains(updateAction))
+        {
+            charUpdateList.Remove(updateAction);
+        }
+    }
+
+    #endregion 유닛 업데이트
 
     #region 유닛 생성
 

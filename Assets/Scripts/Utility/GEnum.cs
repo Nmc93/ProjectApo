@@ -114,26 +114,18 @@ namespace GEnum
         LongGun,
     }
 
-    /// <summary>유닛의 행동 타입 </summary>
-    public enum eUintState
-    {
-        /// <summary> 대기 </summary>
-        Idle,
-        /// <summary> 이동 </summary>
-        Move,
-        /// <summary> 경계 </summary>
-        Alert,
-        /// <summary> 공격 </summary>
-        Attack,
-    }
-
     /// <summary> 유닛의 상호작용 이벤트 </summary>
     public enum eUnitActionEvent : byte
     {
-        NoEvent = 0,
+        /// <summary> 대기 </summary>
+        Idle = 0,
+        /// <summary> 이동 </summary>
         Move,
+        /// <summary> 적 감지 </summary>
         EnemySearch,
+        /// <summary> 공격 </summary>
         EnemyAttack,
+        /// <summary> 사망 </summary>
         Die,
     }
 

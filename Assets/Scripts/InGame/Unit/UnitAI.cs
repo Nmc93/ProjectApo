@@ -8,6 +8,24 @@ public abstract class UnitAI
     public UnitData unitData;
     public Animator animator;
 
+    public System.Action idle;
+    public System.Action move;
+    public System.Action attack;
+    public System.Action die;
+
+    /// <summary> 행동 관련 함수 세팅 </summary>
+    public virtual void SetStateAction(
+        System.Action idle, 
+        System.Action move,
+        System.Action attack, 
+        System.Action die)
+    {
+        this.idle = idle;
+        this.move = move;
+        this.attack = attack;
+        this.die = die;
+    }
+
     /// <summary> AI 정보 세팅 </summary>
     /// <param name="unitData"> 유닛 데이터 </param>
     /// <param name="animator"> 유닛의 애니메이터 </param>
@@ -52,21 +70,31 @@ public class NormalHumanAI : UnitAI
         bool isDetailCheck = true;
         switch(EventType)
         {
-            case eUnitActionEvent.NoEvent:      // 대기 상태
-                actionKey = "Idle"; 
+            case eUnitActionEvent.Idle:         // 대기 상태
+                {
+                    actionKey = "Idle";
+                }
                 break;
             case eUnitActionEvent.Move:         // 이동
-                actionKey = "Run"; 
+                {
+                    actionKey = "Run";
+                }
                 break;
             case eUnitActionEvent.EnemySearch:  // 적 발견
-                actionKey = "BattleReady"; 
+                {
+                    actionKey = "BattleReady";
+                }
                 break;
             case eUnitActionEvent.EnemyAttack:  // 적 공격
-                actionKey = "BattleReady"; 
+                {
+                    actionKey = "Attack";
+                }
                 break;
             case eUnitActionEvent.Die:          // 사망
-                actionKey = "Die";
-                isDetailCheck = false;
+                {
+                    actionKey = "Die";
+                    isDetailCheck = false;
+                }
                 break;
         }
 
