@@ -138,7 +138,7 @@ public class GameManager : MonoBehaviour
         Vector3 v3 = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         v3.z = 0;
 
-        UnitMgr.CreateUnit(v3, 0);
+        UnitMgr.CreateUnit(v3, 0, 1);
         btnActive = false;
     }
 

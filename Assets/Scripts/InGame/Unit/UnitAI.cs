@@ -38,7 +38,7 @@ public abstract class UnitAI
             return;
         }
         //애니메이터가 없을 경우에도 강제 종료
-        else if(animator = null)
+        else if(animator == null)
         {
             Debug.LogError("유닛에 애니메이터가 없습니다.");
             return;

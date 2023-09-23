@@ -7,20 +7,18 @@ public class UnitMgr : MgrBase
 {
     public static UnitMgr instance;
 
-
     [Header("[디폴트 ID]")]
     /// <summary> 기본으로 세팅될 인간 ID </summary>
     public static int DefaultHumanID;
     /// <summary> 기본으로 세팅될 좀비 ID </summary>
     public static int DefaultZombieID;
 
+    [Header("[활성화된 유닛 목록]"), Tooltip("활성화된 유닛 목록")]
     /// <summary> 생성된 유닛 목록 </summary>
     public static List<Unit> unitList = new List<Unit>();
 
-    /// <summary> 비활성 유닛 목록 </summary>
-    private static Queue<Unit> unitPool = new Queue<Unit>();
-    /// <summary> 비활성 좀비 목록 </summary>
-    private static Queue<Unit> zombiePool = new Queue<Unit>();
+    [Header("[비활성화된 유닛 목록]"),Tooltip("비활성화된 유닛 목록")]
+    public static Queue<Unit> unitPool = new Queue<Unit>();
 
     /// <summary> 한번 사용된 랜덤 목록을 캐싱 </summary>
     private static Dictionary<int, UnitRandomData> dicRandomData = new Dictionary<int, UnitRandomData>();
@@ -76,11 +74,11 @@ public class UnitMgr : MgrBase
     /// <param name="weaponID"> 무기 ID 없을 경우 맨손 </param>
     public static void CreateUnit(Vector3 pos, int id,int weaponID = 0)
     {
-        UnitData unitData = CreateUnitData(id);
+        UnitData unitData = CreateUnitData(id, weaponID);
         eUnitType unitType = unitData.unitType;
 
         //놀고 있는 유닛을 찾아서 세팅, 없다면 생성
-        if (!GetDeActiveUnit(unitType,out Unit unit))
+        if (!GetDeActiveUnit(out Unit unit))
         {
             // 유닛 생성
             string path = unitType == eUnitType.Human ? "Char/Human" : "Char/Zombie";
@@ -108,41 +106,27 @@ public class UnitMgr : MgrBase
     #region 풀에 저장된 유닛 반환
 
     /// <summary> 풀 안에 비활성화 된 유닛이 있다면 저장하고 성공 여부를 반환 </summary>
-    /// <param name="unitType"> 반환할 유닛의 타입 </param>
     /// <param name="unit"> 찾은 유닛을 저장할 유닛 변수 </param>
     /// <returns> 비활성화된 유닛을 저장에 성공한다면 True 반환 </returns>
-    private static bool GetDeActiveUnit(eUnitType unitType, out Unit unit)
+    private static bool GetDeActiveUnit(out Unit unit)
     {
         unit = null;
 
-        switch (unitType)
+        if (unitPool.Count > 0)
         {
-            case eUnitType.Human:
-                {
-                    if (unitPool.Count > 0)
-                    {
-                        unit = unitPool.Dequeue();
-                    }
-                }
-                break;
-            case eUnitType.Zombie:
-                {
-                    if (zombiePool.Count > 0)
-                    {
-                        unit = zombiePool.Dequeue();
-                    }
-                }
-                break;
+            unit = unitPool.Dequeue();
         }
 
         return unit != null;
     }
     #endregion 풀에 저장된 유닛 반환
 
+    #region 유닛 데이터 생성
+
     /// <summary> 랜덤테이블의 ID를 기반으로 유닛을 생성, 반환 </summary>
     /// <param name="unitRanID"> UnitRandomTable의 ID </param>
     /// <returns> 해당 ID의 유닛이 없을 경우 null 반환 </returns>
-    private static UnitData CreateUnitData(int unitRanID)
+    private static UnitData CreateUnitData(int unitRanID, int weaponID = 0)
     {
         UnitData unitData = null;
 
@@ -177,10 +161,34 @@ public class UnitMgr : MgrBase
             stats[2],               //방
             (float)stats[3] / 100,  //공속
             (float)stats[4] / 100,  //이속
-            stats[5]);              //탐색범위
+            stats[5],               //탐색범위
+            weaponID);              //무기
 
         return unitData;
     }
+
+    #endregion 유닛 데이터 생성
+
+    #region Get
+
+    /// <summary> 해당 TID를 가진 유닛의 타입을 반환 </summary>
+    /// <param name="tid"> 유닛의 TID </param>
+    /// <returns> TID가 없을 경우 eUnitType.None 반환 </returns>
+    public static eUnitType GetUnitType(int tid)
+    {
+        //인덱스를 검색
+        for(int i = 0; i < unitList.Count; ++i)
+        {
+            if(unitList[i].TID == tid)
+            {
+                return unitList[i].data.unitType;
+            }
+        }
+
+        return eUnitType.None;
+    }
+
+    #endregion Get
 }
 
 #region 데이터 클래스

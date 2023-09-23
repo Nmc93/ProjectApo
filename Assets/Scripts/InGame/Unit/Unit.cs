@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using GEnum;
 
+[System.Serializable]
 public class Unit : MonoBehaviour
 {
     #region 인스펙터
@@ -43,7 +44,7 @@ public class Unit : MonoBehaviour
     public UnitAI ai;
 
     /// <summary> 서치 범위안에 있는 적 ID </summary>
-    private List<int> searchEnemyID = new List<int>();
+    public List<int> searchEnemyID = new List<int>();
 
     /// <summary> 데이터 및 기초 세팅 </summary>
     public void Init(UnitData data)
@@ -65,14 +66,9 @@ public class Unit : MonoBehaviour
         ChangeSprite(hat, data.hatID);
 
         //무기 세팅(맨손일 경우 세팅하지 않음)
-        if (data.weaponTbl.Path == "None")
+        if (data.weaponTbl.Path != "None")
         {
             weapon.sprite = AssetsMgr.GetSprite(eAtlasType.Unit_Human, data.weaponTbl.Path);
-            weapon.gameObject.SetActive(true);
-        }
-        else
-        {
-            weapon.gameObject.SetActive(false);
         }
 
         //스탯 계산 및 적용
@@ -114,9 +110,14 @@ public class Unit : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        //TID를 이름으로 가지지 않은 콜라이더는 유닛이 아님
         if(!int.TryParse(collision.name, out int tid))
         {
-            Debug.LogError($"유닛의 이름 {collision.name}은 TID로 이름을 넣는 규약에 어긋납니다.");
+            return;
+        }
+        //같은 타입의 유닛은 대상에 올리지 않음
+        else if(UnitMgr.GetUnitType(tid) == data.unitType)
+        {
             return;
         }
 
@@ -131,7 +132,6 @@ public class Unit : MonoBehaviour
     {
         if (!int.TryParse(collision.name, out int tid))
         {
-            Debug.LogError($"유닛의 이름 {collision.name}은 TID로 이름을 넣는 규약에 어긋납니다.");
             return;
         }
 
