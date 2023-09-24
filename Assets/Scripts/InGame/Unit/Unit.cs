@@ -43,6 +43,8 @@ public class Unit : MonoBehaviour
     /// <summary> 해당 유닛의 AI </summary>
     public UnitAI ai;
 
+    /// <summary> 공격 대상 적 ID [적이 없을 경우 : -1]</summary>
+    public int tagetEnemyID = -1;
     /// <summary> 서치 범위안에 있는 적 ID </summary>
     public List<int> searchEnemyID = new List<int>();
 
@@ -176,6 +178,19 @@ public class Unit : MonoBehaviour
     /// <summary> 유닛 업데이트 함수 </summary>
     private void UnitUpdate()
     {
+        //공격 대상이 비었는데 감지된 대상이 있을 경우 타겟 지정
+        if(tagetEnemyID == -1 && searchEnemyID.Count > 0)
+        {
+            //타겟 지정 및 이벤트 세팅
+            tagetEnemyID = searchEnemyID[0];
+            ai.Refresh(eUnitActionEvent.EnemySearch);
+        }
+
+        //AI의 업데이트
+        if (ai != null)
+        {
+            ai.Update();
+        }
     }
 
     #region 행동

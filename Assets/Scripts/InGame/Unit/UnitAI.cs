@@ -52,6 +52,9 @@ public abstract class UnitAI
     /// <param name="eventType"> 유닛의 월드와 한 상호작용 타입 </param>
     /// <returns> 흠... </returns>
     public abstract bool Refresh(eUnitActionEvent eventType);
+
+    /// <summary> 유닛의 정보를 업데이트 </summary>
+    public abstract void Update();
 }
 
 /// <summary> 인간형 보스 고티죠? </summary>
@@ -125,5 +128,10 @@ public class NormalHumanAI : UnitAI
         }
 
         return false;
+    }
+
+    public override void Update()
+    {
+
     }
 }
