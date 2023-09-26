@@ -121,7 +121,7 @@ namespace GEnum
         Idle = 0,
         /// <summary> 이동 </summary>
         Move,
-        /// <summary> 적 감지 </summary>
+        /// <summary> 탐색 </summary>
         EnemySearch,
         /// <summary> 공격 </summary>
         EnemyAttack,

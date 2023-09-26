@@ -155,7 +155,7 @@ public class Unit : MonoBehaviour
     /// <summary> 타입에 맞는 AI를 생성 및 세팅 </summary>
     private void SetAI()
     {
-        //기본 상태로 변경 
+        //기본 상태로 변경
         uState = eUnitActionEvent.Idle;
         //타입에 맞는 AI 세팅
         ai = null;

@@ -8,10 +8,33 @@ public abstract class UnitAI
     public UnitData unitData;
     public Animator animator;
 
+    #region 행동 액션
+    /// <summary> 대기 </summary>
     public System.Action idle;
+    /// <summary> 이동 </summary>
     public System.Action move;
+    /// <summary> 공격 </summary>
     public System.Action attack;
+    /// <summary> 사망 </summary>
     public System.Action die;
+    #endregion 행동 액션
+
+    #region 대기 이벤트
+    /// <summary> 대기 이벤트 On,Off 여부 </summary>
+    protected bool isOnWaitEvent = false;
+    /// <summary> 대기 시간 </summary>
+    protected float waitTime;
+    /// <summary> 지난 시간 </summary>
+    protected float curWaitTime;
+
+    public virtual void StartWaitEvent(float waitTime)
+    {
+        this.waitTime = waitTime;
+        isOnWaitEvent = true;
+    }
+    /// <summary> 대기 이벤트 </summary>
+    protected virtual void WaitEvent() {}
+    #endregion 대기 이벤트
 
     /// <summary> 행동 관련 함수 세팅 </summary>
     public virtual void SetStateAction(
@@ -54,7 +77,23 @@ public abstract class UnitAI
     public abstract bool Refresh(eUnitActionEvent eventType);
 
     /// <summary> 유닛의 정보를 업데이트 </summary>
-    public abstract void Update();
+    public virtual void Update()
+    {
+        //대기 트리거가 걸려있는 경우
+        if(isOnWaitEvent)
+        {
+            // 대기 완료
+            if(curWaitTime >= waitTime)
+            {
+                isOnWaitEvent = false;
+                curWaitTime = waitTime = 0;
+            }
+            else
+            {
+                curWaitTime += Time.deltaTime;
+            }
+        }
+    }
 }
 
 /// <summary> 인간형 보스 고티죠? </summary>
@@ -66,8 +105,15 @@ public class NormalHumanAI : UnitAI
         base.Setting(unitData, animator);
     }
 
+    /// <summary> 이벤트 갱신 </summary>
+    /// <param name="EventType"> 상호작용 이벤트 </param>
     public override bool Refresh(eUnitActionEvent EventType)
     {
+        //. 평상시엔 Idle
+        //. 이동시 Move - 완료시 Idle
+        //. 타겟으로 결정된 경우 Attack
+        //. 적 미싱 BattleReady - 일정 시간이 지난 후 경계종료 Idle
+
         //[0 : 주먹],[1 : 권총],[2 : 반자동],[3 : 자동]
         string actionKey = string.Empty;
         bool isDetailCheck = true;
@@ -76,27 +122,32 @@ public class NormalHumanAI : UnitAI
             case eUnitActionEvent.Idle:         // 대기 상태
                 {
                     actionKey = "Idle";
+                    idle();
                 }
                 break;
             case eUnitActionEvent.Move:         // 이동
                 {
                     actionKey = "Run";
+                    move();
                 }
                 break;
-            case eUnitActionEvent.EnemySearch:  // 적 발견
+            case eUnitActionEvent.EnemySearch:  // 적 탐색
                 {
                     actionKey = "BattleReady";
+                    idle();
                 }
                 break;
             case eUnitActionEvent.EnemyAttack:  // 적 공격
                 {
                     actionKey = "Attack";
+                    attack();
                 }
                 break;
             case eUnitActionEvent.Die:          // 사망
                 {
                     actionKey = "Die";
                     isDetailCheck = false;
+                    die();
                 }
                 break;
         }
@@ -130,8 +181,9 @@ public class NormalHumanAI : UnitAI
         return false;
     }
 
-    public override void Update()
+    protected override void WaitEvent()
     {
-
+        base.WaitEvent();
     }
+
 }
