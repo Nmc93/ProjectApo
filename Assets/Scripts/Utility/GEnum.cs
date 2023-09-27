@@ -129,6 +129,15 @@ namespace GEnum
         Die,
     }
 
+    /// <summary> 유닛 대기 이벤트 </summary>
+    public enum eUnitWaitEvent
+    {
+        /// <summary> 아무 이벤트 없이 대기중 </summary>
+        None = 0,
+        /// <summary> 전투 대기 상태 </summary>
+        EndEnemySearch,
+    }
+
     #endregion 유닛
 
     #region 아틀라스, 스프라이트

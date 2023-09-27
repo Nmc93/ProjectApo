@@ -6,17 +6,18 @@ using GEnum;
 public abstract class UnitAI
 {
     public UnitData unitData;
-    public Animator animator;
 
     #region 행동 액션
     /// <summary> 대기 </summary>
-    public System.Action idle;
+    public System.Action<string> idle;
     /// <summary> 이동 </summary>
-    public System.Action move;
+    public System.Action<string> move;
+    /// <summary> 공격 대기 </summary>
+    public System.Action<string> battleReady;
     /// <summary> 공격 </summary>
-    public System.Action attack;
+    public System.Action<string> attack;
     /// <summary> 사망 </summary>
-    public System.Action die;
+    public System.Action<string> die;
     #endregion 행동 액션
 
     #region 대기 이벤트
@@ -27,21 +28,30 @@ public abstract class UnitAI
     /// <summary> 지난 시간 </summary>
     protected float curWaitTime;
 
-    public virtual void StartWaitEvent(float waitTime)
+    /// <summary> 현재 대기 이벤트 타입 </summary>
+    protected eUnitWaitEvent waitEvent;
+
+    /// <summary> 대기 이벤트 시작 </summary>
+    /// <param name="waitTime"> 대기 시간 </param>
+    /// <param name="waitEvent"> 대기 시간 후 실행할 이벤트 타입 </param>
+    public virtual void StartWaitEvent(float waitTime , eUnitWaitEvent waitEvent)
     {
+        this.waitEvent = waitEvent;
         this.waitTime = waitTime;
         isOnWaitEvent = true;
     }
+
     /// <summary> 대기 이벤트 </summary>
     protected virtual void WaitEvent() {}
     #endregion 대기 이벤트
 
     /// <summary> 행동 관련 함수 세팅 </summary>
     public virtual void SetStateAction(
-        System.Action idle, 
-        System.Action move,
-        System.Action attack, 
-        System.Action die)
+        System.Action<string> idle, 
+        System.Action<string> move,
+        System.Action<string> battleReady,
+        System.Action<string> attack, 
+        System.Action<string> die)
     {
         this.idle = idle;
         this.move = move;
@@ -51,8 +61,7 @@ public abstract class UnitAI
 
     /// <summary> AI 정보 세팅 </summary>
     /// <param name="unitData"> 유닛 데이터 </param>
-    /// <param name="animator"> 유닛의 애니메이터 </param>
-    public virtual void Setting(UnitData unitData, Animator animator)
+    public virtual void Setting(UnitData unitData)
     {
         //유닛 정보가 없을 경우 강제종료
         if (unitData == null)
@@ -60,15 +69,8 @@ public abstract class UnitAI
             Debug.LogError("AI의 행동기준이 될 유닛의 데이터가 존재하지 않습니다.");
             return;
         }
-        //애니메이터가 없을 경우에도 강제 종료
-        else if(animator == null)
-        {
-            Debug.LogError("유닛에 애니메이터가 없습니다.");
-            return;
-        }
 
         this.unitData = unitData;
-        this.animator = animator;
     }
 
     /// <summary> 현재 상황에 맞게 상태 갱신 </summary>
@@ -99,10 +101,10 @@ public abstract class UnitAI
 /// <summary> 인간형 보스 고티죠? </summary>
 public class NormalHumanAI : UnitAI
 {
-    public override void Setting(UnitData unitData, Animator animator)
+    public override void Setting(UnitData unitData)
     {
         //유닛 데이터 세팅
-        base.Setting(unitData, animator);
+        base.Setting(unitData);
     }
 
     /// <summary> 이벤트 갱신 </summary>
@@ -117,37 +119,39 @@ public class NormalHumanAI : UnitAI
         //[0 : 주먹],[1 : 권총],[2 : 반자동],[3 : 자동]
         string actionKey = string.Empty;
         bool isDetailCheck = true;
+        System.Action<string> stateAction = null;
+
         switch(EventType)
         {
             case eUnitActionEvent.Idle:         // 대기 상태
                 {
                     actionKey = "Idle";
-                    idle();
+                    stateAction = idle;
                 }
                 break;
             case eUnitActionEvent.Move:         // 이동
                 {
                     actionKey = "Run";
-                    move();
+                    stateAction = move;
                 }
                 break;
             case eUnitActionEvent.EnemySearch:  // 적 탐색
                 {
                     actionKey = "BattleReady";
-                    idle();
+                    stateAction = battleReady;
                 }
                 break;
             case eUnitActionEvent.EnemyAttack:  // 적 공격
                 {
                     actionKey = "Attack";
-                    attack();
+                    stateAction = attack;
                 }
                 break;
             case eUnitActionEvent.Die:          // 사망
                 {
                     actionKey = "Die";
+                    stateAction = die;
                     isDetailCheck = false;
-                    die();
                 }
                 break;
         }
@@ -172,18 +176,25 @@ public class NormalHumanAI : UnitAI
         }
 
         //유의미한 키가 있을 경우에 애니메이션 변경
-        if (!string.IsNullOrEmpty(actionKey))
+        if (stateAction != null && !string.IsNullOrEmpty(actionKey))
         {
-            animator.SetTrigger(actionKey);
+            stateAction(actionKey);
             return true;
         }
 
         return false;
     }
 
+    /// <summary> 대기 이벤트(StartWaitEvent 종료시 실행) </summary>
     protected override void WaitEvent()
     {
         base.WaitEvent();
-    }
 
+        switch (waitEvent)
+        {
+            case eUnitWaitEvent.EndEnemySearch:
+                Refresh(eUnitActionEvent.Idle);
+                break;
+        }
+    }
 }

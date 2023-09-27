@@ -8,7 +8,7 @@ public class Unit : MonoBehaviour
 {
     #region 인스펙터
 
-    [Header("[유닛 애니메이션]"),Tooltip("유닛 애니메이션")]
+    [Header("[유닛 애니메이션]"), Tooltip("유닛 애니메이션")]
     [SerializeField] private Animator animator;
 
     [Header("탐색 범위")]
@@ -113,18 +113,18 @@ public class Unit : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         //TID를 이름으로 가지지 않은 콜라이더는 유닛이 아님
-        if(!int.TryParse(collision.name, out int tid))
+        if (!int.TryParse(collision.name, out int tid))
         {
             return;
         }
         //같은 타입의 유닛은 대상에 올리지 않음
-        else if(UnitMgr.GetUnitType(tid) == data.unitType)
+        else if (UnitMgr.GetUnitType(tid) == data.unitType)
         {
             return;
         }
 
-        //발견된 대상을 목록에 추가
-        if(!searchEnemyID.Contains(tid))
+        //현재 타겟이 아닌 발견된 대상을 목록에 추가
+        if (tagetEnemyID != tid && !searchEnemyID.Contains(tid))
         {
             searchEnemyID.Add(tid);
         }
@@ -163,7 +163,7 @@ public class Unit : MonoBehaviour
         {
             case eUnitType.Human:
                 ai = new NormalHumanAI();
-                ai.SetStateAction(Idle, Move, Attack, Die);
+                ai.SetStateAction(Idle, Move, BattleReady, Attack, Die);
                 break;
             case eUnitType.Zombie:
                 //ai = 
@@ -171,7 +171,7 @@ public class Unit : MonoBehaviour
         }
 
         //ai 세팅
-        ai.Setting(data, animator);
+        ai.Setting(data);
         ai.Refresh(eUnitActionEvent.Idle);
     }
 
@@ -179,7 +179,7 @@ public class Unit : MonoBehaviour
     private void UnitUpdate()
     {
         //공격 대상이 비었는데 감지된 대상이 있을 경우 타겟 지정
-        if(tagetEnemyID == -1 && searchEnemyID.Count > 0)
+        if (tagetEnemyID == -1 && searchEnemyID.Count > 0)
         {
             //타겟 지정 및 이벤트 세팅
             tagetEnemyID = searchEnemyID[0];
@@ -196,23 +196,44 @@ public class Unit : MonoBehaviour
     #region 행동
 
     /// <summary> 대기 </summary>
-    private void Idle()
+    private void Idle(string key)
     {
+        uState = eUnitActionEvent.Idle;
+        ChangeAnim(key);
     }
 
     /// <summary> 이동 </summary>
-    public void Move()
+    public void Move(string key)
     {
+        uState = eUnitActionEvent.Move;
+        ChangeAnim(key);
+    }
+
+    /// <summary> 전투준비, 경계 </summary>
+    public void BattleReady(string key)
+    {
+        uState = eUnitActionEvent.EnemySearch;
+        ChangeAnim(key);
     }
 
     /// <summary> 공격 </summary>
-    private void Attack()
+    private void Attack(string key)
     {
+        uState = eUnitActionEvent.EnemyAttack;
+        ChangeAnim(key);
     }
 
-    private void Die()
+    private void Die(string key)
     {
+        uState = eUnitActionEvent.Die;
+        ChangeAnim(key);
+    }
 
+    /// <summary> 애니메이션 변경 </summary>
+    /// <param name="key"> 애니메이션 키 </param>
+    private void ChangeAnim(string key)
+    {
+        animator.SetTrigger(key);
     }
 
     #endregion 행동
