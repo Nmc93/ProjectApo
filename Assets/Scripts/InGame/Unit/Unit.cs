@@ -43,6 +43,7 @@ public class Unit : MonoBehaviour
     /// <summary> 해당 유닛의 AI </summary>
     public UnitAI ai;
 
+    [Header("[타겟]")]
     /// <summary> 공격 대상 적 ID [적이 없을 경우 : -1]</summary>
     public int tagetEnemyID = -1;
     /// <summary> 서치 범위안에 있는 적 ID </summary>
@@ -155,6 +156,9 @@ public class Unit : MonoBehaviour
     /// <summary> 타입에 맞는 AI를 생성 및 세팅 </summary>
     private void SetAI()
     {
+        tagetEnemyID = -1;
+        searchEnemyID.Clear();
+
         //기본 상태로 변경
         uState = eUnitActionEvent.Idle;
         //타입에 맞는 AI 세팅
@@ -183,6 +187,7 @@ public class Unit : MonoBehaviour
         {
             //타겟 지정 및 이벤트 세팅
             tagetEnemyID = searchEnemyID[0];
+            searchEnemyID.RemoveAt(0);
             ai.Refresh(eUnitActionEvent.EnemySearch);
         }
 
