@@ -43,6 +43,9 @@ public class Unit : MonoBehaviour
     /// <summary> 해당 유닛의 AI </summary>
     public UnitAI ai;
 
+    /// <summary> 현재 유닛의 행동 </summary>
+    public eUnitActionEvent uState;
+
     [Header("[타겟]")]
     /// <summary> 공격 대상 적 ID [적이 없을 경우 : -1]</summary>
     public int tagetEnemyID = -1;
@@ -92,7 +95,7 @@ public class Unit : MonoBehaviour
 
         // 탐색 범위 적용
         searchArea.size = new Vector2(data.sSize, 1);
-        searchArea.offset = new Vector2(-(data.sSize / 2), 0);
+        searchArea.offset = new Vector2(-((float)data.sSize / 2), 0);
     }
 
     #endregion 데이터
@@ -149,9 +152,6 @@ public class Unit : MonoBehaviour
     #endregion 유니티 오버라이드
 
     #region AI
-
-    /// <summary> 현재 유닛의 행동 </summary>
-    public eUnitActionEvent uState;
 
     /// <summary> 타입에 맞는 AI를 생성 및 세팅 </summary>
     private void SetAI()
