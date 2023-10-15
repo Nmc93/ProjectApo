@@ -87,9 +87,9 @@ MonoBehaviour:
     aSpeed: 0
     mSpeed: 0
     sSize: 0
+  uState: 0
   tagetEnemyID: 0
   searchEnemyID: 
-  uState: 0
 --- !u!95 &649283599046049947
 Animator:
   serializedVersion: 5
