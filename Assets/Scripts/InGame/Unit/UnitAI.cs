@@ -20,6 +20,9 @@ public abstract class UnitAI
     public System.Action<string> die;
     #endregion 행동 액션
 
+    /// <summary> 애니메이션 키 목록 <br/> [0 : Head], [1 : Face], [2 : Body], [3 : Arm]</summary>
+    protected List<string> animParam;
+
     #region 대기 이벤트
     /// <summary> 대기 이벤트 On,Off 여부 </summary>
     protected bool isOnWaitEvent = false;
@@ -101,6 +104,11 @@ public abstract class UnitAI
 /// <summary> 인간형 보스 고티죠? </summary>
 public class NormalHumanAI : UnitAI
 {
+    NormalHumanAI()
+    {
+        animParam = new List<string>(4);
+    }
+
     public override void Setting(UnitData unitData)
     {
         //유닛 데이터 세팅
