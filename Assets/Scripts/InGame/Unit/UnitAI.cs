@@ -20,9 +20,6 @@ public abstract class UnitAI
     public System.Action<string> die;
     #endregion 행동 액션
 
-    /// <summary> 애니메이션 키 목록 <br/> [0 : Head], [1 : Face], [2 : Body], [3 : Arm]</summary>
-    protected List<string> animParam;
-
     #region 대기 이벤트
     /// <summary> 대기 이벤트 On,Off 여부 </summary>
     protected bool isOnWaitEvent = false;
@@ -104,11 +101,6 @@ public abstract class UnitAI
 /// <summary> 인간형 보스 고티죠? </summary>
 public class NormalHumanAI : UnitAI
 {
-    NormalHumanAI()
-    {
-        animParam = new List<string>(4);
-    }
-
     public override void Setting(UnitData unitData)
     {
         //유닛 데이터 세팅
@@ -126,10 +118,11 @@ public class NormalHumanAI : UnitAI
 
         //[0 : 주먹],[1 : 권총],[2 : 반자동],[3 : 자동]
         string actionKey = string.Empty;
+        string subAnimKey = string.Empty;
         bool isDetailCheck = true;
         System.Action<string> stateAction = null;
 
-        switch(EventType)
+        switch (EventType)
         {
             case eUnitActionEvent.Idle:         // 대기 상태
                 {
@@ -171,14 +164,14 @@ public class NormalHumanAI : UnitAI
             switch (unitData.weaponTbl.WeaponType)
             {
                 case 0: // 맨손
-                    actionKey = string.Format("{0}_NoWeapon", actionKey);
+                    subAnimKey = "_NoWeapon";
                     break;
                 case 1: // 권총
-                    actionKey = string.Format("{0}_Pistal", actionKey);
+                    subAnimKey = "_Pistal";
                     break;
                 case 2: // 반자동
                 case 3: // 연사총
-                    actionKey = string.Format("{0}_NoWeapon", actionKey);
+                    subAnimKey = "_NoWeapon";
                     break;
             }
         }
@@ -186,7 +179,10 @@ public class NormalHumanAI : UnitAI
         //유의미한 키가 있을 경우에 애니메이션 변경
         if (stateAction != null && !string.IsNullOrEmpty(actionKey))
         {
-            stateAction(actionKey);
+            stateAction($"{actionKey}_Head");
+            stateAction($"{actionKey}_Face");
+            stateAction($"{actionKey}_Body");
+            stateAction($"{actionKey}_Arm{subAnimKey}");
             return true;
         }
 
