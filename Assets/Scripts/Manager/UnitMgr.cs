@@ -101,6 +101,12 @@ public class UnitMgr : MgrBase
         unitList.Add(unit);
     }
 
+    /// <summary> 유닛데이터만 생성해서 반환 </summary>
+    public static UnitData CreateUnitDate(int id, int weaponID = 0)
+    {
+       return CreateUnitData(id, weaponID);
+    }
+
     #endregion 유닛 생성
 
     #region 풀에 저장된 유닛 반환

@@ -55,6 +55,7 @@ public abstract class UnitAI
     {
         this.idle = idle;
         this.move = move;
+        this.battleReady = battleReady;
         this.attack = attack;
         this.die = die;
     }
@@ -136,13 +137,13 @@ public class NormalHumanAI : UnitAI
                     stateAction = move;
                 }
                 break;
-            case eUnitActionEvent.EnemySearch:  // 적 탐색
+            case eUnitActionEvent.BattleReady:  // 적 탐색
                 {
                     actionKey = "BattleReady";
                     stateAction = battleReady;
                 }
                 break;
-            case eUnitActionEvent.EnemyAttack:  // 적 공격
+            case eUnitActionEvent.Attack:  // 적 공격
                 {
                     actionKey = "Attack";
                     stateAction = attack;
@@ -167,7 +168,7 @@ public class NormalHumanAI : UnitAI
                     subAnimKey = "_NoWeapon";
                     break;
                 case 1: // 권총
-                    subAnimKey = "_Pistal";
+                    subAnimKey = "_Pistol";
                     break;
                 case 2: // 반자동
                 case 3: // 연사총

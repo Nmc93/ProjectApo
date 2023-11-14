@@ -188,7 +188,7 @@ public class Unit : MonoBehaviour
             //타겟 지정 및 이벤트 세팅
             tagetEnemyID = searchEnemyID[0];
             searchEnemyID.RemoveAt(0);
-            ai.Refresh(eUnitActionEvent.EnemySearch);
+            ai.Refresh(eUnitActionEvent.BattleReady);
         }
 
         //AI의 업데이트
@@ -217,17 +217,18 @@ public class Unit : MonoBehaviour
     /// <summary> 전투준비, 경계 </summary>
     public void BattleReady(string key)
     {
-        uState = eUnitActionEvent.EnemySearch;
+        uState = eUnitActionEvent.BattleReady;
         ChangeAnim(key);
     }
 
     /// <summary> 공격 </summary>
     private void Attack(string key)
     {
-        uState = eUnitActionEvent.EnemyAttack;
+        uState = eUnitActionEvent.Attack;
         ChangeAnim(key);
     }
 
+    /// <summary> 사망 </summary>
     private void Die(string key)
     {
         uState = eUnitActionEvent.Die;
@@ -252,7 +253,7 @@ public class Unit : MonoBehaviour
     private void ChangeSprite(SpriteRenderer renderer, int id)
     {
         //테이블이 없거나 None일 경우 비활성화 후 종료
-        if(!TableMgr.Get(id, out UnitAppearanceTableData tbl) || tbl.Path == "None")
+        if (!TableMgr.Get(id, out UnitAppearanceTableData tbl) || tbl.Path == "None")
         {
             renderer.gameObject.SetActive(false);
             return;
@@ -282,4 +283,31 @@ public class Unit : MonoBehaviour
         }
     }
     #endregion 이미지 변경
+
+    #region 테스트 코드
+
+
+    public void testInit()
+    {
+        Init(UnitMgr.CreateUnitDate(0, 1));
+    }
+
+    public void testIdle()
+    {
+        ai.Refresh(eUnitActionEvent.Idle);
+    }
+    public void testMove()
+    {
+        ai.Refresh(eUnitActionEvent.Move);
+    }
+    public void testBattleReady()
+    {
+        ai.Refresh(eUnitActionEvent.BattleReady);
+    }
+    public void testAttack()
+    {
+        ai.Refresh(eUnitActionEvent.Attack);
+    }
+
+    #endregion 테스트 코드
 }

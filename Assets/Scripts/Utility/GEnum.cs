@@ -115,16 +115,17 @@ namespace GEnum
     }
 
     /// <summary> 유닛의 상호작용 이벤트 </summary>
+    [Serializable]
     public enum eUnitActionEvent : byte
     {
         /// <summary> 대기 </summary>
         Idle = 0,
         /// <summary> 이동 </summary>
         Move,
-        /// <summary> 탐색 </summary>
-        EnemySearch,
+        /// <summary> 탐색,전투준비 </summary>
+        BattleReady,
         /// <summary> 공격 </summary>
-        EnemyAttack,
+        Attack,
         /// <summary> 사망 </summary>
         Die,
     }
