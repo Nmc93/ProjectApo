@@ -610,7 +610,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2424442515770641450, guid: f5f05f0536ad61d4fa243fd04153e816, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2880205093701381574, guid: f5f05f0536ad61d4fa243fd04153e816, type: 3}
       propertyPath: m_Size.x
@@ -869,9 +869,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1989285493}
-        m_TargetAssemblyTypeName: Unit, Assembly-CSharp
-        m_MethodName: testAttack
+      - m_Target: {fileID: 622560839}
+        m_TargetAssemblyTypeName: UnitTestSceneMgr, Assembly-CSharp
+        m_MethodName: OnClickAttackBtn
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1536,7 +1536,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6279e48eb0a4c95408f6be6c90de24d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isCreateUnit: 0
+  unitID: 0
+  weaponID: 1
+  isCreateUnit: 1
 --- !u!1001 &629202977
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1854,9 +1856,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1989285493}
-        m_TargetAssemblyTypeName: Unit, Assembly-CSharp
-        m_MethodName: testIdle
+      - m_Target: {fileID: 622560839}
+        m_TargetAssemblyTypeName: UnitTestSceneMgr, Assembly-CSharp
+        m_MethodName: OnClickIdleBtn
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2197,9 +2199,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1989285493}
-        m_TargetAssemblyTypeName: Unit, Assembly-CSharp
-        m_MethodName: testMove
+      - m_Target: {fileID: 622560839}
+        m_TargetAssemblyTypeName: UnitTestSceneMgr, Assembly-CSharp
+        m_MethodName: OnClickMoveBtn
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3814,9 +3816,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1989285493}
-        m_TargetAssemblyTypeName: Unit, Assembly-CSharp
-        m_MethodName: testBattleReady
+      - m_Target: {fileID: 622560839}
+        m_TargetAssemblyTypeName: UnitTestSceneMgr, Assembly-CSharp
+        m_MethodName: OnClickBattleReadyBtn
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -4535,9 +4537,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1989285493}
-        m_TargetAssemblyTypeName: Unit, Assembly-CSharp
-        m_MethodName: testInit
+      - m_Target: {fileID: 622560839}
+        m_TargetAssemblyTypeName: UnitTestSceneMgr, Assembly-CSharp
+        m_MethodName: OnClickBattleReadyBtn
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -4835,17 +4837,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1989285493 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4904882957847324432, guid: f5f05f0536ad61d4fa243fd04153e816, type: 3}
-  m_PrefabInstance: {fileID: 82320058866519765}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 89dda771ca21ca44c86ec9cbbeae0f03, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1998367888
 GameObject:
   m_ObjectHideFlags: 0
@@ -4976,7 +4967,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2424442515770641450, guid: f5f05f0536ad61d4fa243fd04153e816, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8369748390717825080, guid: f5f05f0536ad61d4fa243fd04153e816, type: 3}
       propertyPath: m_RootOrder

@@ -25,10 +25,10 @@ public class InputMgr : MgrBase
         public HashSet<Action> Actions = new HashSet<Action>();
     }
 
-    /// <summary> 사용하는 키 목록 [상황에 따라 데이터가 삭제되고 추가됨]</summary>
-    private static List<ClickData> keyList = new List<ClickData>();
     /// <summary> 기능에 할당된 키 확인 [데이터가 삭제되는일은 없어야함] </summary>
     private static Dictionary<eInputType, KeyCode?> dicInUseData = new Dictionary<eInputType, KeyCode?>();
+    /// <summary> 사용하는 키 목록 [상황에 따라 데이터가 삭제되고 추가됨]</summary>
+    private static List<ClickData> keyList = new List<ClickData>();
 
     #region 최초 세팅
     private void Awake()

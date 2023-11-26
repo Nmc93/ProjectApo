@@ -286,7 +286,6 @@ public class Unit : MonoBehaviour
 
     #region 테스트 코드
 
-
     public void testInit()
     {
         Init(UnitMgr.CreateUnitDate(0, 1));

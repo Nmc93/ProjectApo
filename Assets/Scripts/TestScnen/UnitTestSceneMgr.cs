@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using GEnum;
 
 public class UnitTestSceneMgr : MonoBehaviour
@@ -9,6 +10,11 @@ public class UnitTestSceneMgr : MonoBehaviour
 
     /// <summary> 매니저 클래스 저장 </summary>
     public static Dictionary<eMgr, MgrBase> mgrDic = new Dictionary<eMgr, MgrBase>();
+
+    [Header("[생성할 유닛과 무기의 ID]"),Tooltip("유닛의 ID")]
+    public int unitID = 0;
+    [Tooltip("무기의 ID")]
+    public int weaponID = 0;
 
     /// <summary> 시작시 최초 매니저 세팅 </summary>
     private void Awake()
@@ -87,8 +93,83 @@ public class UnitTestSceneMgr : MonoBehaviour
         Vector3 v3 = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         v3.z = 0;
 
-        UnitMgr.CreateUnit(v3, 0, 1);
+        UnitMgr.CreateUnit(v3, unitID, weaponID);
         btnActive = false;
+    }
+
+    /// <summary> 캐릭터 세팅 </summary>
+    public void OnClickResettingBtn()
+    {
+        if (UnitMgr.unitList.Count <= 0)
+        {
+            Debug.LogError("세팅할 캐릭터가 없습니다.");
+            return;
+        }
+
+        for(int i = 0; i < UnitMgr.unitList.Count; ++i)
+        {
+            UnitMgr.unitList[i].testInit();
+        }
+    }
+
+    /// <summary> 대기 모션 버튼 </summary>
+    public void OnClickIdleBtn()
+    {
+        if (UnitMgr.unitList.Count <= 0)
+        {
+            Debug.LogError("세팅할 캐릭터가 없습니다.");
+            return;
+        }
+
+        for (int i = 0; i < UnitMgr.unitList.Count; ++i)
+        {
+            UnitMgr.unitList[i].testIdle();
+        }
+    }
+
+    /// <summary> 이동 모션 버튼 </summary>
+    public void OnClickMoveBtn()
+    {
+        if (UnitMgr.unitList.Count <= 0)
+        {
+            Debug.LogError("이동 모션을 실행할 캐릭터가 없습니다.");
+            return;
+        }
+
+        for (int i = 0; i < UnitMgr.unitList.Count; ++i)
+        {
+            UnitMgr.unitList[i].testMove();
+        }
+    }
+
+    /// <summary> 공격 준비 모션 버튼 </summary>
+    public void OnClickBattleReadyBtn()
+    {
+        if (UnitMgr.unitList.Count <= 0)
+        {
+            Debug.LogError("공격 준비 모션을 실행할 캐릭터가 없습니다.");
+            return;
+        }
+
+        for (int i = 0; i < UnitMgr.unitList.Count; ++i)
+        {
+            UnitMgr.unitList[i].testBattleReady();
+        }
+    }
+
+    /// <summary> 공격 모션 버튼 </summary>
+    public void OnClickAttackBtn()
+    {
+        if (UnitMgr.unitList.Count <= 0)
+        {
+            Debug.LogError("공격 모션을 실행할 캐릭터가 없습니다.");
+            return;
+        }
+
+        for (int i = 0; i < UnitMgr.unitList.Count; ++i)
+        {
+            UnitMgr.unitList[i].testAttack();
+        }
     }
 
     #endregion 테스트
