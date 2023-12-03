@@ -114,7 +114,23 @@ namespace GEnum
         LongGun,
     }
 
-    /// <summary> 유닛의 상호작용 이벤트 </summary>
+    /// <summary> 유닛의 상황 </summary>
+    [Serializable]
+    public enum eUnitSituation : byte
+    {
+        /// <summary> 상황 종료 </summary>
+        SituationClear = 0,
+        /// <summary> 대기 명령 </summary>
+        StandbyCommand,
+        /// <summary> 이동 명령 </summary>
+        MoveCommand,
+        /// <summary> 적 조우 </summary>
+        CreatureEncounter,
+        /// <summary> 지점, 대상 공격 </summary>
+        TargetAttack,
+    }
+
+    /// <summary> 유닛의 상태 </summary>
     [Serializable]
     public enum eUnitActionEvent : byte
     {
@@ -135,8 +151,8 @@ namespace GEnum
     {
         /// <summary> 아무 이벤트 없이 대기중 </summary>
         None = 0,
-        /// <summary> 전투 대기 상태 </summary>
-        EndEnemySearch,
+        /// <summary> 미확인 물체 감정 완료 </summary>
+        EndObjectEmotion,
     }
 
     #endregion 유닛

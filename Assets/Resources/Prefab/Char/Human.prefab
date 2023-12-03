@@ -90,6 +90,7 @@ MonoBehaviour:
   uState: 0
   tagetEnemyID: 0
   searchEnemyID: 
+  targetPoint: {x: 0, y: 0}
 --- !u!95 &649283599046049947
 Animator:
   serializedVersion: 5

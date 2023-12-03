@@ -77,7 +77,7 @@ public abstract class UnitAI
     /// <summary> 현재 상황에 맞게 상태 갱신 </summary>
     /// <param name="eventType"> 유닛의 월드와 한 상호작용 타입 </param>
     /// <returns> 흠... </returns>
-    public abstract bool Refresh(eUnitActionEvent eventType);
+    public abstract bool Refresh(eUnitSituation eventType);
 
     /// <summary> 유닛의 정보를 업데이트 </summary>
     public virtual void Update()
@@ -90,6 +90,9 @@ public abstract class UnitAI
             {
                 isOnWaitEvent = false;
                 curWaitTime = waitTime = 0;
+
+                //대기 이벤트 실행
+                WaitEvent();
             }
             else
             {
@@ -97,9 +100,10 @@ public abstract class UnitAI
             }
         }
     }
+
 }
 
-/// <summary> 인간형 보스 고티죠? </summary>
+/// <summary> 인간형die; 보스 고티죠? </summary>
 public class NormalHumanAI : UnitAI
 {
     public override void Setting(UnitData unitData)
@@ -110,20 +114,39 @@ public class NormalHumanAI : UnitAI
 
     /// <summary> 이벤트 갱신 </summary>
     /// <param name="EventType"> 상호작용 이벤트 </param>
-    public override bool Refresh(eUnitActionEvent EventType)
+    public override bool Refresh(eUnitSituation EventType)
     {
-        //. 평상시엔 Idle
-        //. 이동시 Move - 완료시 Idle
-        //. 타겟으로 결정된 경우 Attack
-        //. 적 미싱 BattleReady - 일정 시간이 지난 후 경계종료 Idle
-
+        // 평상시엔 Idle
+        // 이동시 Move - 완료시 Idle
+        // 타겟으로 결정된 경우 Attack
+        // 적 미싱 BattleReady - 일정 시간이 지난 후 경계종료 Idle
+        
         //[0 : 주먹],[1 : 권총],[2 : 반자동],[3 : 자동]
         string actionKey = string.Empty;
         string subAnimKey = string.Empty;
         bool isDetailCheck = true;
         System.Action<string> stateAction = null;
 
-        switch (EventType)
+        switch(EventType)
+        {
+            case eUnitSituation.SituationClear:     //상황 종료
+                break;
+            case eUnitSituation.StandbyCommand:     //대기 명령
+                break;
+            case eUnitSituation.MoveCommand:        //이동 명령
+                break;
+            case eUnitSituation.CreatureEncounter:  //미확인 물체 조우
+                break;
+            case eUnitSituation.TargetAttack:       // 지점, 대상 공격
+                break;
+        }
+
+
+        //이벤트 타입
+        eUnitActionEvent actionType = eUnitActionEvent.Idle;
+
+        //1차 분류
+        switch (actionType)
         {
             case eUnitActionEvent.Idle:         // 대기 상태
                 {
@@ -143,7 +166,7 @@ public class NormalHumanAI : UnitAI
                     stateAction = battleReady;
                 }
                 break;
-            case eUnitActionEvent.Attack:  // 적 공격
+            case eUnitActionEvent.Attack:       // 적 공격
                 {
                     actionKey = "Attack";
                     stateAction = attack;
@@ -158,7 +181,7 @@ public class NormalHumanAI : UnitAI
                 break;
         }
 
-        //상세 세팅이 필요할 경우
+        //3차 추가 분류
         if (isDetailCheck)
         {
             //착용중인 무기 타입에 따라 세팅
@@ -177,7 +200,7 @@ public class NormalHumanAI : UnitAI
             }
         }
 
-        //유의미한 키가 있을 경우에 애니메이션 변경
+        //2차 분류 및 키 조합
         if (stateAction != null && !string.IsNullOrEmpty(actionKey))
         {
             stateAction($"{actionKey}_Head");
@@ -197,8 +220,10 @@ public class NormalHumanAI : UnitAI
 
         switch (waitEvent)
         {
-            case eUnitWaitEvent.EndEnemySearch:
-                Refresh(eUnitActionEvent.Idle);
+            case eUnitWaitEvent.EndObjectEmotion:
+
+                //미확인 물체 is 적
+                Refresh(eUnitSituation.TargetAttack);
                 break;
         }
     }

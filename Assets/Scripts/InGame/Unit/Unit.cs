@@ -52,6 +52,10 @@ public class Unit : MonoBehaviour
     /// <summary> 서치 범위안에 있는 적 ID </summary>
     public List<int> searchEnemyID = new List<int>();
 
+    [Header("[목표 지점]")]
+    /// <summary> 목적지 포인트 </summary>
+    public Vector2 targetPoint;
+
     /// <summary> 데이터 및 기초 세팅 </summary>
     public void Init(UnitData data)
     {
@@ -149,6 +153,11 @@ public class Unit : MonoBehaviour
         }
     }
 
+    private void Update()
+    {
+        
+    }
+
     #endregion 유니티 오버라이드
 
     #region AI
@@ -176,7 +185,7 @@ public class Unit : MonoBehaviour
 
         //ai 세팅
         ai.Setting(data);
-        ai.Refresh(eUnitActionEvent.Idle);
+        ai.Refresh(eUnitSituation.StandbyCommand);
     }
 
     /// <summary> 유닛 업데이트 함수 </summary>
@@ -188,7 +197,7 @@ public class Unit : MonoBehaviour
             //타겟 지정 및 이벤트 세팅
             tagetEnemyID = searchEnemyID[0];
             searchEnemyID.RemoveAt(0);
-            ai.Refresh(eUnitActionEvent.BattleReady);
+            ai.Refresh(eUnitSituation.CreatureEncounter);
         }
 
         //AI의 업데이트
@@ -199,6 +208,12 @@ public class Unit : MonoBehaviour
     }
 
     #region 행동
+
+    /// <summary> 이벤트 조우 </summary>
+    public void SetSituation(eUnitSituation eSituationType)
+    {
+        ai.Refresh(eSituationType);
+    }
 
     /// <summary> 대기 </summary>
     private void Idle(string key)
@@ -235,14 +250,15 @@ public class Unit : MonoBehaviour
         ChangeAnim(key);
     }
 
+
+    #endregion 행동
+
     /// <summary> 애니메이션 변경 </summary>
     /// <param name="key"> 애니메이션 키 </param>
     private void ChangeAnim(string key)
     {
         animator.SetTrigger(key);
     }
-
-    #endregion 행동
 
     #endregion AI
 
@@ -293,19 +309,19 @@ public class Unit : MonoBehaviour
 
     public void testIdle()
     {
-        ai.Refresh(eUnitActionEvent.Idle);
+        ai.Refresh(eUnitSituation.StandbyCommand);
     }
     public void testMove()
     {
-        ai.Refresh(eUnitActionEvent.Move);
+        ai.Refresh(eUnitSituation.MoveCommand);
     }
     public void testBattleReady()
     {
-        ai.Refresh(eUnitActionEvent.BattleReady);
+        ai.Refresh(eUnitSituation.CreatureEncounter);
     }
     public void testAttack()
     {
-        ai.Refresh(eUnitActionEvent.Attack);
+        ai.Refresh(eUnitSituation.TargetAttack);
     }
 
     #endregion 테스트 코드
