@@ -120,14 +120,11 @@ public class NormalHumanAI : UnitAI
         // 이동시 Move - 완료시 Idle
         // 타겟으로 결정된 경우 Attack
         // 적 미싱 BattleReady - 일정 시간이 지난 후 경계종료 Idle
-        
-        //[0 : 주먹],[1 : 권총],[2 : 반자동],[3 : 자동]
-        string actionKey = string.Empty;
-        string subAnimKey = string.Empty;
-        bool isDetailCheck = true;
-        System.Action<string> stateAction = null;
 
-        switch(EventType)
+        //이벤트 타입
+        eUnitActionEvent actionType = eUnitActionEvent.Idle;
+
+        switch (EventType)
         {
             case eUnitSituation.SituationClear:     //상황 종료
                 break;
@@ -137,13 +134,15 @@ public class NormalHumanAI : UnitAI
                 break;
             case eUnitSituation.CreatureEncounter:  //미확인 물체 조우
                 break;
-            case eUnitSituation.TargetAttack:       // 지점, 대상 공격
+            case eUnitSituation.StrikeCommand:       // 지점, 대상 공격
                 break;
         }
 
-
-        //이벤트 타입
-        eUnitActionEvent actionType = eUnitActionEvent.Idle;
+        //[0 : 주먹],[1 : 권총],[2 : 반자동],[3 : 자동]
+        string actionKey = string.Empty;
+        string subAnimKey = string.Empty;
+        bool isDetailCheck = true;
+        System.Action<string> stateAction = null;
 
         //1차 분류
         switch (actionType)
@@ -223,7 +222,7 @@ public class NormalHumanAI : UnitAI
             case eUnitWaitEvent.EndObjectEmotion:
 
                 //미확인 물체 is 적
-                Refresh(eUnitSituation.TargetAttack);
+                Refresh(eUnitSituation.StrikeCommand);
                 break;
         }
     }

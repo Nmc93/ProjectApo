@@ -127,7 +127,7 @@ namespace GEnum
         /// <summary> 적 조우 </summary>
         CreatureEncounter,
         /// <summary> 지점, 대상 공격 </summary>
-        TargetAttack,
+        StrikeCommand,
     }
 
     /// <summary> 유닛의 상태 </summary>

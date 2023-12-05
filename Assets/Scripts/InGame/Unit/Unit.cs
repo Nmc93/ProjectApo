@@ -321,7 +321,7 @@ public class Unit : MonoBehaviour
     }
     public void testAttack()
     {
-        ai.Refresh(eUnitSituation.TargetAttack);
+        ai.Refresh(eUnitSituation.StrikeCommand);
     }
 
     #endregion 테스트 코드
