@@ -184,7 +184,7 @@ public class Unit : MonoBehaviour
         }
 
         //ai ¼¼ÆÃ
-        ai.Setting(data);
+        ai.Setting(this);
         ai.Refresh(eUnitSituation.StandbyCommand);
     }
 

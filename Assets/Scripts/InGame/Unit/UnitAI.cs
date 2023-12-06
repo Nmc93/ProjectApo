@@ -5,8 +5,6 @@ using GEnum;
 
 public abstract class UnitAI
 {
-    public UnitData unitData;
-
     #region 행동 액션
     /// <summary> 대기 </summary>
     public System.Action<string> idle;
@@ -30,6 +28,11 @@ public abstract class UnitAI
 
     /// <summary> 현재 대기 이벤트 타입 </summary>
     protected eUnitWaitEvent waitEvent;
+
+    /// <summary> 현재 유닛 [unit.AI하면 this가 호출되는 상호참조의 관계라 조심해서 사용] </summary>
+    protected Unit unit;
+    /// <summary> 유닛 정보 </summary>
+    protected UnitData unitData;
 
     /// <summary> 대기 이벤트 시작 </summary>
     /// <param name="waitTime"> 대기 시간 </param>
@@ -61,8 +64,8 @@ public abstract class UnitAI
     }
 
     /// <summary> AI 정보 세팅 </summary>
-    /// <param name="unitData"> 유닛 데이터 </param>
-    public virtual void Setting(UnitData unitData)
+    /// <param name="unit"> 유닛 데이터 </param>
+    public virtual void Setting(Unit unit)
     {
         //유닛 정보가 없을 경우 강제종료
         if (unitData == null)
@@ -70,8 +73,8 @@ public abstract class UnitAI
             Debug.LogError("AI의 행동기준이 될 유닛의 데이터가 존재하지 않습니다.");
             return;
         }
-
-        this.unitData = unitData;
+        this.unit = unit;
+        unitData = unit.data;
     }
 
     /// <summary> 현재 상황에 맞게 상태 갱신 </summary>
@@ -100,22 +103,35 @@ public abstract class UnitAI
             }
         }
     }
-
 }
 
 /// <summary> 인간형die; 보스 고티죠? </summary>
 public class NormalHumanAI : UnitAI
 {
-    public override void Setting(UnitData unitData)
+    public override void Setting(Unit unit)
     {
         //유닛 데이터 세팅
-        base.Setting(unitData);
+        base.Setting(unit);
     }
 
     /// <summary> 이벤트 갱신 </summary>
     /// <param name="EventType"> 상호작용 이벤트 </param>
     public override bool Refresh(eUnitSituation EventType)
     {
+        //switch (curActionType)
+        //{
+        //    case eUnitActionEvent.Idle:
+        //        break;
+        //    case eUnitActionEvent.Move:
+        //        break;
+        //    case eUnitActionEvent.BattleReady:
+        //        break;
+        //    case eUnitActionEvent.Attack:
+        //        break;
+        //    case eUnitActionEvent.Die:
+        //        break;
+        //}
+
         // 평상시엔 Idle
         // 이동시 Move - 완료시 Idle
         // 타겟으로 결정된 경우 Attack
@@ -127,14 +143,46 @@ public class NormalHumanAI : UnitAI
         switch (EventType)
         {
             case eUnitSituation.SituationClear:     //상황 종료
+                {
+                    switch (unit.uState)
+                    {
+                        case eUnitActionEvent.Attack:   // 공격중 상황이 종료될 경우 대기가 아니라 전투 준비로 상태 변경
+                            actionType = eUnitActionEvent.BattleReady;
+                            break;
+                        default:                        // 나머지 타입은 대기로 상태 변경
+                            actionType = eUnitActionEvent.Idle;
+                            break;
+                    }
+                }
                 break;
             case eUnitSituation.StandbyCommand:     //대기 명령
+                {
+                    switch(unit.uState)
+                    {
+                        case eUnitActionEvent.Idle:
+                            break;
+                        case eUnitActionEvent.Move:
+                            break;
+                        case eUnitActionEvent.BattleReady:
+                            break;
+                        case eUnitActionEvent.Attack:
+                            break;
+                        case eUnitActionEvent.Die:
+                            break;
+                    }
+                }
                 break;
             case eUnitSituation.MoveCommand:        //이동 명령
+                {
+                }
                 break;
             case eUnitSituation.CreatureEncounter:  //미확인 물체 조우
+                {
+                }
                 break;
             case eUnitSituation.StrikeCommand:       // 지점, 대상 공격
+                {
+                }
                 break;
         }
 
