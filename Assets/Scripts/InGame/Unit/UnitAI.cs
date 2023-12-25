@@ -118,6 +118,12 @@ public class NormalHumanAI : UnitAI
     /// <param name="EventType"> 상호작용 이벤트 </param>
     public override bool Refresh(eUnitSituation EventType)
     {
+        //사망했을 경우 아무것도 하지 않음
+        if (unit.uState != eUnitActionEvent.Die)
+        {
+            return false;
+        }
+
         //switch (curActionType)
         //{
         //    case eUnitActionEvent.Idle:
@@ -142,46 +148,69 @@ public class NormalHumanAI : UnitAI
 
         switch (EventType)
         {
-            case eUnitSituation.SituationClear:     //상황 종료
+            //상황 종료
+            case eUnitSituation.SituationClear:
                 {
                     switch (unit.uState)
                     {
-                        case eUnitActionEvent.Attack:   // 공격중 상황이 종료될 경우 대기가 아니라 전투 준비로 상태 변경
+                        // 공격중 상황이 종료될 경우 대기가 아니라 전투 준비로 상태 변경
+                        case eUnitActionEvent.Attack:
                             actionType = eUnitActionEvent.BattleReady;
                             break;
-                        default:                        // 나머지 타입은 대기로 상태 변경
+
+                        // 나머지 타입은 대기로 상태 변경
+                        default:
                             actionType = eUnitActionEvent.Idle;
                             break;
                     }
                 }
                 break;
-            case eUnitSituation.StandbyCommand:     //대기 명령
+
+            //대기 명령
+            case eUnitSituation.StandbyCommand:
                 {
-                    switch(unit.uState)
+                    switch (unit.uState)
                     {
+                        // 별 일 없으면 대기 상태로 전환
                         case eUnitActionEvent.Idle:
-                            break;
                         case eUnitActionEvent.Move:
-                            break;
                         case eUnitActionEvent.BattleReady:
+                            actionType = eUnitActionEvent.Idle;
                             break;
+
+                        // 공격중일 경우 전투준비 상태로 전환
                         case eUnitActionEvent.Attack:
-                            break;
-                        case eUnitActionEvent.Die:
+                            actionType = eUnitActionEvent.BattleReady;
                             break;
                     }
                 }
                 break;
-            case eUnitSituation.MoveCommand:        //이동 명령
+
+            //이동 명령
+            case eUnitSituation.MoveCommand:
                 {
+                    actionType = eUnitActionEvent.Move;
                 }
                 break;
-            case eUnitSituation.CreatureEncounter:  //미확인 물체 조우
+
+            //미확인 물체 조우
+            case eUnitSituation.CreatureEncounter:
                 {
+                    //대기상태거나 이동중일 경우 전투 준비
+                    switch (unit.uState)
+                    {
+                        case eUnitActionEvent.Idle:
+                        case eUnitActionEvent.Move:
+                            actionType = eUnitActionEvent.BattleReady;
+                            break;
+                    }
                 }
                 break;
-            case eUnitSituation.StrikeCommand:       // 지점, 대상 공격
+
+            // 지점, 대상 공격
+            case eUnitSituation.StrikeCommand:
                 {
+                    actionType = eUnitActionEvent.Attack;
                 }
                 break;
         }
