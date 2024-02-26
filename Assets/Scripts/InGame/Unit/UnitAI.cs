@@ -67,14 +67,15 @@ public abstract class UnitAI
     /// <param name="unit"> 유닛 데이터 </param>
     public virtual void Setting(Unit unit)
     {
+        this.unit = unit;
+        unitData = unit.data;
+
         //유닛 정보가 없을 경우 강제종료
-        if (unitData == null)
+        if (unit == null || unitData == null)
         {
             Debug.LogError("AI의 행동기준이 될 유닛의 데이터가 존재하지 않습니다.");
             return;
         }
-        this.unit = unit;
-        unitData = unit.data;
     }
 
     /// <summary> 현재 상황에 맞게 상태 갱신 </summary>
@@ -119,7 +120,7 @@ public class NormalHumanAI : UnitAI
     public override bool Refresh(eUnitSituation EventType)
     {
         //사망했을 경우 아무것도 하지 않음
-        if (unit.uState != eUnitActionEvent.Die)
+        if (unit.uState == eUnitActionEvent.Die)
         {
             return false;
         }
