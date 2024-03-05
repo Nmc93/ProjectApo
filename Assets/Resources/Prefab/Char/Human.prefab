@@ -59,7 +59,7 @@ MonoBehaviour:
   backHair: {fileID: 1137792190434049802}
   hat: {fileID: 6470698404264247598}
   weapon: {fileID: 848157411854562996}
-  TID: 0
+  UID: 0
   data:
     unitType: 0
     weaponTbl:

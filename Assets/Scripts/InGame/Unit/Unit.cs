@@ -35,8 +35,8 @@ public class Unit : MonoBehaviour
 
     #region 데이터
 
-    /// <summary> 유닛의 TID </summary>
-    public int TID;
+    /// <summary> 유닛의 UID </summary>
+    public int UID;
 
     /// <summary> 해당 유닛의 정보 </summary>
     public UnitData data;
@@ -56,11 +56,20 @@ public class Unit : MonoBehaviour
     /// <summary> 목적지 포인트 </summary>
     public Vector2 targetPoint;
 
+    private eAtlasType atlasType;
+
     /// <summary> 데이터 및 기초 세팅 </summary>
     public void Init(UnitData data)
     {
         //유닛 데이터 세팅
         this.data = data;
+
+        atlasType = data.unitType switch
+        {
+            eUnitType.Human => eAtlasType.Unit_Human,
+            eUnitType.Zombie => eAtlasType.Unit_Zombie,
+            _ => eAtlasType.Unit_Human,
+        };
 
         // 머리 세팅
         ChangeSprite(head, data.headID);
@@ -151,11 +160,6 @@ public class Unit : MonoBehaviour
             searchEnemyID.Remove(tid);
             //tid를 이용해서 추적 및 탐색을 할지 선택함
         }
-    }
-
-    private void Update()
-    {
-        
     }
 
     #endregion 유니티 오버라이드
@@ -276,7 +280,7 @@ public class Unit : MonoBehaviour
         }
 
         //이미지 및 애니메이션 변경
-        renderer.sprite = AssetsMgr.GetSprite(eAtlasType.Unit_Human, tbl.Path);
+        renderer.sprite = AssetsMgr.GetSprite(atlasType, tbl.Path);
         renderer.gameObject.SetActive(true);
     }
 

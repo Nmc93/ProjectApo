@@ -6,7 +6,7 @@ AnimationClip:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Z1-Arm-Idle2
+  m_Name: Z1-Arm-Idle3
   serializedVersion: 7
   m_Legacy: 0
   m_Compressed: 0
@@ -114,9 +114,9 @@ AnimationClip:
   - serializedVersion: 2
     curve:
     - time: 0
-      value: {fileID: 21300000, guid: 393fc6a9e085a4b9e8e3360acc9f5ea2, type: 3}
+      value: {fileID: 21300000, guid: 33853c142b11148f8865e14371815614, type: 3}
     - time: 1
-      value: {fileID: 21300000, guid: 393fc6a9e085a4b9e8e3360acc9f5ea2, type: 3}
+      value: {fileID: 21300000, guid: 33853c142b11148f8865e14371815614, type: 3}
     attribute: m_Sprite
     path: body/Arm/Back-Arm
     classID: 212
@@ -186,8 +186,8 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     pptrCurveMapping:
-    - {fileID: 21300000, guid: 393fc6a9e085a4b9e8e3360acc9f5ea2, type: 3}
-    - {fileID: 21300000, guid: 393fc6a9e085a4b9e8e3360acc9f5ea2, type: 3}
+    - {fileID: 21300000, guid: 33853c142b11148f8865e14371815614, type: 3}
+    - {fileID: 21300000, guid: 33853c142b11148f8865e14371815614, type: 3}
     - {fileID: 21300000, guid: 33853c142b11148f8865e14371815614, type: 3}
     - {fileID: 21300000, guid: 33853c142b11148f8865e14371815614, type: 3}
   m_AnimationClipSettings:

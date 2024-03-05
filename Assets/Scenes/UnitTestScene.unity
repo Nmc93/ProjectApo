@@ -610,7 +610,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2424442515770641450, guid: f5f05f0536ad61d4fa243fd04153e816, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2880205093701381574, guid: f5f05f0536ad61d4fa243fd04153e816, type: 3}
       propertyPath: m_Size.x
@@ -658,7 +658,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8369748390717825080, guid: f5f05f0536ad61d4fa243fd04153e816, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -4.56
       objectReference: {fileID: 0}
     - target: {fileID: 8369748390717825080, guid: f5f05f0536ad61d4fa243fd04153e816, type: 3}
       propertyPath: m_LocalPosition.y
@@ -1538,7 +1538,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   unitID: 0
   weaponID: 1
-  isCreateUnit: 1
+  isCreateUnit: 0
 --- !u!1001 &629202977
 PrefabInstance:
   m_ObjectHideFlags: 0

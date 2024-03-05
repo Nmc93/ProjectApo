@@ -162,6 +162,8 @@ namespace GEnum
     {
         /// <summary> 인간 캐릭터 관련 이미지 아틀라스 </summary>
         Unit_Human = 0,
+        /// <summary> 좀비 캐릭터 관련 이미지 아틀라스 </summary>
+        Unit_Zombie = 1,
     }
     #endregion 아틀라스, 스프라이트
 }

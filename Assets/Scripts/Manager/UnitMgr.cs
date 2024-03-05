@@ -81,14 +81,13 @@ public class UnitMgr : MgrBase
         if (!GetDeActiveUnit(out Unit unit))
         {
             // 유닛 생성
-            string path = unitType == eUnitType.Human ? "Char/Human" : "Char/Zombie";
-            GameObject unitObj = AssetsMgr.LoadResourcesPrefab(path);
+            GameObject unitObj = AssetsMgr.LoadResourcesPrefab("Char/Human");
             unitObj.transform.SetParent(instance.transform);
             unit = unitObj.GetComponent<Unit>();
 
             // 캐릭터 오브젝트의 이름은 지정된 TID로 세팅(유닛을 구분하는데 사용할 예정)
             unitObj.name = NextCharUID.ToString();
-            unit.TID = NextCharUID;
+            unit.UID = NextCharUID;
             NextCharUID++;
         }
 
@@ -185,7 +184,7 @@ public class UnitMgr : MgrBase
         //인덱스를 검색
         for(int i = 0; i < unitList.Count; ++i)
         {
-            if(unitList[i].TID == tid)
+            if(unitList[i].UID == tid)
             {
                 return unitList[i].data.unitType;
             }
