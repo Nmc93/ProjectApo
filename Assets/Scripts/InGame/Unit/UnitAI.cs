@@ -305,3 +305,182 @@ public class NormalHumanAI : UnitAI
         }
     }
 }
+
+public class NomalZombieAI : UnitAI
+{
+    public override void Setting(Unit unit)
+    {
+        //유닛 데이터 세팅
+        base.Setting(unit);
+    }
+
+    /// <summary> 이벤트 갱신 </summary>
+    /// <param name="EventType"> 상호작용 이벤트 </param>
+    public override bool Refresh(eUnitSituation EventType)
+    {
+        //사망했을 경우 아무것도 하지 않음
+        if (unit.uState == eUnitActionEvent.Die)
+        {
+            return false;
+        }
+
+        #region
+        //switch (curActionType)
+        //{
+        //    case eUnitActionEvent.Idle:
+        //        break;
+        //    case eUnitActionEvent.Move:
+        //        break;
+        //    case eUnitActionEvent.BattleReady:
+        //        break;
+        //    case eUnitActionEvent.Attack:
+        //        break;
+        //    case eUnitActionEvent.Die:
+        //        break;
+        //}
+        #endregion
+
+        // 평상시엔 Idle
+        // 이동시 Move - 완료시 Idle
+        // 타겟으로 결정된 경우 Attack
+        // 적 미싱 BattleReady - 일정 시간이 지난 후 경계종료 Idle
+
+        //이벤트 타입
+        eUnitActionEvent actionType = eUnitActionEvent.Idle;
+
+        switch (EventType)
+        {
+            //상황 종료
+            case eUnitSituation.SituationClear:
+                {
+                    switch (unit.uState)
+                    {
+                        // 공격중 상황이 종료될 경우 대기가 아니라 전투 준비로 상태 변경
+                        case eUnitActionEvent.Attack:
+                            actionType = eUnitActionEvent.BattleReady;
+                            break;
+
+                        // 나머지 타입은 대기로 상태 변경
+                        default:
+                            actionType = eUnitActionEvent.Idle;
+                            break;
+                    }
+                }
+                break;
+
+            //대기 명령
+            case eUnitSituation.StandbyCommand:
+                {
+                    switch (unit.uState)
+                    {
+                        // 별 일 없으면 대기 상태로 전환
+                        case eUnitActionEvent.Idle:
+                        case eUnitActionEvent.Move:
+                        case eUnitActionEvent.BattleReady:
+                            actionType = eUnitActionEvent.Idle;
+                            break;
+
+                        // 공격중일 경우 전투준비 상태로 전환
+                        case eUnitActionEvent.Attack:
+                            actionType = eUnitActionEvent.BattleReady;
+                            break;
+                    }
+                }
+                break;
+
+            //이동 명령
+            case eUnitSituation.MoveCommand:
+                {
+                    actionType = eUnitActionEvent.Move;
+                }
+                break;
+
+            //미확인 물체 조우
+            case eUnitSituation.CreatureEncounter:
+                {
+                    //대기상태거나 이동중일 경우 전투 준비
+                    switch (unit.uState)
+                    {
+                        case eUnitActionEvent.Idle:
+                        case eUnitActionEvent.Move:
+                            actionType = eUnitActionEvent.BattleReady;
+                            break;
+                    }
+                }
+                break;
+
+            // 지점, 대상 공격
+            case eUnitSituation.StrikeCommand:
+                {
+                    actionType = eUnitActionEvent.Attack;
+                }
+                break;
+        }
+
+        //[0 : 주먹],[1 : 권총],[2 : 반자동],[3 : 자동]
+        string actionKey = string.Empty;
+        System.Action<string> stateAction = null;
+
+        //1차 분류
+        switch (actionType)
+        {
+            case eUnitActionEvent.Idle:         // 대기 상태
+                {
+                    actionKey = "Idle";
+                    stateAction = idle;
+                }
+                break;
+            case eUnitActionEvent.Move:         // 이동
+                {
+                    actionKey = "Run";
+                    stateAction = move;
+                }
+                break;
+            case eUnitActionEvent.BattleReady:  // 적 발견
+                {
+                    actionKey = "Angry";
+                    stateAction = battleReady;
+                }
+                break;
+            case eUnitActionEvent.Attack:       // 적 공격
+                {
+                    actionKey = "Attack";
+                    stateAction = attack;
+                }
+                break;
+            case eUnitActionEvent.Die:          // 사망
+                {
+                    actionKey = "Die";
+                    stateAction = die;
+                }
+                break;
+        }
+
+        //2차 분류 및 키 조합
+        if (stateAction != null && !string.IsNullOrEmpty(actionKey))
+        {
+            stateAction($"{actionKey}_Head");
+            stateAction($"{actionKey}_Face{unit.data.faceID}");
+            stateAction($"{actionKey}_Body");
+            stateAction($"{actionKey}_Arm");
+            return true;
+        }
+
+        return false;
+    }
+
+    /// <summary> 대기 이벤트(StartWaitEvent 종료시 실행) </summary>
+    protected override void WaitEvent()
+    {
+        base.WaitEvent();
+
+        switch (waitEvent)
+        {
+            case eUnitWaitEvent.EndObjectEmotion:
+
+                //미확인 물체 is 적
+                Refresh(eUnitSituation.StrikeCommand);
+                break;
+        }
+    }
+}

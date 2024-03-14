@@ -232,7 +232,7 @@ public class UnitRandomData
         {
             if(!int.TryParse(strs[i],out value))
             {
-                Debug.LogError("{strs[i]}를 int로 변환할 수 없어서 테이블의 수정이 필요합니다.");
+                Debug.LogError($"{strs[i]}를 int로 변환할 수 없어서 테이블의 수정이 필요합니다.");
                 value = 0;
             }
             result[i] = value;

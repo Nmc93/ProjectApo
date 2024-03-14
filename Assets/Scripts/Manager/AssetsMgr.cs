@@ -120,13 +120,12 @@ public class AssetsMgr : MgrBase
     #region 애니메이터 컨트롤러
 
     /// <summary> Animator의 컨트롤러를 반환 </summary>
-    /// <param name="unitType"> 유닛 타입 </param>
-    /// <param name="bodyType"> 몸통에 따라 </param>
-    public static RuntimeAnimatorController GetUnitRuntimeAnimatorController(int bodyType)
+    /// <param name="animType"> 애니메이션 타입 </param>
+    public static RuntimeAnimatorController GetUnitRuntimeAnimatorController(int animType)
     {
-        if(!TableMgr.Get(bodyType,out UnitAppearanceTableData tbl))
+        if(!TableMgr.Get(animType,out UnitAppearanceTableData tbl))
         {
-            Debug.LogError($"{bodyType}의 ID를 가진 UnitAppearanceTableData가 없습니다.");
+            Debug.LogError($"{animType}의 ID를 가진 UnitAppearanceTableData가 없습니다.");
             return null;
         }
 

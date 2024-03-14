@@ -8,9 +8,6 @@ public class Unit : MonoBehaviour
 {
     #region 인스펙터
 
-    [Header("[유닛 애니메이션]"), Tooltip("유닛 애니메이션")]
-    [SerializeField] private Animator animator;
-
     [Header("탐색 범위")]
     [SerializeField] private BoxCollider2D searchArea;
 
@@ -31,10 +28,16 @@ public class Unit : MonoBehaviour
     [Tooltip("무기")]
     [SerializeField] private SpriteRenderer weapon;
 
+    [Header("[애니메이터]"),Tooltip("머리 애니메이터")]
+    [SerializeField] private Animator headAnimator;
+    [Tooltip("유닛 애니메이션")]
+    [SerializeField] private Animator bodyAnimator;
+
     #endregion 인스펙터
 
     #region 데이터
 
+    [Header("[유닛 데이터]")]
     /// <summary> 유닛의 UID </summary>
     public int UID;
 
@@ -85,7 +88,7 @@ public class Unit : MonoBehaviour
         ChangeSprite(hat, data.hatID);
 
         //무기 세팅(맨손일 경우 세팅하지 않음)
-        if (data.weaponTbl.Path != "None")
+        if (data.weaponTbl.Path != "None" && atlasType == eAtlasType.Unit_Human)
         {
             weapon.sprite = AssetsMgr.GetSprite(eAtlasType.Unit_Human, data.weaponTbl.Path);
         }
@@ -93,8 +96,10 @@ public class Unit : MonoBehaviour
         //스탯 계산 및 적용
         RefreshStat();
 
+        //머리 세팅 (애니메이션 컨트롤러)
+        headAnimator.runtimeAnimatorController = AssetsMgr.GetUnitRuntimeAnimatorController(data.faceID);
         //몸, 팔 세팅 (애니메이션 컨트롤러)
-        animator.runtimeAnimatorController = AssetsMgr.GetUnitRuntimeAnimatorController(data.bodyID);
+        bodyAnimator.runtimeAnimatorController = AssetsMgr.GetUnitRuntimeAnimatorController(data.bodyID);
 
         //AI 세팅
         SetAI();
@@ -183,7 +188,8 @@ public class Unit : MonoBehaviour
                 ai.SetStateAction(Idle, Move, BattleReady, Attack, Die);
                 break;
             case eUnitType.Zombie:
-                //ai = 
+                ai = new NomalZombieAI();
+                ai.SetStateAction(Idle, Move, BattleReady, Attack, Die);
                 break;
         }
 
@@ -261,7 +267,7 @@ public class Unit : MonoBehaviour
     /// <param name="key"> 애니메이션 키 </param>
     private void ChangeAnim(string key)
     {
-        animator.SetTrigger(key);
+        bodyAnimator.SetTrigger(key);
     }
 
     #endregion AI
