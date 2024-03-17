@@ -158,9 +158,9 @@ public class UnitMgr : MgrBase
             ranData.GetRanHat,
             ranData.GetRanHair,
             ranData.GetRanBackHair,
-            ranData.GetRanFace,
+            ranData.GetRanHeadAnim,
             ranData.GetRanFaceDeco,
-            ranData.GetRanBody,
+            ranData.GetRanBodyAnim,
             stats[0],               //피
             stats[1],               //공
             stats[2],               //방
@@ -215,10 +215,10 @@ public class UnitRandomData
         heads = Convert(tbl.Head);
         hairs = Convert(tbl.Hair);
         backHairs = Convert(tbl.BackHair);
-        faces = Convert(tbl.Face);
         faceDecos = Convert(tbl.FaceDeco);
         hats = Convert(tbl.Hat);
-        bodys = Convert(tbl.Body);
+        headAnims = Convert(tbl.HeadAnim);
+        bodyAnims = Convert(tbl.BodyAnim);
         stats = Convert(tbl.Stat);
     }
 
@@ -246,19 +246,19 @@ public class UnitRandomData
     public int[] heads;
     public int[] hairs;
     public int[] backHairs;
-    public int[] faces;
     public int[] faceDecos;
     public int[] hats;
-    public int[] bodys;
+    public int[] headAnims;
+    public int[] bodyAnims;
     public int[] stats;
 
     public int GetRanHeads => heads[Random.Range(0, heads.Length)];
     public int GetRanHair => hairs[Random.Range(0, hairs.Length)];
     public int GetRanBackHair => backHairs[Random.Range(0, backHairs.Length)];
-    public int GetRanFace => faces[Random.Range(0, faces.Length)];
     public int GetRanFaceDeco => faceDecos[Random.Range(0, faceDecos.Length)];
     public int GetRanHat => hats[Random.Range(0, hats.Length)];
-    public int GetRanBody => bodys[Random.Range(0, bodys.Length)];
+    public int GetRanHeadAnim => headAnims[Random.Range(0, headAnims.Length)];
+    public int GetRanBodyAnim => bodyAnims[Random.Range(0, bodyAnims.Length)];
 
     /// <summary> [0 : 피]<br/>[1 : 공]<br/>[2 : 방]<br/>[3 : 공속]<br/>[4 : 이속] </summary>
     public int[] GetRanStats

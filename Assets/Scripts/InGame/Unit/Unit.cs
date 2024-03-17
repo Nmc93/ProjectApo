@@ -11,11 +11,9 @@ public class Unit : MonoBehaviour
     [Header("탐색 범위")]
     [SerializeField] private BoxCollider2D searchArea;
 
-    [Header("[유닛 스프라이트 정보]")]
+    [Header("[유닛 스프라이트]")]
     [Tooltip("머리")]
     [SerializeField] private SpriteRenderer head;
-    [Tooltip("얼굴")]
-    [SerializeField] private SpriteRenderer face;
     [Tooltip("얼굴 데코")]
     [SerializeField] private SpriteRenderer faceDeco;
     [Tooltip("머리카락")]
@@ -28,9 +26,9 @@ public class Unit : MonoBehaviour
     [Tooltip("무기")]
     [SerializeField] private SpriteRenderer weapon;
 
-    [Header("[애니메이터]"),Tooltip("머리 애니메이터")]
+    [Header("[유닛 애니메이터]"),Tooltip("머리 애니메이터")]
     [SerializeField] private Animator headAnimator;
-    [Tooltip("유닛 애니메이션")]
+    [Tooltip("몸통 애니메이션")]
     [SerializeField] private Animator bodyAnimator;
 
     #endregion 인스펙터
@@ -76,8 +74,6 @@ public class Unit : MonoBehaviour
 
         // 머리 세팅
         ChangeSprite(head, data.headID);
-        // 얼굴
-        ChangeSprite(face, data.faceID);
         //얼굴 장식
         ChangeSprite(faceDeco, data.faceDecoID);
         //머리카락 세팅
@@ -93,13 +89,13 @@ public class Unit : MonoBehaviour
             weapon.sprite = AssetsMgr.GetSprite(eAtlasType.Unit_Human, data.weaponTbl.Path);
         }
 
+        //머리 세팅 (애니메이션 컨트롤러)
+        headAnimator.runtimeAnimatorController = AssetsMgr.GetUnitRuntimeAnimatorController(data.headAnimID);
+        //몸, 팔 세팅 (애니메이션 컨트롤러)
+        bodyAnimator.runtimeAnimatorController = AssetsMgr.GetUnitRuntimeAnimatorController(data.bodyAnimID);
+        
         //스탯 계산 및 적용
         RefreshStat();
-
-        //머리 세팅 (애니메이션 컨트롤러)
-        headAnimator.runtimeAnimatorController = AssetsMgr.GetUnitRuntimeAnimatorController(data.faceID);
-        //몸, 팔 세팅 (애니메이션 컨트롤러)
-        bodyAnimator.runtimeAnimatorController = AssetsMgr.GetUnitRuntimeAnimatorController(data.bodyID);
 
         //AI 세팅
         SetAI();
@@ -134,12 +130,18 @@ public class Unit : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        //센서는 감지하지 않음
+        if(collision.gameObject.layer == 11)
+        {
+            return;
+        }
+
         //TID를 이름으로 가지지 않은 콜라이더는 유닛이 아님
         if (!int.TryParse(collision.name, out int tid))
         {
             return;
         }
-        //같은 타입의 유닛은 대상에 올리지 않음
+        //우호 타입의 유닛은 대상에 올리지 않음
         else if (UnitMgr.GetUnitType(tid) == data.unitType)
         {
             return;
@@ -226,48 +228,54 @@ public class Unit : MonoBehaviour
     }
 
     /// <summary> 대기 </summary>
-    private void Idle(string key)
+    private void Idle(string[] key)
     {
         uState = eUnitActionEvent.Idle;
         ChangeAnim(key);
     }
 
     /// <summary> 이동 </summary>
-    public void Move(string key)
+    public void Move(string[] key)
     {
         uState = eUnitActionEvent.Move;
         ChangeAnim(key);
     }
 
     /// <summary> 전투준비, 경계 </summary>
-    public void BattleReady(string key)
+    public void BattleReady(string[] key)
     {
         uState = eUnitActionEvent.BattleReady;
         ChangeAnim(key);
     }
 
     /// <summary> 공격 </summary>
-    private void Attack(string key)
+    private void Attack(string[] key)
     {
         uState = eUnitActionEvent.Attack;
         ChangeAnim(key);
     }
 
     /// <summary> 사망 </summary>
-    private void Die(string key)
+    private void Die(string[] key)
     {
         uState = eUnitActionEvent.Die;
         ChangeAnim(key);
     }
 
-
     #endregion 행동
 
     /// <summary> 애니메이션 변경 </summary>
     /// <param name="key"> 애니메이션 키 </param>
-    private void ChangeAnim(string key)
+    private void ChangeAnim(string[] key)
     {
-        bodyAnimator.SetTrigger(key);
+        //머리
+        headAnimator.SetTrigger(key[0]);
+        //얼굴
+        headAnimator.SetTrigger(key[1]);
+        //몸 + 다리
+        bodyAnimator.SetTrigger(key[2]);
+        //팔
+        bodyAnimator.SetTrigger(key[3]);
     }
 
     #endregion AI
@@ -275,11 +283,11 @@ public class Unit : MonoBehaviour
     #region 이미지 변경
     /// <summary> 스프라이트랜더러의 스프라이트를 변경 </summary>
     /// <param name="renderer"> 변경할 스프라이트 랜더러 </param>
-    /// <param name="id"> UnitAppearanceTableData의 ID 참조 </param>
+    /// <param name="id"> UnitSpriteTableData의 ID 참조 </param>
     private void ChangeSprite(SpriteRenderer renderer, int id)
     {
         //테이블이 없거나 None일 경우 비활성화 후 종료
-        if (!TableMgr.Get(id, out UnitAppearanceTableData tbl) || tbl.Path == "None")
+        if (!TableMgr.Get(id, out UnitSpriteTableData tbl) || tbl.Path == "None")
         {
             renderer.gameObject.SetActive(false);
             return;

@@ -7,15 +7,15 @@ public abstract class UnitAI
 {
     #region 행동 액션
     /// <summary> 대기 </summary>
-    public System.Action<string> idle;
+    public System.Action<string[]> idle;
     /// <summary> 이동 </summary>
-    public System.Action<string> move;
+    public System.Action<string[]> move;
     /// <summary> 공격 대기 </summary>
-    public System.Action<string> battleReady;
+    public System.Action<string[]> battleReady;
     /// <summary> 공격 </summary>
-    public System.Action<string> attack;
+    public System.Action<string[]> attack;
     /// <summary> 사망 </summary>
-    public System.Action<string> die;
+    public System.Action<string[]> die;
     #endregion 행동 액션
 
     #region 대기 이벤트
@@ -50,11 +50,11 @@ public abstract class UnitAI
 
     /// <summary> 행동 관련 함수 세팅 </summary>
     public virtual void SetStateAction(
-        System.Action<string> idle, 
-        System.Action<string> move,
-        System.Action<string> battleReady,
-        System.Action<string> attack, 
-        System.Action<string> die)
+        System.Action<string[]> idle, 
+        System.Action<string[]> move,
+        System.Action<string[]> battleReady,
+        System.Action<string[]> attack, 
+        System.Action<string[]> die)
     {
         this.idle = idle;
         this.move = move;
@@ -144,9 +144,10 @@ public class NormalHumanAI : UnitAI
         // 타겟으로 결정된 경우 Attack
         // 적 미싱 BattleReady - 일정 시간이 지난 후 경계종료 Idle
 
-        //이벤트 타입
+        // 이벤트 타입
         eUnitActionEvent actionType = eUnitActionEvent.Idle;
 
+        // 외부 이벤트에 맞는 상황 타입으로 변환
         switch (EventType)
         {
             //상황 종료
@@ -220,7 +221,7 @@ public class NormalHumanAI : UnitAI
         string actionKey = string.Empty;
         string subAnimKey = string.Empty;
         bool isDetailCheck = true;
-        System.Action<string> stateAction = null;
+        System.Action<string[]> stateAction = null;
 
         //1차 분류
         switch (actionType)
@@ -272,7 +273,7 @@ public class NormalHumanAI : UnitAI
                     break;
                 case 2: // 반자동
                 case 3: // 연사총
-                    subAnimKey = "_NoWeapon";
+                    subAnimKey = "_LongGun";
                     break;
             }
         }
@@ -280,10 +281,14 @@ public class NormalHumanAI : UnitAI
         //2차 분류 및 키 조합
         if (stateAction != null && !string.IsNullOrEmpty(actionKey))
         {
-            stateAction($"{actionKey}_Head");
-            stateAction($"{actionKey}_Face");
-            stateAction($"{actionKey}_Body");
-            stateAction($"{actionKey}_Arm{subAnimKey}");
+            stateAction(new string[] 
+            { 
+                $"{actionKey}_Head", 
+                $"{actionKey}_Face", 
+                $"{actionKey}_Body", 
+                $"{actionKey}_Arm{subAnimKey}" 
+            });
+
             return true;
         }
 
@@ -419,7 +424,7 @@ public class NomalZombieAI : UnitAI
 
         //[0 : 주먹],[1 : 권총],[2 : 반자동],[3 : 자동]
         string actionKey = string.Empty;
-        System.Action<string> stateAction = null;
+        System.Action<string[]> stateAction = null;
 
         //1차 분류
         switch (actionType)
@@ -459,10 +464,14 @@ public class NomalZombieAI : UnitAI
         //2차 분류 및 키 조합
         if (stateAction != null && !string.IsNullOrEmpty(actionKey))
         {
-            stateAction($"{actionKey}_Head");
-            stateAction($"{actionKey}_Face{unit.data.faceID}");
-            stateAction($"{actionKey}_Body");
-            stateAction($"{actionKey}_Arm");
+            stateAction(new string[]
+            {
+                $"{actionKey}_Head",
+                $"{actionKey}_Face{unit.data.headAnimID}",
+                $"{actionKey}_Body",
+                $"{actionKey}_Arm"
+            });
+
             return true;
         }
 

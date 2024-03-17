@@ -53,8 +53,11 @@ public class TableMgr : MgrBase
         //UnitStatTableData 세팅(유닛의 스탯 테이블)
         dicTable.Add("UnitStatTableData", LoadTable<UnitStatTableData>());
 
-        //UnitAppearanceTableData 세팅(유닛의 외형 정보 테이블)
-        dicTable.Add("UnitAppearanceTableData", LoadTable<UnitAppearanceTableData>());
+        //UnitAnimatorTableData 세팅(유닛의 애니메이터 정보 테이블)
+        dicTable.Add("UnitAnimatorTableData", LoadTable<UnitAnimatorTableData>());
+
+        //UnitSpriteTableData 세팅(유닛의 외형 이미지 정보 테이블)
+        dicTable.Add("UnitSpriteTableData", LoadTable<UnitSpriteTableData>());
 
         //UnitWeaponTableData 세팅(무기 정보 테이블)
         dicTable.Add("UnitWeaponTableData", LoadTable<UnitWeaponTableData>());

@@ -14,9 +14,9 @@ public class UnitData
         int hatID,
         int hairID,
         int backHairID,
-        int faceID,
+        int headAnimID,
         int faceDecoID,
-        int bodyID,
+        int bodyAnimID,
         int maxHp,
         int attack,
         int defence,
@@ -38,9 +38,9 @@ public class UnitData
         this.hatID = hatID;
         this.hairID = hairID;
         this.backHairID = backHairID;
-        this.faceID = faceID;
+        this.headAnimID = headAnimID;
         this.faceDecoID = faceDecoID;
-        this.bodyID = bodyID;
+        this.bodyAnimID = bodyAnimID;
         
         //º£ÀÌ½º ½ºÅÈ ¼¼ÆÃ
         this.maxHp = maxHp;
@@ -88,11 +88,11 @@ public class UnitData
     /// <summary> µÞ¸Ó¸® Å¸ÀÔ </summary>
     public int backHairID;
     /// <summary> ¾ó±¼ Å¸ÀÔ </summary>
-    public int faceID;
+    public int headAnimID;
     /// <summary> ¾ó±¼ Àå½Ä Å¸ÀÔ(Äà¼ö¿° µî) </summary>
     public int faceDecoID;
     /// <summary> ¸ö Å¸ÀÔ </summary>
-    public int bodyID;
+    public int bodyAnimID;
     #endregion ¿ÜÇü Á¤º¸ 
 
     #region ½ºÅÝ Á¤º¸

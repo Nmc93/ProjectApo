@@ -110,6 +110,8 @@ public class AssetsMgr : MgrBase
         {
             case eAtlasType.Unit_Human:
                 return "Human";
+            case eAtlasType.Unit_Zombie:
+                return "Zombie";
             default:
                 return string.Empty;
         }
@@ -123,9 +125,9 @@ public class AssetsMgr : MgrBase
     /// <param name="animType"> 애니메이션 타입 </param>
     public static RuntimeAnimatorController GetUnitRuntimeAnimatorController(int animType)
     {
-        if(!TableMgr.Get(animType,out UnitAppearanceTableData tbl))
+        if(!TableMgr.Get(animType, out UnitAnimatorTableData tbl))
         {
-            Debug.LogError($"{animType}의 ID를 가진 UnitAppearanceTableData가 없습니다.");
+            Debug.LogError($"{animType}의 ID를 가진 UnitAnimatorTableData가 없습니다.");
             return null;
         }
 

@@ -51,7 +51,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   searchArea: {fileID: 4020701893038288140}
   head: {fileID: 36629833901495730}
-  face: {fileID: 2282955182237544096}
   faceDeco: {fileID: 2880205093701381574}
   hair: {fileID: 4292179351286317229}
   backHair: {fileID: 1137792190434049802}
@@ -71,9 +70,9 @@ MonoBehaviour:
     hatID: 0
     hairID: 0
     backHairID: 0
-    faceID: 0
+    headAnimID: 0
     faceDecoID: 0
-    bodyID: 0
+    bodyAnimID: 0
     maxHp: 0
     attack: 0
     defence: 0
@@ -186,7 +185,7 @@ GameObject:
   - component: {fileID: 8486268777701819244}
   - component: {fileID: 4292179351286317229}
   m_Layer: 8
-  m_Name: hair
+  m_Name: Hair
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -270,7 +269,7 @@ GameObject:
   - component: {fileID: 1379756116976162084}
   - component: {fileID: 1137792190434049802}
   m_Layer: 8
-  m_Name: back-hair
+  m_Name: Back-Hair
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -484,7 +483,7 @@ GameObject:
   - component: {fileID: 5266724860462984677}
   - component: {fileID: 2282955182237544096}
   m_Layer: 8
-  m_Name: face
+  m_Name: Face
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -654,7 +653,7 @@ GameObject:
   - component: {fileID: 3108192773182497242}
   - component: {fileID: 2880205093701381574}
   m_Layer: 8
-  m_Name: face-decoration
+  m_Name: FaceDecoration
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -739,7 +738,7 @@ GameObject:
   - component: {fileID: 328793841521367076}
   - component: {fileID: 331363594798389379}
   m_Layer: 8
-  m_Name: body
+  m_Name: Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -824,7 +823,7 @@ Animator:
   m_GameObject: {fileID: 4273748193908365784}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: fbae112942a5bc54084b920ea5351cb2, type: 2}
+  m_Controller: {fileID: 22100000, guid: 00d5117f1ed08624192b0b891173c4ce, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -846,7 +845,7 @@ GameObject:
   - component: {fileID: 4025901357431423911}
   - component: {fileID: 6470698404264247598}
   m_Layer: 8
-  m_Name: hat
+  m_Name: Hat
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1132,7 +1131,7 @@ GameObject:
   - component: {fileID: 36629833901495730}
   - component: {fileID: 3119867876881501837}
   m_Layer: 8
-  m_Name: head
+  m_Name: Head
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1219,7 +1218,7 @@ Animator:
   m_GameObject: {fileID: 7989800035570661739}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 16c8438a94f8bac408d300b342ad2a8a, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
