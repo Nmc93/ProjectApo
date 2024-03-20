@@ -79,6 +79,7 @@ MonoBehaviour:
     attackSpeed: 0
     moveSpeed: 0
     searchSize: 0
+    reactionSpeed: 0
     curMaxHp: 0
     curHp: 0
     dmg: 0

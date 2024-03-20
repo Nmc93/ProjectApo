@@ -112,6 +112,10 @@ public class UnitData
     public float moveSpeed;
     /// <summary> 유닛의 탐색범위 </summary>
     public int searchSize;
+
+    /// <summary> 반응속도 - 초 </summary>
+    public float reactionSpeed;
+
     #endregion 기본 스탯
 
     #region 적용 스탯

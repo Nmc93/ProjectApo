@@ -137,20 +137,20 @@ public class Unit : MonoBehaviour
         }
 
         //TID를 이름으로 가지지 않은 콜라이더는 유닛이 아님
-        if (!int.TryParse(collision.name, out int tid))
+        if (int.TryParse(collision.name, out int uID) == false)
         {
             return;
         }
         //우호 타입의 유닛은 대상에 올리지 않음
-        else if (UnitMgr.GetUnitType(tid) == data.unitType)
+        else if (UnitMgr.GetUnitType(uID) == data.unitType)
         {
             return;
         }
 
         //현재 타겟이 아닌 발견된 대상을 목록에 추가
-        if (tagetEnemyID != tid && !searchEnemyID.Contains(tid))
+        if (tagetEnemyID != uID && !searchEnemyID.Contains(uID))
         {
-            searchEnemyID.Add(tid);
+            searchEnemyID.Add(uID);
         }
     }
 
@@ -203,12 +203,11 @@ public class Unit : MonoBehaviour
     /// <summary> 유닛 업데이트 함수 </summary>
     private void UnitUpdate()
     {
-        //공격 대상이 비었는데 감지된 대상이 있을 경우 타겟 지정
+        //1. 타겟이 없는 상태에서 타겟을 발견한 경우
         if (tagetEnemyID == -1 && searchEnemyID.Count > 0)
         {
             //타겟 지정 및 이벤트 세팅
             tagetEnemyID = searchEnemyID[0];
-            searchEnemyID.RemoveAt(0);
             ai.Refresh(eUnitSituation.CreatureEncounter);
         }
 
@@ -221,45 +220,54 @@ public class Unit : MonoBehaviour
 
     #region 행동
 
-    /// <summary> 이벤트 조우 </summary>
-    public void SetSituation(eUnitSituation eSituationType)
-    {
-        ai.Refresh(eSituationType);
-    }
-
     /// <summary> 대기 </summary>
-    private void Idle(string[] key)
+    private void Idle(string[] key, System.Action callBack)
     {
         uState = eUnitActionEvent.Idle;
         ChangeAnim(key);
+        
+        //콜백 실행
+        callBack();
     }
 
     /// <summary> 이동 </summary>
-    public void Move(string[] key)
+    public void Move(string[] key, System.Action callBack)
     {
         uState = eUnitActionEvent.Move;
         ChangeAnim(key);
+
+        //콜백 실행
+        callBack();
     }
 
     /// <summary> 전투준비, 경계 </summary>
-    public void BattleReady(string[] key)
+    public void BattleReady(string[] key, System.Action callBack)
     {
         uState = eUnitActionEvent.BattleReady;
         ChangeAnim(key);
+
+        //콜백 실행
+        callBack();
     }
 
     /// <summary> 공격 </summary>
-    private void Attack(string[] key)
+    private void Attack(string[] key, System.Action callBack)
     {
         uState = eUnitActionEvent.Attack;
         ChangeAnim(key);
+
+        //콜백 실행
+        callBack();
     }
 
     /// <summary> 사망 </summary>
-    private void Die(string[] key)
+    private void Die(string[] key, System.Action callBack)
     {
         uState = eUnitActionEvent.Die;
         ChangeAnim(key);
+
+        //콜백 실행
+        callBack();
     }
 
     #endregion 행동

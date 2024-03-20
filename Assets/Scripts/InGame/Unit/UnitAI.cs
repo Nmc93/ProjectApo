@@ -7,15 +7,15 @@ public abstract class UnitAI
 {
     #region 행동 액션
     /// <summary> 대기 </summary>
-    public System.Action<string[]> idle;
+    public System.Action<string[], System.Action> idle;
     /// <summary> 이동 </summary>
-    public System.Action<string[]> move;
+    public System.Action<string[], System.Action> move;
     /// <summary> 공격 대기 </summary>
-    public System.Action<string[]> battleReady;
+    public System.Action<string[], System.Action> battleReady;
     /// <summary> 공격 </summary>
-    public System.Action<string[]> attack;
+    public System.Action<string[], System.Action> attack;
     /// <summary> 사망 </summary>
-    public System.Action<string[]> die;
+    public System.Action<string[], System.Action> die;
     #endregion 행동 액션
 
     #region 대기 이벤트
@@ -39,9 +39,12 @@ public abstract class UnitAI
     /// <param name="waitEvent"> 대기 시간 후 실행할 이벤트 타입 </param>
     public virtual void StartWaitEvent(float waitTime , eUnitWaitEvent waitEvent)
     {
-        this.waitEvent = waitEvent;
-        this.waitTime = waitTime;
-        isOnWaitEvent = true;
+        if(waitEvent != eUnitWaitEvent.None)
+        {
+            this.waitEvent = waitEvent;
+            this.waitTime = waitTime;
+            isOnWaitEvent = true;
+        }
     }
 
     /// <summary> 대기 이벤트 </summary>
@@ -50,11 +53,11 @@ public abstract class UnitAI
 
     /// <summary> 행동 관련 함수 세팅 </summary>
     public virtual void SetStateAction(
-        System.Action<string[]> idle, 
-        System.Action<string[]> move,
-        System.Action<string[]> battleReady,
-        System.Action<string[]> attack, 
-        System.Action<string[]> die)
+        System.Action<string[], System.Action> idle, 
+        System.Action<string[], System.Action> move,
+        System.Action<string[], System.Action> battleReady,
+        System.Action<string[], System.Action> attack, 
+        System.Action<string[], System.Action> die)
     {
         this.idle = idle;
         this.move = move;
@@ -125,6 +128,7 @@ public class NormalHumanAI : UnitAI
             return false;
         }
 
+        #region
         //switch (curActionType)
         //{
         //    case eUnitActionEvent.Idle:
@@ -138,6 +142,7 @@ public class NormalHumanAI : UnitAI
         //    case eUnitActionEvent.Die:
         //        break;
         //}
+        #endregion
 
         // 평상시엔 Idle
         // 이동시 Move - 완료시 Idle
@@ -146,7 +151,6 @@ public class NormalHumanAI : UnitAI
 
         // 이벤트 타입
         eUnitActionEvent actionType = eUnitActionEvent.Idle;
-
         // 외부 이벤트에 맞는 상황 타입으로 변환
         switch (EventType)
         {
@@ -221,7 +225,10 @@ public class NormalHumanAI : UnitAI
         string actionKey = string.Empty;
         string subAnimKey = string.Empty;
         bool isDetailCheck = true;
-        System.Action<string[]> stateAction = null;
+        System.Action<string[], System.Action> stateAction = null;
+
+        float waitTime = 0f;
+        eUnitWaitEvent waitEventType = eUnitWaitEvent.None;
 
         //1차 분류
         switch (actionType)
@@ -234,20 +241,22 @@ public class NormalHumanAI : UnitAI
                 break;
             case eUnitActionEvent.Move:         // 이동
                 {
-                    actionKey = "Run";
                     stateAction = move;
+                    actionKey = "Run";
                 }
                 break;
             case eUnitActionEvent.BattleReady:  // 적 탐색
                 {
-                    actionKey = "BattleReady";
                     stateAction = battleReady;
+                    actionKey = "BattleReady";
+                    waitTime = unit.data.reactionSpeed;
+                    waitEventType = eUnitWaitEvent.EndObjectEmotion;
                 }
                 break;
             case eUnitActionEvent.Attack:       // 적 공격
                 {
-                    actionKey = "Attack";
                     stateAction = attack;
+                    actionKey = "Attack";
                 }
                 break;
             case eUnitActionEvent.Die:          // 사망
@@ -281,13 +290,14 @@ public class NormalHumanAI : UnitAI
         //2차 분류 및 키 조합
         if (stateAction != null && !string.IsNullOrEmpty(actionKey))
         {
-            stateAction(new string[] 
-            { 
-                $"{actionKey}_Head", 
-                $"{actionKey}_Face", 
-                $"{actionKey}_Body", 
-                $"{actionKey}_Arm{subAnimKey}" 
-            });
+            stateAction(new string[]
+            {
+                $"{actionKey}_Head",
+                $"{actionKey}_Face",
+                $"{actionKey}_Body",
+                $"{actionKey}_Arm{subAnimKey}"
+            }, 
+            () => { StartWaitEvent(waitTime, waitEventType); });
 
             return true;
         }
@@ -302,10 +312,11 @@ public class NormalHumanAI : UnitAI
 
         switch (waitEvent)
         {
-            case eUnitWaitEvent.EndObjectEmotion:
-
-                //미확인 물체 is 적
-                Refresh(eUnitSituation.StrikeCommand);
+            case eUnitWaitEvent.EndObjectEmotion: //미확인 물체 감정 완료
+                {
+                    //미확인 물체 is 적
+                    Refresh(eUnitSituation.StrikeCommand);
+                }
                 break;
         }
     }
@@ -424,7 +435,7 @@ public class NomalZombieAI : UnitAI
 
         //[0 : 주먹],[1 : 권총],[2 : 반자동],[3 : 자동]
         string actionKey = string.Empty;
-        System.Action<string[]> stateAction = null;
+        System.Action<string[], System.Action> stateAction = null;
 
         //1차 분류
         switch (actionType)
@@ -470,7 +481,7 @@ public class NomalZombieAI : UnitAI
                 $"{actionKey}_Face{unit.data.headAnimID}",
                 $"{actionKey}_Body",
                 $"{actionKey}_Arm"
-            });
+            }, null);
 
             return true;
         }
