@@ -5,29 +5,29 @@ using UnityEngine;
 public class SoundTableData : TableBase
 {
 	public override string TableName { get => "SoundTable"; }
-	public override object GetKey { get => id; }
+	public override object GetKey { get => iD; }
 
-	public SoundTableData (int id, string path, int soundtype, bool isloop) 
+	public SoundTableData (int iD, string path, int soundType, bool isLoop) 
 	{
-		this.id = id;
+		this.iD = iD;
 		this.path = path;
-		this.soundtype = soundtype;
-		this.isloop = isloop;
+		this.soundType = soundType;
+		this.isLoop = isLoop;
 	}
 	
 	[SerializeField]
-	private int id;
-	public int ID { get => id; }
+	private int iD;
+	public int ID { get => iD; }
 	
 	[SerializeField]
 	private string path;
 	public string Path { get => path; }
 	
 	[SerializeField]
-	private int soundtype;
-	public int SoundType { get => soundtype; }
+	private int soundType;
+	public int SoundType { get => soundType; }
 	
 	[SerializeField]
-	private bool isloop;
-	public bool IsLoop { get => isloop; }
+	private bool isLoop;
+	public bool IsLoop { get => isLoop; }
 }

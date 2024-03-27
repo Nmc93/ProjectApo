@@ -7,6 +7,8 @@ public class UnitMgr : MgrBase
 {
     public static UnitMgr instance;
 
+    #region 인스펙터
+
     [Header("[디폴트 ID]")]
     /// <summary> 기본으로 세팅될 인간 ID </summary>
     public static int DefaultHumanID;
@@ -20,17 +22,27 @@ public class UnitMgr : MgrBase
     [Header("[비활성화된 유닛 목록]"),Tooltip("비활성화된 유닛 목록")]
     public static Queue<Unit> unitPool = new Queue<Unit>();
 
+    #endregion 인스펙터
+
+    #region 변수
+
     /// <summary> 한번 사용된 랜덤 목록을 캐싱 </summary>
     private static Dictionary<int, UnitRandomData> dicRandomData = new Dictionary<int, UnitRandomData>();
 
     /// <summary> 다음 만들어질 캐릭터의 UID </summary>
     private static int NextCharUID;
 
+    #endregion 변수
+
+    #region 오버라이드, 기본 세팅
+
     private void Awake()
     {
         DontDestroyOnLoad(gameObject);
         instance = this;
     }
+
+    #endregion 오버라이드, 기본 세팅
 
     #region 유닛 업데이트
 
@@ -166,7 +178,8 @@ public class UnitMgr : MgrBase
             stats[2],               //방
             (float)stats[3] / 100,  //공속
             (float)stats[4] / 100,  //이속
-            stats[5],               //탐색범위
+            (float)stats[5] / 100,  //반응속도
+            stats[6],               //탐지범위
             weaponID);              //무기
 
         return unitData;
@@ -194,6 +207,16 @@ public class UnitMgr : MgrBase
     }
 
     #endregion Get
+
+    #region 유닛 상호작용
+
+    /// <summary> A 유닛이 B유닛을 공격 </summary>
+    public void AttackUnit(int targetUID, int damage)
+    {
+        //TODO: 유닛 공격 처리 작업 필요
+    }
+
+    #endregion 유닛 상호작용
 }
 
 #region 데이터 클래스
@@ -260,7 +283,9 @@ public class UnitRandomData
     public int GetRanHeadAnim => headAnims[Random.Range(0, headAnims.Length)];
     public int GetRanBodyAnim => bodyAnims[Random.Range(0, bodyAnims.Length)];
 
-    /// <summary> [0 : 피]<br/>[1 : 공]<br/>[2 : 방]<br/>[3 : 공속]<br/>[4 : 이속] </summary>
+    /// <summary> [0 : 체력]<br/>[1 : 공격력]<br/>[2 : 방어력]
+    /// <br/>[3 : 공격속도]<br/>[4 : 이동속도]<br/>[5 : 반응속도]
+    /// <br/>[6 : 탐색범위] </summary>
     public int[] GetRanStats
     {
         get
@@ -272,12 +297,13 @@ public class UnitRandomData
 
             int[] statArray = new int[6];
 
-            statArray[0] = Random.Range(tbl.MinHp, tbl.MaxHp);                  //체력
-            statArray[1] = Random.Range(tbl.MinDmg, tbl.MaxDmg);                //공격력
-            statArray[2] = Random.Range(tbl.MinDef, tbl.MaxDef);                //방어력
-            statArray[3] = Random.Range(tbl.MinAttSpeed, tbl.MaxAttSpeed);      //공격속도
-            statArray[4] = Random.Range(tbl.MinMoveSpeed, tbl.MaxMoveSpeed);    //이동속도
-            statArray[5] = Random.Range(tbl.MinSearchSize, tbl.MaxSearchSize);  //탐색범위
+            statArray[0] = Random.Range(tbl.MinHp, tbl.MaxHp);                          // 체력
+            statArray[1] = Random.Range(tbl.MinDmg, tbl.MaxDmg);                        // 공격력
+            statArray[2] = Random.Range(tbl.MinDef, tbl.MaxDef);                        // 방어력
+            statArray[3] = Random.Range(tbl.MinAttSpeed, tbl.MaxAttSpeed);              // 공격속도
+            statArray[4] = Random.Range(tbl.MinMoveSpeed, tbl.MaxMoveSpeed);            // 이동속도
+            statArray[5] = Random.Range(tbl.MinxReactionSpeed, tbl.MaxReactionSpeed);   // 반응속도
+            statArray[6] = Random.Range(tbl.MinDetectionRange, tbl.MaxDetectionRange);  // 탐지범위
 
             return statArray;
         }

@@ -62,8 +62,8 @@ MonoBehaviour:
   data:
     unitType: 0
     weaponTbl:
-      id: 0
-      weapontype: 0
+      iD: 0
+      weaponType: 0
       path: 
     name: 
     headID: 0
@@ -73,20 +73,21 @@ MonoBehaviour:
     headAnimID: 0
     faceDecoID: 0
     bodyAnimID: 0
-    maxHp: 0
-    attack: 0
-    defence: 0
-    attackSpeed: 0
-    moveSpeed: 0
-    searchSize: 0
-    reactionSpeed: 0
-    curMaxHp: 0
-    curHp: 0
-    dmg: 0
-    def: 0
-    aSpeed: 0
-    mSpeed: 0
-    sSize: 0
+    tbl_MaxHp: 0
+    tbl_Attack: 0
+    tbl_Defence: 0
+    tbl_ASpeed: 0
+    tbl_MSpeed: 0
+    tbl_RSpeed: 0
+    tbl_DetectionRange: 0
+    f_MaxHp: 0
+    f_CurHp: 0
+    f_Damage: 0
+    f_Defence: 0
+    f_ASpeed: 0
+    f_MSpeed: 0
+    f_RSpeed: 0
+    f_DetectionRange: 0
   uState: 0
   tagetEnemyID: 0
   searchEnemyID: 

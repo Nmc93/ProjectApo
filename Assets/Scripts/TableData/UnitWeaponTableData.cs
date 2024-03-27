@@ -5,22 +5,22 @@ using UnityEngine;
 public class UnitWeaponTableData : TableBase
 {
 	public override string TableName { get => "UnitWeaponTable"; }
-	public override object GetKey { get => id; }
+	public override object GetKey { get => iD; }
 
-	public UnitWeaponTableData (int id, int weapontype, string path) 
+	public UnitWeaponTableData (int iD, int weaponType, string path) 
 	{
-		this.id = id;
-		this.weapontype = weapontype;
+		this.iD = iD;
+		this.weaponType = weaponType;
 		this.path = path;
 	}
 	
 	[SerializeField]
-	private int id;
-	public int ID { get => id; }
+	private int iD;
+	public int ID { get => iD; }
 	
 	[SerializeField]
-	private int weapontype;
-	public int WeaponType { get => weapontype; }
+	private int weaponType;
+	public int WeaponType { get => weaponType; }
 	
 	[SerializeField]
 	private string path;

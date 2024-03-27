@@ -22,7 +22,8 @@ public class UnitData
         int defence,
         float attackSpeed,
         float moveSpeed,
-        int searchSize,
+        float reActionSpeed,
+        int detectionRange,
         int weaponID = 0)
     {
         //유닛의 타입 세팅
@@ -43,18 +44,19 @@ public class UnitData
         this.bodyAnimID = bodyAnimID;
         
         //베이스 스탯 세팅
-        this.maxHp = maxHp;
-        this.attack = attack;
-        this.defence = defence;
-        this.attackSpeed = attackSpeed;
-        this.moveSpeed = moveSpeed;
-        this.searchSize = searchSize;
+        tbl_MaxHp = maxHp;
+        tbl_Attack = attack;
+        tbl_Defence = defence;
+        tbl_ASpeed = attackSpeed;
+        tbl_MSpeed = moveSpeed;
+        tbl_RSpeed = reActionSpeed;
+        tbl_DetectionRange = detectionRange;
 
         //무기 세팅
         weaponTbl = TableMgr.Get<UnitWeaponTableData>(weaponID);
 
         //스탯 갱신
-        RefreshStat();
+        RefreshStat(true);
     }
 
     /// <summary> 무기 데이터 세팅 </summary>
@@ -98,61 +100,69 @@ public class UnitData
     #region 스텟 정보
 
     #region 기본 스탯
-    /// <summary> 유닛 체력 </summary>
-    public int maxHp;
+    /// <summary> 기본 - 최대 체력 </summary>
+    public int tbl_MaxHp;
 
-    /// <summary> 유닛 공격력 </summary>
-    public int attack;
-    /// <summary> 유닛 방어력 </summary>
-    public int defence;
+    /// <summary> 기본 - 공격력 </summary>
+    public int tbl_Attack;
+    /// <summary> 기본 - 방어력 </summary>
+    public int tbl_Defence;
 
-    /// <summary> 유닛의 공격속도 </summary>
-    public float attackSpeed;
-    /// <summary> 유닛의 이동속도 </summary>
-    public float moveSpeed;
+    /// <summary> 기본 - 공격속도 </summary>
+    public float tbl_ASpeed;
+    /// <summary> 기본 - 이동속도 </summary>
+    public float tbl_MSpeed;
+    /// <summary> 기본 - 반응속도(초) </summary>
+    public float tbl_RSpeed;
+
     /// <summary> 유닛의 탐색범위 </summary>
-    public int searchSize;
-
-    /// <summary> 반응속도 - 초 </summary>
-    public float reactionSpeed;
+    public int tbl_DetectionRange;
 
     #endregion 기본 스탯
 
-    #region 적용 스탯
+    #region 최종 스탯
 
-    /// <summary> 유닛 현재 체력 </summary>
-    public int curMaxHp;
-    /// <summary> 유닛 현재 체력 </summary>
-    public int curHp;
-    /// <summary> 현재 공격력 </summary>
-    public int dmg;
-    /// <summary> 현재 방어력 </summary>
-    public int def;
+    /// <summary> 최종 최대 체력 </summary>
+    public int f_MaxHp;
+    /// <summary> 최종 체력 </summary>
+    public int f_CurHp;
+    /// <summary> 최종 공격력 </summary>
+    public int f_Damage;
+    /// <summary> 최종 방어력 </summary>
+    public int f_Defence;
 
     /// <summary> 현재 공격속도 </summary>
-    public float aSpeed;
+    public float f_ASpeed;
     /// <summary> 현재 이동속도 </summary>
-    public float mSpeed;
+    public float f_MSpeed;
+    /// <summary> 최종 반응 속도 </summary>
+    public float f_RSpeed;
 
     /// <summary> 탐색 범위 </summary>
-    public int sSize;
+    public int f_DetectionRange;
 
-    #endregion 적용 스탯
+    #endregion 최종 스탯
 
     #endregion 스텟 정보
 
     /// <summary> 현재 기본 스탯을 기반으로 스탯 계산 </summary>
-    public void RefreshStat()
+    public void RefreshStat(bool isCreate = false)
     {
-        //체력 세팅
-        curHp = curMaxHp = maxHp;
+        f_MaxHp = tbl_MaxHp;          // 최대 체력
 
-        dmg = attack;// + 총기 데미지
-        def = defence;// + 추가적인 무언가
+        f_Damage = tbl_Attack;                  // + 총기 데미지
+        f_Defence = tbl_Defence;                // + 추가적인 무언가
 
-        aSpeed = attackSpeed; // 장비 특성에 따라 비율 조절 추가
-        mSpeed = moveSpeed; // 장비 특성에 따라 비율 조절 추가
+        f_ASpeed = tbl_ASpeed;                  // 장비 특성에 따라 비율 조절 추가
+        f_MSpeed = tbl_MSpeed;                  // 장비 특성에 따라 비율 조절 추가
+        f_RSpeed = tbl_RSpeed;                  // 장비 특성에 따라 비율 조절 추가
 
-        sSize = searchSize; // 장비나 특성에 따라 비율 조절 추가
+        f_DetectionRange = tbl_DetectionRange; // 장비나 특성에 따라 비율 조절 추가
+
+        // 첫 생성의 경우 현재 체력 == 최대 체력
+        if(isCreate)
+        {
+            f_CurHp = f_MaxHp;
+        }
     }
 }

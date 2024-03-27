@@ -5,32 +5,32 @@ using UnityEngine;
 public class UnitSpriteTableData : TableBase
 {
 	public override string TableName { get => "UnitSpriteTable"; }
-	public override object GetKey { get => id; }
+	public override object GetKey { get => iD; }
 
-	public UnitSpriteTableData (int id, int groupid, int unittype, int parttype, string path) 
+	public UnitSpriteTableData (int iD, int groupID, int unitType, int partType, string path) 
 	{
-		this.id = id;
-		this.groupid = groupid;
-		this.unittype = unittype;
-		this.parttype = parttype;
+		this.iD = iD;
+		this.groupID = groupID;
+		this.unitType = unitType;
+		this.partType = partType;
 		this.path = path;
 	}
 	
 	[SerializeField]
-	private int id;
-	public int ID { get => id; }
+	private int iD;
+	public int ID { get => iD; }
 	
 	[SerializeField]
-	private int groupid;
-	public int GroupID { get => groupid; }
+	private int groupID;
+	public int GroupID { get => groupID; }
 	
 	[SerializeField]
-	private int unittype;
-	public int UnitType { get => unittype; }
+	private int unitType;
+	public int UnitType { get => unitType; }
 	
 	[SerializeField]
-	private int parttype;
-	public int PartType { get => parttype; }
+	private int partType;
+	public int PartType { get => partType; }
 	
 	[SerializeField]
 	private string path;

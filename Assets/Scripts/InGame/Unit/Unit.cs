@@ -1,9 +1,10 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using GEnum;
 
-[System.Serializable]
+[Serializable]
 public class Unit : MonoBehaviour
 {
     #region 인스펙터
@@ -56,8 +57,11 @@ public class Unit : MonoBehaviour
     [Header("[목표 지점]")]
     /// <summary> 목적지 포인트 </summary>
     public Vector2 targetPoint;
-
+    /// <summary> 해당 유닛의 아틀라스 타입 </summary>
     private eAtlasType atlasType;
+
+    /// <summary> 행동 콜백 </summary>
+    private Action animCallBack;
 
     /// <summary> 데이터 및 기초 세팅 </summary>
     public void Init(UnitData data)
@@ -108,13 +112,15 @@ public class Unit : MonoBehaviour
         data.RefreshStat();
 
         // 탐색 범위 적용
-        searchArea.size = new Vector2(data.sSize, 1);
-        searchArea.offset = new Vector2(-((float)data.sSize / 2), 0);
+        searchArea.size = new Vector2(data.f_DetectionRange, 1);
+        searchArea.offset = new Vector2(-((float)data.f_DetectionRange / 2), 0);
     }
 
     #endregion 데이터
 
     #region 유니티 오버라이드
+
+    #region 이벤트 등록, 해제
 
     private void OnEnable()
     {
@@ -128,6 +134,8 @@ public class Unit : MonoBehaviour
         UnitMgr.RemoveUpdateEvent(UnitUpdate);
     }
 
+    #endregion 이벤트 등록, 해제
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         //센서는 감지하지 않음
@@ -136,21 +144,22 @@ public class Unit : MonoBehaviour
             return;
         }
 
-        //TID를 이름으로 가지지 않은 콜라이더는 유닛이 아님
-        if (int.TryParse(collision.name, out int uID) == false)
+        // 유닛의 이름은 UID로 유효하고 해당 UID를 가진 유닛이 적대적인 경우
+        if (int.TryParse(collision.name, out int uID) && UnitMgr.GetUnitType(uID) != data.unitType)
         {
-            return;
-        }
-        //우호 타입의 유닛은 대상에 올리지 않음
-        else if (UnitMgr.GetUnitType(uID) == data.unitType)
-        {
-            return;
-        }
+            //발견된 대상이 
+            if (false == searchEnemyID.Contains(uID))
+            {
+                searchEnemyID.Add(uID);
 
-        //현재 타겟이 아닌 발견된 대상을 목록에 추가
-        if (tagetEnemyID != uID && !searchEnemyID.Contains(uID))
-        {
-            searchEnemyID.Add(uID);
+                //현재 타겟이 없을 경우
+                if(tagetEnemyID == -1)
+                {
+                    //타겟 지정 및 이벤트 세팅
+                    tagetEnemyID = searchEnemyID[0];
+                    ai.Refresh(eUnitSituation.CreatureEncounter);
+                }
+            }
         }
     }
 
@@ -187,11 +196,11 @@ public class Unit : MonoBehaviour
         {
             case eUnitType.Human:
                 ai = new NormalHumanAI();
-                ai.SetStateAction(Idle, Move, BattleReady, Attack, Die);
+                ai.SetStateAction(new Action<string[], Action>[] { Idle, Move, BattleReady, Attack, Die });
                 break;
             case eUnitType.Zombie:
                 ai = new NomalZombieAI();
-                ai.SetStateAction(Idle, Move, BattleReady, Attack, Die);
+                ai.SetStateAction(new Action<string[], Action>[] { Idle, Move, BattleReady, Attack, Die });
                 break;
         }
 
@@ -203,14 +212,6 @@ public class Unit : MonoBehaviour
     /// <summary> 유닛 업데이트 함수 </summary>
     private void UnitUpdate()
     {
-        //1. 타겟이 없는 상태에서 타겟을 발견한 경우
-        if (tagetEnemyID == -1 && searchEnemyID.Count > 0)
-        {
-            //타겟 지정 및 이벤트 세팅
-            tagetEnemyID = searchEnemyID[0];
-            ai.Refresh(eUnitSituation.CreatureEncounter);
-        }
-
         //AI의 업데이트
         if (ai != null)
         {
@@ -221,53 +222,75 @@ public class Unit : MonoBehaviour
     #region 행동
 
     /// <summary> 대기 </summary>
-    private void Idle(string[] key, System.Action callBack)
+    private void Idle(string[] key, Action callBack)
     {
         uState = eUnitActionEvent.Idle;
         ChangeAnim(key);
-        
+
         //콜백 실행
-        callBack();
+        animCallBack = callBack;
     }
 
     /// <summary> 이동 </summary>
-    public void Move(string[] key, System.Action callBack)
+    public void Move(string[] key, Action callBack)
     {
         uState = eUnitActionEvent.Move;
         ChangeAnim(key);
 
-        //콜백 실행
-        callBack();
+        //콜백 처리
+        CallBackHandling(callBack);
     }
 
     /// <summary> 전투준비, 경계 </summary>
-    public void BattleReady(string[] key, System.Action callBack)
+    public void BattleReady(string[] key, Action callBack)
     {
         uState = eUnitActionEvent.BattleReady;
         ChangeAnim(key);
 
-        //콜백 실행
-        callBack();
+        //콜백 처리
+        CallBackHandling(callBack);
     }
 
     /// <summary> 공격 </summary>
-    private void Attack(string[] key, System.Action callBack)
+    private void Attack(string[] key, Action callBack)
     {
         uState = eUnitActionEvent.Attack;
         ChangeAnim(key);
 
-        //콜백 실행
-        callBack();
+        //대상에 대한 공격
+        UnitMgr.instance.AttackUnit(tagetEnemyID, data.f_Damage);
+
+        //콜백 처리
+        CallBackHandling(callBack);
     }
 
     /// <summary> 사망 </summary>
-    private void Die(string[] key, System.Action callBack)
+    private void Die(string[] key, Action callBack)
     {
         uState = eUnitActionEvent.Die;
         ChangeAnim(key);
 
-        //콜백 실행
-        callBack();
+        //콜백 처리
+        CallBackHandling(callBack);
+    }
+
+    private void CallBackHandling(Action callBack)
+    {
+        switch(ai.timing)
+        {
+            //즉시 실행
+            case eUnitWaitEventStartTiming.StartAnim:
+                {
+                    callBack();
+                }
+                break;
+            //애니메이션이 종료될 때 실행
+            case eUnitWaitEventStartTiming.EndAnim:
+                {
+                    animCallBack = callBack;
+                }
+                break;
+        }
     }
 
     #endregion 행동

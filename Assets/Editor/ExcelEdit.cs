@@ -9,6 +9,7 @@ using System.Data;
 using System.Diagnostics;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace ExcelEdit
 {
@@ -583,15 +584,19 @@ namespace ExcelEdit
             //CS 스크립트
             string csText = scGenerator.ConvertExcelToCSText();
 
-            //데이터를 저장
+            if (File.Exists(selectTableCSPath))
+            {
+                File.Delete(selectTableCSPath);
+            }
+
+            //데이터를 삭제
             using (FileStream file = File.Open(selectTableCSPath, FileMode.OpenOrCreate, FileAccess.Write))
             {
                 using (StreamWriter writer = new StreamWriter(file))
                 {
-                    writer.Flush();
                     writer.Write(csText);
                 }
-
+            
                 EditorUtility.DisplayDialog("CS 생성/갱신", "완료", "확인");
             }
         }

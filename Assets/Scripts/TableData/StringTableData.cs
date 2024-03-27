@@ -5,17 +5,17 @@ using UnityEngine;
 public class StringTableData : TableBase
 {
 	public override string TableName { get => "StringTable"; }
-	public override object GetKey { get => id; }
+	public override object GetKey { get => iD; }
 
-	public StringTableData (string id, string text) 
+	public StringTableData (string iD, string text) 
 	{
-		this.id = id;
+		this.iD = iD;
 		this.text = text;
 	}
 	
 	[SerializeField]
-	private string id;
-	public string ID { get => id; }
+	private string iD;
+	public string ID { get => iD; }
 	
 	[SerializeField]
 	private string text;

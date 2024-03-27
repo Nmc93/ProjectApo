@@ -5,29 +5,29 @@ using UnityEngine;
 public class UnitRandomTableData : TableBase
 {
 	public override string TableName { get => "UnitRandomTable"; }
-	public override object GetKey { get => id; }
+	public override object GetKey { get => iD; }
 
-	public UnitRandomTableData (int id, int unittype, string head, string hair, string backhair, string facedeco, string hat, string headanim, string bodyanim, string stat) 
+	public UnitRandomTableData (int iD, int unitType, string head, string hair, string backHair, string faceDeco, string hat, string headAnim, string bodyAnim, string stat) 
 	{
-		this.id = id;
-		this.unittype = unittype;
+		this.iD = iD;
+		this.unitType = unitType;
 		this.head = head;
 		this.hair = hair;
-		this.backhair = backhair;
-		this.facedeco = facedeco;
+		this.backHair = backHair;
+		this.faceDeco = faceDeco;
 		this.hat = hat;
-		this.headanim = headanim;
-		this.bodyanim = bodyanim;
+		this.headAnim = headAnim;
+		this.bodyAnim = bodyAnim;
 		this.stat = stat;
 	}
 	
 	[SerializeField]
-	private int id;
-	public int ID { get => id; }
+	private int iD;
+	public int ID { get => iD; }
 	
 	[SerializeField]
-	private int unittype;
-	public int UnitType { get => unittype; }
+	private int unitType;
+	public int UnitType { get => unitType; }
 	
 	[SerializeField]
 	private string head;
@@ -38,24 +38,24 @@ public class UnitRandomTableData : TableBase
 	public string Hair { get => hair; }
 	
 	[SerializeField]
-	private string backhair;
-	public string BackHair { get => backhair; }
+	private string backHair;
+	public string BackHair { get => backHair; }
 	
 	[SerializeField]
-	private string facedeco;
-	public string FaceDeco { get => facedeco; }
+	private string faceDeco;
+	public string FaceDeco { get => faceDeco; }
 	
 	[SerializeField]
 	private string hat;
 	public string Hat { get => hat; }
 	
 	[SerializeField]
-	private string headanim;
-	public string HeadAnim { get => headanim; }
+	private string headAnim;
+	public string HeadAnim { get => headAnim; }
 	
 	[SerializeField]
-	private string bodyanim;
-	public string BodyAnim { get => bodyanim; }
+	private string bodyAnim;
+	public string BodyAnim { get => bodyAnim; }
 	
 	[SerializeField]
 	private string stat;

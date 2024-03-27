@@ -66,26 +66,28 @@ namespace ExcelEdit
                 {
                     if (columnTypeList[i] != eDataType.None)
                     {
-                        //ex : private int a;
-                        //     public int A { get => a; }
+                        //ex : private int aValue;
+                        //     public int AValue { get => aValue; }
+                        string name = columnNameList[i];
                         cValue = string.Format("\t{0}", csParamTemplate
                         .Replace("$Type$", ExcelUtility.ConverteDataTypeToString(columnTypeList[i]))
-                        .Replace("$LowName$", columnNameList[i].ToLower())
-                        .Replace("$Name$", columnNameList[i]));
+                        .Replace("$LowName$", name.Substring(0, 1).ToLower() + name.Substring(1))
+                        .Replace("$Name$", name));
                     }
                 }
                 else
                 {
                     if (columnTypeList[i] != eDataType.None)
                     {
-                        //ex : private int a;
-                        //     public int A { get => a; }
-                        //     private int b;
-                        //     public int B { get => b; }
+                        //ex : private int aValue;
+                        //     public int AValue { get => aValue; }
+                        //     private int bValue;
+                        //     public int BValue { get => bValue; }
+                        string name = columnNameList[i];
                         cValue = string.Format("{0}\n\t{1}", cValue, csParamTemplate
                         .Replace("$Type$", ExcelUtility.ConverteDataTypeToString(columnTypeList[i]))
-                        .Replace("$LowName$", columnNameList[i].ToLower())
-                        .Replace("$Name$", columnNameList[i]));
+                        .Replace("$LowName$", name.Substring(0,1).ToLower() + name.Substring(1))
+                        .Replace("$Name$", name));
                     }
                 }
             }
@@ -103,27 +105,33 @@ namespace ExcelEdit
                 {
                     if (columnTypeList[i] != eDataType.None)
                     {
-                        //ex : int a
+                        string name = columnNameList[i];
+                        name = name.Substring(0, 1).ToLower() + name.Substring(1);
+
+                        //ex : int aValue
                         constString1 = csConstParam
                             .Replace("$Type$", ExcelUtility.ConverteDataTypeToString(columnTypeList[i]))
-                            .Replace("$LowName$", columnNameList[i].ToLower());
-                        //ex : this.a = a;
+                            .Replace("$LowName$", name);
+                        //ex : this.aValue = aValue;
                         constString2 = string.Format("\t\t{0}", csConstvalue
-                            .Replace("$LowName$", columnNameList[i].ToLower()));
+                            .Replace("$LowName$", name));
                     }
                 }
                 else
                 {
                     if (columnTypeList[i] != eDataType.None)
                     {
+                        string name = columnNameList[i];
+                        name = name.Substring(0, 1).ToLower() + name.Substring(1);
+
                         //ex : int a,int b
                         constString1 = string.Format("{0}, {1}", constString1, csConstParam
                             .Replace("$Type$", ExcelUtility.ConverteDataTypeToString(columnTypeList[i]))
-                            .Replace("$LowName$", columnNameList[i].ToLower()));
+                            .Replace("$LowName$", name));
                         //ex : this.a = a;
                         //     this.b = b;
                         constString2 = string.Format("{0}\n\t\t{1}", constString2, csConstvalue
-                            .Replace("$LowName$", columnNameList[i].ToLower()));
+                            .Replace("$LowName$", name));
                     }
                 }
             }
@@ -139,7 +147,7 @@ namespace ExcelEdit
             //테이블 이름 프로퍼티 생성
             string tblName = csTblNameTemplate.Replace("$Name$", tableName);
             //키값 프로퍼티 생성
-            string getKey = csGetKeyTemplat.Replace("$Key$", columnNameList[0].ToLower());
+            string getKey = csGetKeyTemplat.Replace("$Key$", columnNameList[0].Substring(0, 1).ToLower() + columnNameList[0].Substring(1));
 
             //4. 클래스 몸통 생성
             string cBody = csBodyTemplate
@@ -151,6 +159,6 @@ namespace ExcelEdit
             
             return cBody;
         }
-        #endregion 엑셀파일을 CS로 변환ㅡ
+        #endregion 엑셀파일을 CS로 변환
     }
 }

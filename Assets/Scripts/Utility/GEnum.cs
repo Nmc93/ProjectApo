@@ -146,6 +146,16 @@ namespace GEnum
         Die,
     }
 
+    /// <summary> 유닛 대기 이벤트 시작 타이밍 </summary>
+    public enum eUnitWaitEventStartTiming
+    {
+        /// <summary> 애니메이션을 시작시킬 때 </summary>
+        StartAnim,
+        /// <summary> 애니메이션을 종료할 때 </summary>
+        EndAnim,
+
+    }
+
     /// <summary> 유닛 대기 이벤트 </summary>
     public enum eUnitWaitEvent
     {
@@ -153,6 +163,8 @@ namespace GEnum
         None = 0,
         /// <summary> 미확인 물체 감정 완료 </summary>
         EndObjectEmotion,
+        /// <summary> 공격 결과 대기 </summary>
+        ActionAfterAttack
     }
 
     #endregion 유닛

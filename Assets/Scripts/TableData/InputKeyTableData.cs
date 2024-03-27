@@ -5,19 +5,19 @@ using UnityEngine;
 public class InputKeyTableData : TableBase
 {
 	public override string TableName { get => "InputKeyTable"; }
-	public override object GetKey { get => id; }
+	public override object GetKey { get => iD; }
 
-	public InputKeyTableData (string id, string keystring) 
+	public InputKeyTableData (string iD, string keyString) 
 	{
-		this.id = id;
-		this.keystring = keystring;
+		this.iD = iD;
+		this.keyString = keyString;
 	}
 	
 	[SerializeField]
-	private string id;
-	public string ID { get => id; }
+	private string iD;
+	public string ID { get => iD; }
 	
 	[SerializeField]
-	private string keystring;
-	public string KeyString { get => keystring; }
+	private string keyString;
+	public string KeyString { get => keyString; }
 }

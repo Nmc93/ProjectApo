@@ -5,19 +5,19 @@ using UnityEngine;
 public class OptionTableData : TableBase
 {
 	public override string TableName { get => "OptionTable"; }
-	public override object GetKey { get => id; }
+	public override object GetKey { get => iD; }
 
-	public OptionTableData (string id, string optionvalue) 
+	public OptionTableData (string iD, string optionValue) 
 	{
-		this.id = id;
-		this.optionvalue = optionvalue;
+		this.iD = iD;
+		this.optionValue = optionValue;
 	}
 	
 	[SerializeField]
-	private string id;
-	public string ID { get => id; }
+	private string iD;
+	public string ID { get => iD; }
 	
 	[SerializeField]
-	private string optionvalue;
-	public string OptionValue { get => optionvalue; }
+	private string optionValue;
+	public string OptionValue { get => optionValue; }
 }
