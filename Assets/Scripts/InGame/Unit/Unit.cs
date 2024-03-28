@@ -51,8 +51,8 @@ public class Unit : MonoBehaviour
     [Header("[타겟]")]
     /// <summary> 공격 대상 적 ID [적이 없을 경우 : -1]</summary>
     public int tagetEnemyID = -1;
-    /// <summary> 서치 범위안에 있는 적 ID </summary>
-    public List<int> searchEnemyID = new List<int>();
+    /// <summary> 서치 범위안에 있는 적 ID 목록 </summary>
+    public List<int> searchEnemyList = new List<int>();
 
     [Header("[목표 지점]")]
     /// <summary> 목적지 포인트 </summary>
@@ -148,15 +148,15 @@ public class Unit : MonoBehaviour
         if (int.TryParse(collision.name, out int uID) && UnitMgr.GetUnitType(uID) != data.unitType)
         {
             //발견된 대상이 
-            if (false == searchEnemyID.Contains(uID))
+            if (false == searchEnemyList.Contains(uID))
             {
-                searchEnemyID.Add(uID);
+                searchEnemyList.Add(uID);
 
                 //현재 타겟이 없을 경우
-                if(tagetEnemyID == -1)
+                if(searchEnemyList.Count == 1 && tagetEnemyID == -1)
                 {
                     //타겟 지정 및 이벤트 세팅
-                    tagetEnemyID = searchEnemyID[0];
+                    tagetEnemyID = searchEnemyList[0];
                     ai.Refresh(eUnitSituation.CreatureEncounter);
                 }
             }
@@ -171,9 +171,9 @@ public class Unit : MonoBehaviour
         }
 
         //벗어난 대상을 목록에서 제거
-        if (searchEnemyID.Contains(tid))
+        if (searchEnemyList.Contains(tid))
         {
-            searchEnemyID.Remove(tid);
+            searchEnemyList.Remove(tid);
             //tid를 이용해서 추적 및 탐색을 할지 선택함
         }
     }
@@ -186,7 +186,7 @@ public class Unit : MonoBehaviour
     private void SetAI()
     {
         tagetEnemyID = -1;
-        searchEnemyID.Clear();
+        searchEnemyList.Clear();
 
         //기본 상태로 변경
         uState = eUnitActionEvent.Idle;

@@ -459,7 +459,7 @@ public class NomalZombieAI : UnitAI
 
         //[0 : 주먹],[1 : 권총],[2 : 반자동],[3 : 자동]
         string actionKey = string.Empty;
-        System.Action<string[], System.Action> stateAction = null;
+        Action<string[], System.Action> stateAction = null;
 
         //1차 분류
         switch (actionType)
