@@ -24,17 +24,17 @@ public abstract class UnitAI
     /// <summary> 대기 시간 </summary>
     protected float waitTime;
     /// <summary> 대기 이벤트 타입 </summary>
-    [NonSerialized] public eUnitWaitEvent waitType;
+    [NonSerialized] public eUnitWaitEvent waitEventType;
     /// <summary> 대기 이벤트 시작 타이밍 </summary>
-    [NonSerialized] public eUnitWaitEventStartTiming timing;
+    [NonSerialized] public eUnitWaitEventStartTiming waitEventStartTiming;
 
     /// <summary> 실행할 대기 이벤트 </summary>
     protected virtual void WaitEvent() 
     {
         isReservation = false;
         waitTime = 0f;
-        waitType = eUnitWaitEvent.None;
-        timing = eUnitWaitEventStartTiming.StartAnim;
+        waitEventType = eUnitWaitEvent.None;
+        waitEventStartTiming = eUnitWaitEventStartTiming.StartAnim;
     }
 
     /// <summary> 대기 이벤트 세팅 </summary>
@@ -50,8 +50,8 @@ public abstract class UnitAI
         {
             isReservation = false;
             this.waitTime = waitTime;
-            this.waitType = waitType;
-            this.timing = timing;
+            this.waitEventType = waitType;
+            this.waitEventStartTiming = timing;
         }
     }
 
@@ -114,8 +114,8 @@ public abstract class UnitAI
 
                 isReservation = false;
                 waitTime = 0f;
-                waitType = eUnitWaitEvent.None;
-                timing = eUnitWaitEventStartTiming.StartAnim;
+                waitEventType = eUnitWaitEvent.None;
+                waitEventStartTiming = eUnitWaitEventStartTiming.StartAnim;
             }
             else
             {
@@ -325,7 +325,7 @@ public class NormalHumanAI : UnitAI
     /// <summary> 대기 이벤트 </summary>
     protected override void WaitEvent()
     {
-        switch (waitType)
+        switch (waitEventType)
         {
             //미확인 물체 감정 완료
             case eUnitWaitEvent.EndObjectEmotion:
@@ -516,7 +516,7 @@ public class NomalZombieAI : UnitAI
     /// <summary> 대기 이벤트(StartWaitEvent 종료시 실행) </summary>
     protected override void WaitEvent()
     {
-        switch (waitType)
+        switch (waitEventType)
         {
             case eUnitWaitEvent.EndObjectEmotion:
 

@@ -195,12 +195,16 @@ public class Unit : MonoBehaviour
         switch (data.unitType)
         {
             case eUnitType.Human:
-                ai = new NormalHumanAI();
-                ai.SetStateAction(new Action<string[], Action>[] { Idle, Move, BattleReady, Attack, Die });
+                {
+                    ai = new NormalHumanAI();
+                    ai.SetStateAction(new Action<string[], Action>[] { Idle, Move, BattleReady, Attack, Die });
+                }
                 break;
             case eUnitType.Zombie:
-                ai = new NomalZombieAI();
-                ai.SetStateAction(new Action<string[], Action>[] { Idle, Move, BattleReady, Attack, Die });
+                {
+                    ai = new NomalZombieAI();
+                    ai.SetStateAction(new Action<string[], Action>[] { Idle, Move, BattleReady, Attack, Die });
+                }
                 break;
         }
 
@@ -227,8 +231,8 @@ public class Unit : MonoBehaviour
         uState = eUnitActionEvent.Idle;
         ChangeAnim(key);
 
-        //콜백 실행
-        animCallBack = callBack;
+        //콜백 처리
+        CallBackHandling(callBack);
     }
 
     /// <summary> 이동 </summary>
@@ -276,7 +280,7 @@ public class Unit : MonoBehaviour
 
     private void CallBackHandling(Action callBack)
     {
-        switch(ai.timing)
+        switch(ai.waitEventStartTiming)
         {
             //즉시 실행
             case eUnitWaitEventStartTiming.StartAnim:
