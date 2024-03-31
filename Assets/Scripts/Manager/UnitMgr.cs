@@ -295,7 +295,7 @@ public class UnitRandomData
                 return null;
             }
 
-            int[] statArray = new int[6];
+            int[] statArray = new int[7];
 
             statArray[0] = Random.Range(tbl.MinHp, tbl.MaxHp);                          // 체력
             statArray[1] = Random.Range(tbl.MinDmg, tbl.MaxDmg);                        // 공격력

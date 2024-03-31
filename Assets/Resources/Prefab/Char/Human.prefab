@@ -56,8 +56,8 @@ MonoBehaviour:
   backHair: {fileID: 1137792190434049802}
   hat: {fileID: 6470698404264247598}
   weapon: {fileID: 848157411854562996}
-  headAnimator: {fileID: 3119867876881501837}
-  bodyAnimator: {fileID: 331363594798389379}
+  unitHead: {fileID: 7819837540832590935}
+  unitBody: {fileID: 7419544078534131127}
   UID: 0
   data:
     unitType: 0
@@ -739,6 +739,7 @@ GameObject:
   - component: {fileID: 4427090364440469353}
   - component: {fileID: 328793841521367076}
   - component: {fileID: 331363594798389379}
+  - component: {fileID: 7419544078534131127}
   m_Layer: 8
   m_Name: Body
   m_TagString: Untagged
@@ -836,6 +837,19 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &7419544078534131127
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4273748193908365784}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c1be2bc6df3e464a89295a58e77829c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animator: {fileID: 331363594798389379}
 --- !u!1 &4817955564511246571
 GameObject:
   m_ObjectHideFlags: 0
@@ -1132,6 +1146,7 @@ GameObject:
   - component: {fileID: 6840352316448232156}
   - component: {fileID: 36629833901495730}
   - component: {fileID: 3119867876881501837}
+  - component: {fileID: 7819837540832590935}
   m_Layer: 8
   m_Name: Head
   m_TagString: Untagged
@@ -1231,3 +1246,16 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &7819837540832590935
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7989800035570661739}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e8bd95a908163c4f85f37753a5a970e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animator: {fileID: 3119867876881501837}

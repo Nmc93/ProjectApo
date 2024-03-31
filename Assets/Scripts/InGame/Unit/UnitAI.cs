@@ -7,7 +7,7 @@ using GEnum;
 public abstract class UnitAI
 {
     /// <summary> 행동 액션 이벤트 </summary>
-    public Action<string[], Action>[] events;
+    public Action<string[], string[], Action>[] events;
 
     /// <summary> 현재 유닛 [unit.AI하면 this가 호출되는 상호참조의 관계라 조심해서 사용] </summary>
     protected Unit unit;
@@ -66,7 +66,7 @@ public abstract class UnitAI
     #region 세팅
 
     /// <summary> 행동 관련 함수 세팅 </summary>
-    public virtual void SetStateAction(Action<string[], Action>[] events)
+    public virtual void SetStateAction(Action<string[], string[], Action>[] events)
     {
         this.events = events;
     }
@@ -227,7 +227,7 @@ public class NormalHumanAI : UnitAI
         string actionKey = string.Empty;
         string subAnimKey = string.Empty;
         bool isDetailCheck = true;
-        Action<string[], Action> stateAction = null;
+        Action<string[], string[], Action> stateAction = null;
 
         //대기 이벤트 변수
         float waitTime = 0f;
@@ -307,14 +307,19 @@ public class NormalHumanAI : UnitAI
         //2차 분류 및 키 조합
         if (stateAction != null && !string.IsNullOrEmpty(actionKey))
         {
-            stateAction(new string[]
-            {
-                $"{actionKey}_Head",
-                $"{actionKey}_Face",
-                $"{actionKey}_Body",
-                $"{actionKey}_Arm{subAnimKey}"
-            },
-            StartWaitEvent);
+            stateAction(
+                new string[]
+                { 
+                    $"{actionKey}_Head",
+                    $"{actionKey}_Face",
+                },
+                new string[]
+                {
+                    $"{actionKey}_Body",
+                    $"{actionKey}_Arm{subAnimKey}"
+                },
+                StartWaitEvent
+            );
 
             return true;
         }

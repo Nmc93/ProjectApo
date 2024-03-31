@@ -10,27 +10,27 @@ public class Unit : MonoBehaviour
     #region 인스펙터
 
     [Header("탐색 범위")]
-    [SerializeField] private BoxCollider2D searchArea;
+    [SerializeField] BoxCollider2D searchArea;
 
     [Header("[유닛 스프라이트]")]
     [Tooltip("머리")]
-    [SerializeField] private SpriteRenderer head;
+    [SerializeField] SpriteRenderer head;
     [Tooltip("얼굴 데코")]
-    [SerializeField] private SpriteRenderer faceDeco;
+    [SerializeField] SpriteRenderer faceDeco;
     [Tooltip("머리카락")]
-    [SerializeField] private SpriteRenderer hair;
+    [SerializeField] SpriteRenderer hair;
     [Tooltip("뒷머리")]
-    [SerializeField] private SpriteRenderer backHair;
+    [SerializeField] SpriteRenderer backHair;
     [Tooltip("모자")]
-    [SerializeField] private SpriteRenderer hat;
+    [SerializeField] SpriteRenderer hat;
 
     [Tooltip("무기")]
-    [SerializeField] private SpriteRenderer weapon;
+    [SerializeField] SpriteRenderer weapon;
 
-    [Header("[유닛 애니메이터]"),Tooltip("머리 애니메이터")]
-    [SerializeField] private Animator headAnimator;
-    [Tooltip("몸통 애니메이션")]
-    [SerializeField] private Animator bodyAnimator;
+    [Header("[유닛 파츠 클래스]"),Tooltip("머리 관리 클래스")]
+    [SerializeField] UnitHead unitHead;
+    [Tooltip("몸통 관리 클래스")]
+    [SerializeField] UnitBody unitBody;
 
     #endregion 인스펙터
 
@@ -94,10 +94,10 @@ public class Unit : MonoBehaviour
         }
 
         //머리 세팅 (애니메이션 컨트롤러)
-        headAnimator.runtimeAnimatorController = AssetsMgr.GetUnitRuntimeAnimatorController(data.headAnimID);
+        unitHead.SetAnimatior(data.headAnimID);
         //몸, 팔 세팅 (애니메이션 컨트롤러)
-        bodyAnimator.runtimeAnimatorController = AssetsMgr.GetUnitRuntimeAnimatorController(data.bodyAnimID);
-        
+        unitBody.SetAnimatior(data.bodyAnimID);
+
         //스탯 계산 및 적용
         RefreshStat();
 
@@ -192,18 +192,19 @@ public class Unit : MonoBehaviour
         uState = eUnitActionEvent.Idle;
         //타입에 맞는 AI 세팅
         ai = null;
+
         switch (data.unitType)
         {
             case eUnitType.Human:
                 {
                     ai = new NormalHumanAI();
-                    ai.SetStateAction(new Action<string[], Action>[] { Idle, Move, BattleReady, Attack, Die });
+                    ai.SetStateAction(new Action<string[], string[], Action>[] { Idle, Move, BattleReady, Attack, Die });
                 }
                 break;
             case eUnitType.Zombie:
                 {
                     ai = new NomalZombieAI();
-                    ai.SetStateAction(new Action<string[], Action>[] { Idle, Move, BattleReady, Attack, Die });
+                    ai.SetStateAction(new Action<string[], string[], Action>[] { Idle, Move, BattleReady, Attack, Die });
                 }
                 break;
         }
@@ -226,40 +227,56 @@ public class Unit : MonoBehaviour
     #region 행동
 
     /// <summary> 대기 </summary>
-    private void Idle(string[] key, Action callBack)
+    private void Idle(string[] headKey, string[] bodyKey, Action callBack)
     {
         uState = eUnitActionEvent.Idle;
-        ChangeAnim(key);
+
+        //머리, 얼굴 애니메이션 변경
+        unitHead.ChangeAnim(headKey);
+        //몸 + 다리, 팔 애니메이션 변경
+        unitBody.ChangeAnim(bodyKey);
 
         //콜백 처리
         CallBackHandling(callBack);
     }
 
     /// <summary> 이동 </summary>
-    public void Move(string[] key, Action callBack)
+    public void Move(string[] headKey, string[] bodyKey, Action callBack)
     {
         uState = eUnitActionEvent.Move;
-        ChangeAnim(key);
+
+        //머리, 얼굴 애니메이션 변경
+        unitHead.ChangeAnim(headKey);
+        //몸 + 다리, 팔 애니메이션 변경
+        unitBody.ChangeAnim(bodyKey);
 
         //콜백 처리
         CallBackHandling(callBack);
     }
 
     /// <summary> 전투준비, 경계 </summary>
-    public void BattleReady(string[] key, Action callBack)
+    public void BattleReady(string[] headKey, string[] bodyKey, Action callBack)
     {
         uState = eUnitActionEvent.BattleReady;
-        ChangeAnim(key);
+
+        //머리, 얼굴 애니메이션 변경
+        unitHead.ChangeAnim(headKey);
+        //몸 + 다리, 팔 애니메이션 변경
+        unitBody.ChangeAnim(bodyKey);
 
         //콜백 처리
         CallBackHandling(callBack);
     }
 
     /// <summary> 공격 </summary>
-    private void Attack(string[] key, Action callBack)
+    private void Attack(string[] headKey, string[] bodyKey, Action callBack)
     {
         uState = eUnitActionEvent.Attack;
-        ChangeAnim(key);
+
+        //머리, 얼굴 애니메이션 변경
+        unitHead.ChangeAnim(headKey);
+        //몸 + 다리, 팔 애니메이션 변경
+        unitBody.ChangeAnim(bodyKey);
 
         //대상에 대한 공격
         UnitMgr.instance.AttackUnit(tagetEnemyID, data.f_Damage);
@@ -269,10 +286,14 @@ public class Unit : MonoBehaviour
     }
 
     /// <summary> 사망 </summary>
-    private void Die(string[] key, Action callBack)
+    private void Die(string[] headKey, string[] bodyKey, Action callBack)
     {
         uState = eUnitActionEvent.Die;
-        ChangeAnim(key);
+
+        //머리, 얼굴 애니메이션 변경
+        unitHead.ChangeAnim(headKey);
+        //몸 + 다리, 팔 애니메이션 변경
+        unitBody.ChangeAnim(bodyKey);
 
         //콜백 처리
         CallBackHandling(callBack);
@@ -298,20 +319,6 @@ public class Unit : MonoBehaviour
     }
 
     #endregion 행동
-
-    /// <summary> 애니메이션 변경 </summary>
-    /// <param name="key"> 애니메이션 키 </param>
-    private void ChangeAnim(string[] key)
-    {
-        //머리
-        headAnimator.SetTrigger(key[0]);
-        //얼굴
-        headAnimator.SetTrigger(key[1]);
-        //몸 + 다리
-        bodyAnimator.SetTrigger(key[2]);
-        //팔
-        bodyAnimator.SetTrigger(key[3]);
-    }
 
     #endregion AI
 
