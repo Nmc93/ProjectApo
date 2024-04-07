@@ -6,9 +6,6 @@ using GEnum;
 
 public abstract class UnitAI
 {
-    /// <summary> 행동 액션 이벤트 </summary>
-    public Action<string[], string[], Action>[] events;
-
     /// <summary> 현재 유닛 [unit.AI하면 this가 호출되는 상호참조의 관계라 조심해서 사용] </summary>
     protected Unit unit;
     /// <summary> 유닛 정보 </summary>
@@ -28,10 +25,11 @@ public abstract class UnitAI
     /// <summary> 대기 이벤트 시작 타이밍 </summary>
     [NonSerialized] public eUnitWaitEventStartTiming waitEventStartTiming;
 
-    /// <summary> 실행할 대기 이벤트 </summary>
+    /// <summary> 대기 이벤트 실행 </summary>
     protected virtual void WaitEvent() 
     {
         isReservation = false;
+        curWaitTime = 0f;
         waitTime = 0f;
         waitEventType = eUnitWaitEvent.None;
         waitEventStartTiming = eUnitWaitEventStartTiming.StartAnim;
@@ -50,12 +48,12 @@ public abstract class UnitAI
         {
             isReservation = false;
             this.waitTime = waitTime;
-            this.waitEventType = waitType;
-            this.waitEventStartTiming = timing;
+            waitEventType = waitType;
+            waitEventStartTiming = timing;
         }
     }
 
-    /// <summary> 이벤트 실행 </summary>
+    /// <summary> 대기 이벤트 활성화 </summary>
     public virtual void StartWaitEvent()
     {
         isReservation = true;
@@ -64,12 +62,6 @@ public abstract class UnitAI
     #endregion 대기 이벤트
 
     #region 세팅
-
-    /// <summary> 행동 관련 함수 세팅 </summary>
-    public virtual void SetStateAction(Action<string[], string[], Action>[] events)
-    {
-        this.events = events;
-    }
 
     /// <summary> AI 정보 세팅 </summary>
     /// <param name="unit"> 유닛 데이터 </param>
@@ -111,11 +103,6 @@ public abstract class UnitAI
             if (curWaitTime >= waitTime)
             {
                 WaitEvent();
-
-                isReservation = false;
-                waitTime = 0f;
-                waitEventType = eUnitWaitEvent.None;
-                waitEventStartTiming = eUnitWaitEventStartTiming.StartAnim;
             }
             else
             {
@@ -227,12 +214,12 @@ public class NormalHumanAI : UnitAI
         string actionKey = string.Empty;
         string subAnimKey = string.Empty;
         bool isDetailCheck = true;
-        Action<string[], string[], Action> stateAction = null;
+        Action<string[], Action> stateAction = null;
 
         //대기 이벤트 변수
         float waitTime = 0f;
         eUnitWaitEvent waitEventType = eUnitWaitEvent.None;
-        eUnitWaitEventStartTiming timing = eUnitWaitEventStartTiming.StartAnim;
+        //eUnitWaitEventStartTiming timing = eUnitWaitEventStartTiming.StartAnim;
 
         // events -> [0 : 대기],[1 : 이동],[2 : 탐색],[3 : 공격],[4 : 사망]
 
@@ -242,7 +229,6 @@ public class NormalHumanAI : UnitAI
             // 대기 상태
             case eUnitActionEvent.Idle:
                 {
-                    stateAction = events[0];
                     actionKey = "Idle";
                 }
                 break;
@@ -250,7 +236,6 @@ public class NormalHumanAI : UnitAI
             // 이동
             case eUnitActionEvent.Move:
                 {
-                    stateAction = events[1];
                     actionKey = "Run";
                 }
                 break;
@@ -258,27 +243,24 @@ public class NormalHumanAI : UnitAI
             // 적 탐색
             case eUnitActionEvent.BattleReady:
                 {
-                    stateAction = events[2];
                     actionKey = "BattleReady";
-                    waitTime = unit.data.tbl_RSpeed;
                     waitEventType = eUnitWaitEvent.EndObjectEmotion;
+                    waitTime = unit.data.f_ASpeed;
                 }
                 break;
 
             // 적 공격
             case eUnitActionEvent.Attack:
                 {
-                    stateAction = events[3];
                     actionKey = "Attack";
-                    waitTime = unit.data.f_ASpeed;
                     waitEventType = eUnitWaitEvent.ActionAfterAttack;
+                    waitTime = 0f;
                 }
                 break;
 
             // 사망
             case eUnitActionEvent.Die:
                 {
-                    stateAction = events[4];
                     actionKey = "Die";
                     isDetailCheck = false;
                 }
@@ -307,14 +289,12 @@ public class NormalHumanAI : UnitAI
         //2차 분류 및 키 조합
         if (stateAction != null && !string.IsNullOrEmpty(actionKey))
         {
-            stateAction(
-                new string[]
-                { 
-                    $"{actionKey}_Head",
-                    $"{actionKey}_Face",
-                },
+            unit.ChangeState(
+                actionType,
                 new string[]
                 {
+                    $"{actionKey}_Head",
+                    $"{actionKey}_Face",
                     $"{actionKey}_Body",
                     $"{actionKey}_Arm{subAnimKey}"
                 },

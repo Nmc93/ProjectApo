@@ -27,10 +27,10 @@ public class Unit : MonoBehaviour
     [Tooltip("무기")]
     [SerializeField] SpriteRenderer weapon;
 
-    [Header("[유닛 파츠 클래스]"),Tooltip("머리 관리 클래스")]
-    [SerializeField] UnitHead unitHead;
-    [Tooltip("몸통 관리 클래스")]
-    [SerializeField] UnitBody unitBody;
+    [Header("[유닛 애니메이션]"),Tooltip("머리 애니메이션")]
+    [SerializeField] UnitHeadAnimator uHeadAnimator;
+    [Tooltip("몸통 애니메이션")]
+    [SerializeField] UnitBodyAnimator uBodyAnimator;
 
     #endregion 인스펙터
 
@@ -94,9 +94,9 @@ public class Unit : MonoBehaviour
         }
 
         //머리 세팅 (애니메이션 컨트롤러)
-        unitHead.SetAnimatior(data.headAnimID);
+        uHeadAnimator.SetAnimatior(data.headAnimID);
         //몸, 팔 세팅 (애니메이션 컨트롤러)
-        unitBody.SetAnimatior(data.bodyAnimID);
+        uBodyAnimator.SetAnimatior(data.bodyAnimID);
 
         //스탯 계산 및 적용
         RefreshStat();
@@ -198,13 +198,11 @@ public class Unit : MonoBehaviour
             case eUnitType.Human:
                 {
                     ai = new NormalHumanAI();
-                    ai.SetStateAction(new Action<string[], string[], Action>[] { Idle, Move, BattleReady, Attack, Die });
                 }
                 break;
             case eUnitType.Zombie:
                 {
                     ai = new NomalZombieAI();
-                    ai.SetStateAction(new Action<string[], string[], Action>[] { Idle, Move, BattleReady, Attack, Die });
                 }
                 break;
         }
@@ -226,74 +224,20 @@ public class Unit : MonoBehaviour
 
     #region 행동
 
-    /// <summary> 대기 </summary>
-    private void Idle(string[] headKey, string[] bodyKey, Action callBack)
+    /// <summary> 상태 변경 </summary>
+    /// <param name="state"> 변경 상태 </param>
+    /// <param name="key"> 변경 애니메이션 키 </param>
+    /// <param name="callBack"> 애니메이션 콜백 </param>
+    public void ChangeState(eUnitActionEvent state, string[] key, Action callBack)
     {
-        uState = eUnitActionEvent.Idle;
+        uState = state;
 
         //머리, 얼굴 애니메이션 변경
-        unitHead.ChangeAnim(headKey);
+        uHeadAnimator.SetTrigger(key[0]);
+        uHeadAnimator.SetTrigger(key[1]);
         //몸 + 다리, 팔 애니메이션 변경
-        unitBody.ChangeAnim(bodyKey);
-
-        //콜백 처리
-        CallBackHandling(callBack);
-    }
-
-    /// <summary> 이동 </summary>
-    public void Move(string[] headKey, string[] bodyKey, Action callBack)
-    {
-        uState = eUnitActionEvent.Move;
-
-        //머리, 얼굴 애니메이션 변경
-        unitHead.ChangeAnim(headKey);
-        //몸 + 다리, 팔 애니메이션 변경
-        unitBody.ChangeAnim(bodyKey);
-
-        //콜백 처리
-        CallBackHandling(callBack);
-    }
-
-    /// <summary> 전투준비, 경계 </summary>
-    public void BattleReady(string[] headKey, string[] bodyKey, Action callBack)
-    {
-        uState = eUnitActionEvent.BattleReady;
-
-        //머리, 얼굴 애니메이션 변경
-        unitHead.ChangeAnim(headKey);
-        //몸 + 다리, 팔 애니메이션 변경
-        unitBody.ChangeAnim(bodyKey);
-
-        //콜백 처리
-        CallBackHandling(callBack);
-    }
-
-    /// <summary> 공격 </summary>
-    private void Attack(string[] headKey, string[] bodyKey, Action callBack)
-    {
-        uState = eUnitActionEvent.Attack;
-
-        //머리, 얼굴 애니메이션 변경
-        unitHead.ChangeAnim(headKey);
-        //몸 + 다리, 팔 애니메이션 변경
-        unitBody.ChangeAnim(bodyKey);
-
-        //대상에 대한 공격
-        UnitMgr.instance.AttackUnit(tagetEnemyID, data.f_Damage);
-
-        //콜백 처리
-        CallBackHandling(callBack);
-    }
-
-    /// <summary> 사망 </summary>
-    private void Die(string[] headKey, string[] bodyKey, Action callBack)
-    {
-        uState = eUnitActionEvent.Die;
-
-        //머리, 얼굴 애니메이션 변경
-        unitHead.ChangeAnim(headKey);
-        //몸 + 다리, 팔 애니메이션 변경
-        unitBody.ChangeAnim(bodyKey);
+        uBodyAnimator.SetTrigger(key[2]);
+        uBodyAnimator.SetTrigger(key[3]);
 
         //콜백 처리
         CallBackHandling(callBack);
