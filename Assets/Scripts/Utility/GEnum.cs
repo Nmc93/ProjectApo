@@ -146,18 +146,19 @@ namespace GEnum
         Die,
     }
 
-    /// <summary> 유닛 대기 이벤트 시작 타이밍 </summary>
-    public enum eUnitWaitEventStartTiming
+    /// <summary> 유닛의 이벤트 우선순위 </summary>
+    public enum eUnitEventPriority : byte
     {
-        /// <summary> 애니메이션을 시작시킬 때 </summary>
-        StartAnim,
-        /// <summary> 애니메이션을 종료할 때 </summary>
-        EndAnim,
-
+        /// <summary> 플레이어의 직접명령 </summary>
+        Direct_Command = 0,
+        /// <summary> 외.내부에서 일어나는 상황에 대응 </summary>
+        Situation_Response,
+        /// <summary> 작전 명령서 </summary>
+        Operation_Order
     }
 
     /// <summary> 유닛 대기 이벤트 </summary>
-    public enum eUnitWaitEvent
+    public enum eUnitWaitEvent : byte
     {
         /// <summary> 아무 이벤트 없이 대기중 </summary>
         None = 0,
@@ -165,6 +166,15 @@ namespace GEnum
         EndObjectEmotion,
         /// <summary> 공격 결과 대기 </summary>
         ActionAfterAttack
+    }
+
+    /// <summary> 유닛 대기 이벤트 시작 타이밍 </summary>
+    public enum eUnitWaitEventStartTiming : byte
+    {
+        /// <summary> 애니메이션을 시작시킬 때 </summary>
+        StartAnim,
+        /// <summary> 애니메이션을 종료할 때 </summary>
+        EndAnim,
     }
 
     #endregion 유닛

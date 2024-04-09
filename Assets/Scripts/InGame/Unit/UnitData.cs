@@ -166,3 +166,16 @@ public class UnitData
         }
     }
 }
+
+/// <summary> 명령,외.내부에서 들어온 이벤트 데이터 </summary>
+public struct UnitEventData
+{
+    /// <summary> 우선순위 </summary>
+    public eUnitEventPriority priority;
+    /// <summary> 타입 </summary>
+    public eUnitWaitEvent waitEventType;
+    /// <summary> 시작 타이밍 </summary>
+    public eUnitWaitEventStartTiming waitEventStartTiming;
+    /// <summary> 대기 시간 </summary>
+    public float waitTime;
+}

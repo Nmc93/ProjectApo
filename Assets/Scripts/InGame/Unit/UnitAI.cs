@@ -25,6 +25,9 @@ public abstract class UnitAI
     /// <summary> 대기 이벤트 시작 타이밍 </summary>
     [NonSerialized] public eUnitWaitEventStartTiming waitEventStartTiming;
 
+    /// <summary> 현재 대기중인 이벤트 </summary>
+    public UnitEventData curUnitEvent;
+
     /// <summary> 대기 이벤트 실행 </summary>
     protected virtual void WaitEvent() 
     {
