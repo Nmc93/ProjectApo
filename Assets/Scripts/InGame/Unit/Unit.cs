@@ -157,7 +157,15 @@ public class Unit : MonoBehaviour
                 {
                     //타겟 지정 및 이벤트 세팅
                     tagetEnemyID = searchEnemyList[0];
-                    ai.Refresh(eUnitSituation.CreatureEncounter);
+
+                    UnitEventData data = UnitMgr.GetUnitEvent();
+                    data.SetData(
+                        eUnitEventPriority.Situation_Response,
+                        eUnitSituation.Creature_Encounter,
+                        eUnitWaitEventStartTiming.RunImmediately,
+                        0f);
+
+                    ai.Refresh(data);
                 }
             }
         }
@@ -209,7 +217,15 @@ public class Unit : MonoBehaviour
 
         //ai 세팅
         ai.Setting(this);
-        ai.Refresh(eUnitSituation.StandbyCommand);
+
+        UnitEventData eventData = UnitMgr.GetUnitEvent();
+        eventData.SetData(
+            eUnitEventPriority.Situation_Response,
+            eUnitSituation.Standby_Command,
+            eUnitWaitEventStartTiming.RunImmediately,
+            0f);
+
+        ai.Refresh(eventData);
     }
 
     /// <summary> 유닛 업데이트 함수 </summary>
@@ -245,7 +261,7 @@ public class Unit : MonoBehaviour
 
     private void CallBackHandling(Action callBack)
     {
-        switch(ai.waitEventStartTiming)
+        switch(ai.curUnitEvent.waitEventStartTiming)
         {
             //즉시 실행
             case eUnitWaitEventStartTiming.StartAnim:
@@ -306,27 +322,27 @@ public class Unit : MonoBehaviour
 
     #region 테스트 코드
 
-    public void testInit()
-    {
-        Init(UnitMgr.CreateUnitDate(0, 1));
-    }
-
-    public void testIdle()
-    {
-        ai.Refresh(eUnitSituation.StandbyCommand);
-    }
-    public void testMove()
-    {
-        ai.Refresh(eUnitSituation.MoveCommand);
-    }
-    public void testBattleReady()
-    {
-        ai.Refresh(eUnitSituation.CreatureEncounter);
-    }
-    public void testAttack()
-    {
-        ai.Refresh(eUnitSituation.StrikeCommand);
-    }
+    //public void testInit()
+    //{
+    //    Init(UnitMgr.CreateUnitDate(0, 1));
+    //}
+    //
+    //public void testIdle()
+    //{
+    //    ai.Refresh(eUnitSituation.StandbyCommand);
+    //}
+    //public void testMove()
+    //{
+    //    ai.Refresh(eUnitSituation.MoveCommand);
+    //}
+    //public void testBattleReady()
+    //{
+    //    ai.Refresh(eUnitSituation.CreatureEncounter);
+    //}
+    //public void testAttack()
+    //{
+    //    ai.Refresh(eUnitSituation.StrikeCommand);
+    //}
 
     #endregion 테스트 코드
 }

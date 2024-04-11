@@ -32,6 +32,9 @@ public class UnitMgr : MgrBase
     /// <summary> 다음 만들어질 캐릭터의 UID </summary>
     private static int NextCharUID;
 
+    /// <summary> 사용 대기중인 유닛 이벤트 풀 </summary>
+    private static Queue<UnitEventData> unitEventPool = new Queue<UnitEventData>(50);
+
     #endregion 변수
 
     #region 오버라이드, 기본 세팅
@@ -186,6 +189,30 @@ public class UnitMgr : MgrBase
     }
 
     #endregion 유닛 데이터 생성
+
+    #region 유닛 이벤트 풀
+
+    /// <summary> 사용 완료한 이벤트 데이터를 반환 </summary>
+    /// <param name="eventData"> 사용 완료한 이벤트 데이터 </param>
+    public static void UnitEventReturn(UnitEventData eventData)
+    {
+        eventData.DataReset();
+        unitEventPool.Enqueue(eventData);
+    }
+
+    /// <summary> 빈 유닛 이벤트를 획득 </summary>
+    /// <returns> 풀에 없을 경우 새로 만들어서 반환 </returns>
+    public static UnitEventData GetUnitEvent()
+    {
+        if(unitEventPool.Count <= 0)
+        {
+            return new UnitEventData();
+        }
+
+        return unitEventPool.Dequeue();
+    }
+
+    #endregion 유닛 이벤트 풀
 
     #region Get
 

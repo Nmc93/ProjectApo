@@ -18,41 +18,39 @@ public abstract class UnitAI
 
     /// <summary> 지난 시간 </summary>
     protected float curWaitTime;
-    /// <summary> 대기 시간 </summary>
-    protected float waitTime;
-    /// <summary> 대기 이벤트 타입 </summary>
-    [NonSerialized] public eUnitWaitEvent waitEventType;
-    /// <summary> 대기 이벤트 시작 타이밍 </summary>
-    [NonSerialized] public eUnitWaitEventStartTiming waitEventStartTiming;
 
     /// <summary> 현재 대기중인 이벤트 </summary>
     public UnitEventData curUnitEvent;
 
     /// <summary> 대기 이벤트 실행 </summary>
-    protected virtual void WaitEvent() 
+    protected virtual void WaitEvent()
     {
-        isReservation = false;
-        curWaitTime = 0f;
-        waitTime = 0f;
-        waitEventType = eUnitWaitEvent.None;
-        waitEventStartTiming = eUnitWaitEventStartTiming.StartAnim;
+        //실행한 이벤트 데이터 리셋 및 반환
+        if(null != curUnitEvent)
+        {
+            UnitMgr.UnitEventReturn(curUnitEvent);
+        }
+
+        //현재 이벤트 해제
+        curUnitEvent = null;
     }
 
     /// <summary> 대기 이벤트 세팅 </summary>
-    /// <param name="waitTime"> 대기 시간 </param>
-    /// <param name="waitType"> 대기 시간 후 실행할 이벤트 타입 </param>
+    /// <param name="priority"> 이벤트 우선순위 </param>
+    /// <param name="waitType"> 실행할 대기 이벤트 </param>
     /// <param name="timing"> 이벤트 시작 타이밍 </param>
+    /// <param name="waitTime"> 이벤트 시간 </param>
     public virtual void SettingWaitEvent(
-        float waitTime,
-        eUnitWaitEvent waitType,
-        eUnitWaitEventStartTiming timing)
+        eUnitEventPriority priority,
+        eUnitSituation evnetType,
+        eUnitWaitEventStartTiming timing,
+        float waitTime)
     {
-        if(waitType != eUnitWaitEvent.None)
+        if(evnetType != eUnitSituation.None)
         {
-            isReservation = false;
-            this.waitTime = waitTime;
-            waitEventType = waitType;
-            waitEventStartTiming = timing;
+            curUnitEvent = UnitMgr.GetUnitEvent();
+
+            curUnitEvent.SetData(priority, evnetType, timing, waitTime);
         }
     }
 
@@ -88,7 +86,7 @@ public abstract class UnitAI
     /// <summary> 현재 상황에 맞게 상태 갱신 </summary>
     /// <param name="eventType"> 유닛의 월드와 한 상호작용 타입 </param>
     /// <returns> 흠... </returns>
-    public abstract bool Refresh(eUnitSituation eventType);
+    public abstract bool Refresh(UnitEventData unitEventData);
 
     /// <summary> 유닛의 정보를 업데이트 </summary>
     public virtual void Update()
@@ -100,10 +98,10 @@ public abstract class UnitAI
     public virtual void WaitEventUpdate()
     {
         //대기 트리거가 걸려있는 경우
-        if (isReservation)
+        if (null != curUnitEvent)
         {
             // 대기중일 경우
-            if (curWaitTime >= waitTime)
+            if (curWaitTime >= curUnitEvent.waitTime)
             {
                 WaitEvent();
             }
@@ -127,27 +125,23 @@ public class NormalHumanAI : UnitAI
     }
 
     /// <summary> 이벤트 갱신 </summary>
-    /// <param name="EventType"> 상호작용 이벤트 </param>
-    public override bool Refresh(eUnitSituation EventType)
+    /// <param name="eventType"> 상호작용 이벤트 </param>
+    public override bool Refresh(UnitEventData unitEventData)
     {
+
         //사망했을 경우 아무것도 하지 않음
         if (unit.uState == eUnitActionEvent.Die)
         {
             return false;
         }
 
-        // 평상시엔 Idle
-        // 이동시 Move - 완료시 Idle
-        // 타겟으로 결정된 경우 Attack
-        // 적 미싱 BattleReady - 일정 시간이 지난 후 경계종료 Idle
-
         // 이벤트 타입
         eUnitActionEvent actionType = eUnitActionEvent.Idle;
         // 외부 이벤트에 맞는 상황 타입으로 변환
-        switch (EventType)
+        switch (unitEventData.eventType)
         {
             //상황 종료
-            case eUnitSituation.SituationClear:
+            case eUnitSituation.Situation_Clear:
                 {
                     switch (unit.uState)
                     {
@@ -165,7 +159,7 @@ public class NormalHumanAI : UnitAI
                 break;
 
             //대기 명령
-            case eUnitSituation.StandbyCommand:
+            case eUnitSituation.Standby_Command:
                 {
                     switch (unit.uState)
                     {
@@ -185,14 +179,14 @@ public class NormalHumanAI : UnitAI
                 break;
 
             //이동 명령
-            case eUnitSituation.MoveCommand:
+            case eUnitSituation.Move_Command:
                 {
                     actionType = eUnitActionEvent.Move;
                 }
                 break;
 
             //미확인 물체 조우
-            case eUnitSituation.CreatureEncounter:
+            case eUnitSituation.Creature_Encounter:
                 {
                     //대기상태거나 이동중일 경우 전투 준비
                     switch (unit.uState)
@@ -206,7 +200,7 @@ public class NormalHumanAI : UnitAI
                 break;
 
             // 지점, 대상 공격
-            case eUnitSituation.StrikeCommand:
+            case eUnitSituation.Strike_Command:
                 {
                     actionType = eUnitActionEvent.Attack;
                 }
@@ -218,11 +212,6 @@ public class NormalHumanAI : UnitAI
         string subAnimKey = string.Empty;
         bool isDetailCheck = true;
         Action<string[], Action> stateAction = null;
-
-        //대기 이벤트 변수
-        float waitTime = 0f;
-        eUnitWaitEvent waitEventType = eUnitWaitEvent.None;
-        //eUnitWaitEventStartTiming timing = eUnitWaitEventStartTiming.StartAnim;
 
         // events -> [0 : 대기],[1 : 이동],[2 : 탐색],[3 : 공격],[4 : 사망]
 
@@ -247,8 +236,6 @@ public class NormalHumanAI : UnitAI
             case eUnitActionEvent.BattleReady:
                 {
                     actionKey = "BattleReady";
-                    waitEventType = eUnitWaitEvent.EndObjectEmotion;
-                    waitTime = unit.data.f_ASpeed;
                 }
                 break;
 
@@ -256,8 +243,6 @@ public class NormalHumanAI : UnitAI
             case eUnitActionEvent.Attack:
                 {
                     actionKey = "Attack";
-                    waitEventType = eUnitWaitEvent.ActionAfterAttack;
-                    waitTime = 0f;
                 }
                 break;
 
@@ -313,22 +298,22 @@ public class NormalHumanAI : UnitAI
     /// <summary> 대기 이벤트 </summary>
     protected override void WaitEvent()
     {
-        switch (waitEventType)
-        {
-            //미확인 물체 감정 완료
-            case eUnitWaitEvent.EndObjectEmotion:
-                {
-                    //미확인 물체 is 적
-                    Refresh(eUnitSituation.StrikeCommand);
-                }
-                break;
-            // 공격 결과 이후 행동
-            case eUnitWaitEvent.ActionAfterAttack:
-                {
-                    //TODO: 공격 결과 이후 행동 작업
-                }
-                break;
-        }
+        //switch (curUnitEvent.eventType)
+        //{
+        //    //미확인 물체 감정 완료
+        //    case eUnitWaitEvent.EndObjectEmotion:
+        //        {
+        //            //미확인 물체 is 적
+        //            Refresh(eUnitSituation.StrikeCommand);
+        //        }
+        //        break;
+        //    // 공격 결과 이후 행동
+        //    case eUnitWaitEvent.ActionAfterAttack:
+        //        {
+        //            //TODO: 공격 결과 이후 행동 작업
+        //        }
+        //        break;
+        //}
 
         base.WaitEvent();
     }
@@ -379,7 +364,7 @@ public class NomalZombieAI : UnitAI
         switch (EventType)
         {
             //상황 종료
-            case eUnitSituation.SituationClear:
+            case eUnitSituation.Situation_Clear:
                 {
                     switch (unit.uState)
                     {
@@ -397,7 +382,7 @@ public class NomalZombieAI : UnitAI
                 break;
 
             //대기 명령
-            case eUnitSituation.StandbyCommand:
+            case eUnitSituation.Standby_Command:
                 {
                     switch (unit.uState)
                     {
@@ -417,14 +402,14 @@ public class NomalZombieAI : UnitAI
                 break;
 
             //이동 명령
-            case eUnitSituation.MoveCommand:
+            case eUnitSituation.Move_Command:
                 {
                     actionType = eUnitActionEvent.Move;
                 }
                 break;
 
             //미확인 물체 조우
-            case eUnitSituation.CreatureEncounter:
+            case eUnitSituation.Creature_Encounter:
                 {
                     //대기상태거나 이동중일 경우 전투 준비
                     switch (unit.uState)
@@ -438,7 +423,7 @@ public class NomalZombieAI : UnitAI
                 break;
 
             // 지점, 대상 공격
-            case eUnitSituation.StrikeCommand:
+            case eUnitSituation.Strike_Command:
                 {
                     actionType = eUnitActionEvent.Attack;
                 }
@@ -504,14 +489,14 @@ public class NomalZombieAI : UnitAI
     /// <summary> 대기 이벤트(StartWaitEvent 종료시 실행) </summary>
     protected override void WaitEvent()
     {
-        switch (waitEventType)
-        {
-            case eUnitWaitEvent.EndObjectEmotion:
-
-                //미확인 물체 is 적
-                Refresh(eUnitSituation.StrikeCommand);
-                break;
-        }
+        //switch (curUnitEvent.waitEventType)
+        //{
+        //    case eUnitWaitEvent.EndObjectEmotion:
+        //
+        //        //미확인 물체 is 적
+        //        Refresh(eUnitSituation.StrikeCommand);
+        //        break;
+        //}
 
         base.WaitEvent();
     }

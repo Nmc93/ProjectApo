@@ -168,14 +168,36 @@ public class UnitData
 }
 
 /// <summary> 명령,외.내부에서 들어온 이벤트 데이터 </summary>
-public struct UnitEventData
+public class UnitEventData
 {
     /// <summary> 우선순위 </summary>
     public eUnitEventPriority priority;
     /// <summary> 타입 </summary>
-    public eUnitWaitEvent waitEventType;
+    public eUnitSituation eventType;
     /// <summary> 시작 타이밍 </summary>
     public eUnitWaitEventStartTiming waitEventStartTiming;
     /// <summary> 대기 시간 </summary>
     public float waitTime;
+
+    /// <summary> 이벤트 데이터 세팅 </summary>
+    /// <param name="priority"> 우선순위 </param>
+    /// <param name="eventType"> 이벤트 타입 </param>
+    /// <param name="waitEventStartTiming"> 실행 타이밍 </param>
+    /// <param name="waitTime"> 시작 전 대기 시간 </param>
+    public void SetData(eUnitEventPriority priority, eUnitSituation eventType, eUnitWaitEventStartTiming waitEventStartTiming, float waitTime)
+    {
+        this.priority = priority;
+        this.eventType = eventType;
+        this.waitEventStartTiming = waitEventStartTiming;
+        this.waitTime = waitTime;
+    }
+
+    /// <summary> 데이터 리셋 </summary>
+    public void DataReset()
+    {
+        priority = eUnitEventPriority.None;
+        eventType = eUnitSituation.None;
+        waitEventStartTiming = eUnitWaitEventStartTiming.StartAnim;
+        waitTime = 0;
+    }
 }

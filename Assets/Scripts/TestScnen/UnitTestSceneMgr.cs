@@ -106,10 +106,10 @@ public class UnitTestSceneMgr : MonoBehaviour
             return;
         }
 
-        for(int i = 0; i < UnitMgr.unitList.Count; ++i)
-        {
-            UnitMgr.unitList[i].testInit();
-        }
+        //for(int i = 0; i < UnitMgr.unitList.Count; ++i)
+        //{
+        //    UnitMgr.unitList[i].testInit();
+        //}
     }
 
     /// <summary> 대기 모션 버튼 </summary>
@@ -121,10 +121,10 @@ public class UnitTestSceneMgr : MonoBehaviour
             return;
         }
 
-        for (int i = 0; i < UnitMgr.unitList.Count; ++i)
-        {
-            UnitMgr.unitList[i].testIdle();
-        }
+        //for (int i = 0; i < UnitMgr.unitList.Count; ++i)
+        //{
+        //    UnitMgr.unitList[i].testIdle();
+        //}
     }
 
     /// <summary> 이동 모션 버튼 </summary>
@@ -136,10 +136,10 @@ public class UnitTestSceneMgr : MonoBehaviour
             return;
         }
 
-        for (int i = 0; i < UnitMgr.unitList.Count; ++i)
-        {
-            UnitMgr.unitList[i].testMove();
-        }
+        //for (int i = 0; i < UnitMgr.unitList.Count; ++i)
+        //{
+        //    UnitMgr.unitList[i].testMove();
+        //}
     }
 
     /// <summary> 공격 준비 모션 버튼 </summary>
@@ -151,10 +151,10 @@ public class UnitTestSceneMgr : MonoBehaviour
             return;
         }
 
-        for (int i = 0; i < UnitMgr.unitList.Count; ++i)
-        {
-            UnitMgr.unitList[i].testBattleReady();
-        }
+        //for (int i = 0; i < UnitMgr.unitList.Count; ++i)
+        //{
+        //    UnitMgr.unitList[i].testBattleReady();
+        //}
     }
 
     /// <summary> 공격 모션 버튼 </summary>
@@ -166,10 +166,10 @@ public class UnitTestSceneMgr : MonoBehaviour
             return;
         }
 
-        for (int i = 0; i < UnitMgr.unitList.Count; ++i)
-        {
-            UnitMgr.unitList[i].testAttack();
-        }
+        //for (int i = 0; i < UnitMgr.unitList.Count; ++i)
+        //{
+        //    UnitMgr.unitList[i].testAttack();
+        //}
     }
 
     #endregion 테스트

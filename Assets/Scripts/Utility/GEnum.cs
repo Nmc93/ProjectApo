@@ -118,16 +118,17 @@ namespace GEnum
     [Serializable]
     public enum eUnitSituation : byte
     {
+        None = 0,
         /// <summary> 상황 종료 </summary>
-        SituationClear = 0,
+        Situation_Clear,
         /// <summary> 대기 명령 </summary>
-        StandbyCommand,
+        Standby_Command,
         /// <summary> 이동 명령 </summary>
-        MoveCommand,
+        Move_Command,
         /// <summary> 적 조우 </summary>
-        CreatureEncounter,
+        Creature_Encounter,
         /// <summary> 지점, 대상 공격 </summary>
-        StrikeCommand,
+        Strike_Command,
     }
 
     /// <summary> 유닛의 상태 </summary>
@@ -149,28 +150,21 @@ namespace GEnum
     /// <summary> 유닛의 이벤트 우선순위 </summary>
     public enum eUnitEventPriority : byte
     {
+        /// <summary> 사용중이 아님 </summary>
+        None = 0,
         /// <summary> 플레이어의 직접명령 </summary>
-        Direct_Command = 0,
+        Direct_Command,
         /// <summary> 외.내부에서 일어나는 상황에 대응 </summary>
         Situation_Response,
         /// <summary> 작전 명령서 </summary>
         Operation_Order
     }
 
-    /// <summary> 유닛 대기 이벤트 </summary>
-    public enum eUnitWaitEvent : byte
-    {
-        /// <summary> 아무 이벤트 없이 대기중 </summary>
-        None = 0,
-        /// <summary> 미확인 물체 감정 완료 </summary>
-        EndObjectEmotion,
-        /// <summary> 공격 결과 대기 </summary>
-        ActionAfterAttack
-    }
-
-    /// <summary> 유닛 대기 이벤트 시작 타이밍 </summary>
+    /// <summary> 유닛 이벤트 시작 타이밍 </summary>
     public enum eUnitWaitEventStartTiming : byte
     {
+        /// <summary> 즉시 실행 </summary>
+        RunImmediately,
         /// <summary> 애니메이션을 시작시킬 때 </summary>
         StartAnim,
         /// <summary> 애니메이션을 종료할 때 </summary>
