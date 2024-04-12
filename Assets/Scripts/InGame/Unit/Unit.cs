@@ -243,8 +243,7 @@ public class Unit : MonoBehaviour
     /// <summary> 상태 변경 </summary>
     /// <param name="state"> 변경 상태 </param>
     /// <param name="key"> 변경 애니메이션 키 </param>
-    /// <param name="callBack"> 애니메이션 콜백 </param>
-    public void ChangeState(eUnitActionEvent state, string[] key, Action callBack)
+    public void ChangeState(eUnitActionEvent state, string[] key)
     {
         uState = state;
 
@@ -256,12 +255,12 @@ public class Unit : MonoBehaviour
         uBodyAnimator.SetTrigger(key[3]);
 
         //콜백 처리
-        CallBackHandling(callBack);
+        //CallBackHandling(callBack);
     }
 
     private void CallBackHandling(Action callBack)
     {
-        switch(ai.curUnitEvent.waitEventStartTiming)
+        switch(ai.waitUnitEvent.waitEventStartTiming)
         {
             //즉시 실행
             case eUnitWaitEventStartTiming.StartAnim:

@@ -19,20 +19,23 @@ public abstract class UnitAI
     /// <summary> 지난 시간 </summary>
     protected float curWaitTime;
 
+    /// <summary> 현재 진행중인 일의 우선순위 </summary>
+    public eUnitEventPriority curStatePriority;
+
     /// <summary> 현재 대기중인 이벤트 </summary>
-    public UnitEventData curUnitEvent;
+    public UnitEventData waitUnitEvent;
 
     /// <summary> 대기 이벤트 실행 </summary>
     protected virtual void WaitEvent()
     {
         //실행한 이벤트 데이터 리셋 및 반환
-        if(null != curUnitEvent)
+        if(null != waitUnitEvent)
         {
-            UnitMgr.UnitEventReturn(curUnitEvent);
+            UnitMgr.UnitEventReturn(waitUnitEvent);
         }
 
         //현재 이벤트 해제
-        curUnitEvent = null;
+        waitUnitEvent = null;
     }
 
     /// <summary> 대기 이벤트 세팅 </summary>
@@ -48,16 +51,10 @@ public abstract class UnitAI
     {
         if(evnetType != eUnitSituation.None)
         {
-            curUnitEvent = UnitMgr.GetUnitEvent();
+            waitUnitEvent = UnitMgr.GetUnitEvent();
 
-            curUnitEvent.SetData(priority, evnetType, timing, waitTime);
+            waitUnitEvent.SetData(priority, evnetType, timing, waitTime);
         }
-    }
-
-    /// <summary> 대기 이벤트 활성화 </summary>
-    public virtual void StartWaitEvent()
-    {
-        isReservation = true;
     }
 
     #endregion 대기 이벤트
@@ -70,6 +67,7 @@ public abstract class UnitAI
     {
         this.unit = unit;
         unitData = unit.data;
+        curStatePriority = eUnitEventPriority.None;
 
         //유닛 정보가 없을 경우 강제종료
         if (unit == null || unitData == null)
@@ -86,7 +84,7 @@ public abstract class UnitAI
     /// <summary> 현재 상황에 맞게 상태 갱신 </summary>
     /// <param name="eventType"> 유닛의 월드와 한 상호작용 타입 </param>
     /// <returns> 흠... </returns>
-    public abstract bool Refresh(UnitEventData unitEventData);
+    public abstract void Refresh();
 
     /// <summary> 유닛의 정보를 업데이트 </summary>
     public virtual void Update()
@@ -98,10 +96,10 @@ public abstract class UnitAI
     public virtual void WaitEventUpdate()
     {
         //대기 트리거가 걸려있는 경우
-        if (null != curUnitEvent)
+        if (null != waitUnitEvent)
         {
             // 대기중일 경우
-            if (curWaitTime >= curUnitEvent.waitTime)
+            if (curWaitTime >= waitUnitEvent.waitTime)
             {
                 WaitEvent();
             }
@@ -125,20 +123,30 @@ public class NormalHumanAI : UnitAI
     }
 
     /// <summary> 이벤트 갱신 </summary>
-    /// <param name="eventType"> 상호작용 이벤트 </param>
-    public override bool Refresh(UnitEventData unitEventData)
+    public override void Refresh()
     {
-
-        //사망했을 경우 아무것도 하지 않음
+        // 사망했을 경우 아무것도 하지 않음
         if (unit.uState == eUnitActionEvent.Die)
         {
-            return false;
+            return;
         }
-
+        // 잘못된 명령일 경우
+        else if(waitUnitEvent.priority == eUnitEventPriority.None)
+        {
+            Debug.LogError($"잘못된 명령 : {waitUnitEvent.priority}");
+            return;
+        }
+        // 우선순위에서 밀리는 명령일 경우
+        else if(waitUnitEvent != null && curStatePriority < waitUnitEvent.priority)
+        {
+            Debug.LogError($"우선순위가 낮은 명령 :[Cur:{curStatePriority}] [New:{waitUnitEvent.priority}]");
+            return;
+        }
+        
         // 이벤트 타입
         eUnitActionEvent actionType = eUnitActionEvent.Idle;
         // 외부 이벤트에 맞는 상황 타입으로 변환
-        switch (unitEventData.eventType)
+        switch (waitUnitEvent.eventType)
         {
             //상황 종료
             case eUnitSituation.Situation_Clear:
@@ -277,6 +285,12 @@ public class NormalHumanAI : UnitAI
         //2차 분류 및 키 조합
         if (stateAction != null && !string.IsNullOrEmpty(actionKey))
         {
+            //이벤트 세팅
+            curStatePriority = waitUnitEvent.priority;
+            UnitMgr.UnitEventReturn(waitUnitEvent);
+            waitUnitEvent = null;
+
+            //유닛의 상태 및 애니메이션 변경
             unit.ChangeState(
                 actionType,
                 new string[]
@@ -285,36 +299,13 @@ public class NormalHumanAI : UnitAI
                     $"{actionKey}_Face",
                     $"{actionKey}_Body",
                     $"{actionKey}_Arm{subAnimKey}"
-                },
-                StartWaitEvent
-            );
-
-            return true;
+                });
         }
-
-        return false;
     }
 
     /// <summary> 대기 이벤트 </summary>
     protected override void WaitEvent()
     {
-        //switch (curUnitEvent.eventType)
-        //{
-        //    //미확인 물체 감정 완료
-        //    case eUnitWaitEvent.EndObjectEmotion:
-        //        {
-        //            //미확인 물체 is 적
-        //            Refresh(eUnitSituation.StrikeCommand);
-        //        }
-        //        break;
-        //    // 공격 결과 이후 행동
-        //    case eUnitWaitEvent.ActionAfterAttack:
-        //        {
-        //            //TODO: 공격 결과 이후 행동 작업
-        //        }
-        //        break;
-        //}
-
         base.WaitEvent();
     }
 }
@@ -328,13 +319,13 @@ public class NomalZombieAI : UnitAI
     }
 
     /// <summary> 이벤트 갱신 </summary>
-    /// <param name="EventType"> 상호작용 이벤트 </param>
-    public override bool Refresh(eUnitSituation EventType)
+    /// <param name="eventData"> 상호작용 이벤트 </param>
+    public override void Refresh()
     {
         //사망했을 경우 아무것도 하지 않음
         if (unit.uState == eUnitActionEvent.Die)
         {
-            return false;
+            return;
         }
 
         #region
@@ -361,7 +352,7 @@ public class NomalZombieAI : UnitAI
         //이벤트 타입
         eUnitActionEvent actionType = eUnitActionEvent.Idle;
 
-        switch (EventType)
+        switch (waitUnitEvent.eventType)
         {
             //상황 종료
             case eUnitSituation.Situation_Clear:
@@ -479,11 +470,7 @@ public class NomalZombieAI : UnitAI
                 $"{actionKey}_Body",
                 $"{actionKey}_Arm"
             }, null);
-
-            return true;
         }
-
-        return false;
     }
 
     /// <summary> 대기 이벤트(StartWaitEvent 종료시 실행) </summary>
