@@ -285,7 +285,7 @@ public class NormalHumanAI : UnitAI
         //2차 분류 및 키 조합
         if (stateAction != null && !string.IsNullOrEmpty(actionKey))
         {
-            //이벤트 세팅
+            //현재 작업의 우선순위 세팅 및 현재 이벤트 반환
             curStatePriority = waitUnitEvent.priority;
             UnitMgr.UnitEventReturn(waitUnitEvent);
             waitUnitEvent = null;
@@ -327,27 +327,6 @@ public class NomalZombieAI : UnitAI
         {
             return;
         }
-
-        #region
-        //switch (curActionType)
-        //{
-        //    case eUnitActionEvent.Idle:
-        //        break;
-        //    case eUnitActionEvent.Move:
-        //        break;
-        //    case eUnitActionEvent.BattleReady:
-        //        break;
-        //    case eUnitActionEvent.Attack:
-        //        break;
-        //    case eUnitActionEvent.Die:
-        //        break;
-        //}
-        #endregion
-
-        // 평상시엔 Idle
-        // 이동시 Move - 완료시 Idle
-        // 타겟으로 결정된 경우 Attack
-        // 적 미싱 BattleReady - 일정 시간이 지난 후 경계종료 Idle
 
         //이벤트 타입
         eUnitActionEvent actionType = eUnitActionEvent.Idle;
@@ -423,7 +402,6 @@ public class NomalZombieAI : UnitAI
 
         //[0 : 주먹],[1 : 권총],[2 : 반자동],[3 : 자동]
         string actionKey = string.Empty;
-        Action<string[], System.Action> stateAction = null;
 
         //1차 분류
         switch (actionType)
@@ -431,45 +409,46 @@ public class NomalZombieAI : UnitAI
             case eUnitActionEvent.Idle:         // 대기 상태
                 {
                     actionKey = "Idle";
-                    //stateAction = idle;
                 }
                 break;
             case eUnitActionEvent.Move:         // 이동
                 {
                     actionKey = "Run";
-                    //stateAction = move;
                 }
                 break;
             case eUnitActionEvent.BattleReady:  // 적 발견
                 {
                     actionKey = "Angry";
-                    //stateAction = battleReady;
                 }
                 break;
             case eUnitActionEvent.Attack:       // 적 공격
                 {
                     actionKey = "Attack";
-                    //stateAction = attack;
                 }
                 break;
             case eUnitActionEvent.Die:          // 사망
                 {
                     actionKey = "Die";
-                    //stateAction = die;
                 }
                 break;
         }
 
         //2차 분류 및 키 조합
-        if (stateAction != null && !string.IsNullOrEmpty(actionKey))
+        if (false == string.IsNullOrEmpty(actionKey))
         {
-            stateAction(new string[]
-            {
-                $"{actionKey}_Head",
-                $"{actionKey}_Face{unit.data.headAnimID}",
-                $"{actionKey}_Body",
-                $"{actionKey}_Arm"
-            }, null);
+            // 애니메이션
+            unit.ChangeState(
+                actionType,
+                new string[]
+                {
+                    $"{actionKey}_Head",
+                    $"{actionKey}_Face{unit.data.headAnimID}",
+                    $"{actionKey}_Body",
+                    $"{actionKey}_Arm"
+                });
+
+            //
+            waitUnitEvent = null;
         }
     }
 

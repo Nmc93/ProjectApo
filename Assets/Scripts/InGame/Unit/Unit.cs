@@ -245,6 +245,7 @@ public class Unit : MonoBehaviour
     /// <param name="key"> 변경 애니메이션 키 </param>
     public void ChangeState(eUnitActionEvent state, string[] key)
     {
+        //상태 변경
         uState = state;
 
         //머리, 얼굴 애니메이션 변경
@@ -253,28 +254,6 @@ public class Unit : MonoBehaviour
         //몸 + 다리, 팔 애니메이션 변경
         uBodyAnimator.SetTrigger(key[2]);
         uBodyAnimator.SetTrigger(key[3]);
-
-        //콜백 처리
-        //CallBackHandling(callBack);
-    }
-
-    private void CallBackHandling(Action callBack)
-    {
-        switch(ai.waitUnitEvent.waitEventStartTiming)
-        {
-            //즉시 실행
-            case eUnitWaitEventStartTiming.StartAnim:
-                {
-                    callBack();
-                }
-                break;
-            //애니메이션이 종료될 때 실행
-            case eUnitWaitEventStartTiming.EndAnim:
-                {
-                    animCallBack = callBack;
-                }
-                break;
-        }
     }
 
     #endregion 행동
