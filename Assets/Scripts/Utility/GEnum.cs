@@ -150,14 +150,14 @@ namespace GEnum
     /// <summary> 유닛의 이벤트 우선순위 </summary>
     public enum eUnitEventPriority : byte
     {
+        /// <summary> 행동이 종료된 상태, 우선순위에 상관없이 덮어쓰거나 씌워질 수 있음 </summary>
+        WaitState = 0,
         /// <summary> 플레이어의 직접명령 </summary>
-        Direct_Command = 0,
+        Direct_Command,
         /// <summary> 외.내부에서 일어나는 상황에 대응 </summary>
         Situation_Response,
         /// <summary> 작전 명령서 </summary>
-        Operation_Order,
-        /// <summary> 사용중이 아님 </summary>
-        None = 255
+        Operation_Order
     }
 
     /// <summary> 유닛 이벤트 시작 타이밍 </summary>

@@ -66,6 +66,11 @@ public class Unit : MonoBehaviour
     /// <summary> 데이터 및 기초 세팅 </summary>
     public void Init(UnitData data)
     {
+        if(data == null)
+        {
+            return;
+        }
+
         //유닛 데이터 세팅
         this.data = data;
 
@@ -158,14 +163,10 @@ public class Unit : MonoBehaviour
                     //타겟 지정 및 이벤트 세팅
                     tagetEnemyID = searchEnemyList[0];
 
-                    UnitEventData data = UnitMgr.GetUnitEvent();
-                    data.SetData(
+                    ai.SettingWaitEvent(
                         eUnitEventPriority.Situation_Response,
                         eUnitSituation.Creature_Encounter,
-                        eUnitWaitEventStartTiming.RunImmediately,
                         0f);
-
-                    ai.Refresh(data);
                 }
             }
         }
@@ -173,7 +174,7 @@ public class Unit : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (!int.TryParse(collision.name, out int tid))
+        if (false == int.TryParse(collision.name, out int tid))
         {
             return;
         }
@@ -198,34 +199,57 @@ public class Unit : MonoBehaviour
 
         //기본 상태로 변경
         uState = eUnitActionEvent.Idle;
+        
         //타입에 맞는 AI 세팅
-        ai = null;
-
         switch (data.unitType)
         {
             case eUnitType.Human:
                 {
-                    ai = new NormalHumanAI();
+                    if(ai != null)
+                    {
+                        if(ai is NormalHumanAI)
+                        {
+                            ai.Init(this);
+                        }
+                        else
+                        {
+                            ai.Release();
+                            ai = new NormalHumanAI(this);
+                        }
+                    }
+                    else
+                    {
+                        ai = new NormalHumanAI(this);
+                    }
                 }
                 break;
             case eUnitType.Zombie:
                 {
-                    ai = new NomalZombieAI();
+                    if (ai != null)
+                    {
+                        if (ai is NomalZombieAI)
+                        {
+                            ai.Init(this);
+                        }
+                        else
+                        {
+                            ai.Release();
+                            ai = new NomalZombieAI(this);
+                        }
+                    }
+                    else
+                    {
+                        ai = new NomalZombieAI(this);
+                    }
                 }
                 break;
         }
 
-        //ai 세팅
-        ai.Setting(this);
-
-        UnitEventData eventData = UnitMgr.GetUnitEvent();
-        eventData.SetData(
-            eUnitEventPriority.Situation_Response,
+        // 대기 내부 이벤트 실행
+        ai.SettingWaitEvent(
+            eUnitEventPriority.WaitState,
             eUnitSituation.Standby_Command,
-            eUnitWaitEventStartTiming.RunImmediately,
             0f);
-
-        ai.Refresh(eventData);
     }
 
     /// <summary> 유닛 업데이트 함수 </summary>

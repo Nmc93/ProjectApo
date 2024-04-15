@@ -174,8 +174,6 @@ public class UnitEventData
     public eUnitEventPriority priority;
     /// <summary> 타입 </summary>
     public eUnitSituation eventType;
-    /// <summary> 시작 타이밍 </summary>
-    public eUnitWaitEventStartTiming waitEventStartTiming;
     /// <summary> 대기 시간 </summary>
     public float waitTime;
 
@@ -184,20 +182,18 @@ public class UnitEventData
     /// <param name="eventType"> 이벤트 타입 </param>
     /// <param name="waitEventStartTiming"> 실행 타이밍 </param>
     /// <param name="waitTime"> 시작 전 대기 시간 </param>
-    public void SetData(eUnitEventPriority priority, eUnitSituation eventType, eUnitWaitEventStartTiming waitEventStartTiming, float waitTime)
+    public void SetData(eUnitEventPriority priority, eUnitSituation eventType, float waitTime)
     {
         this.priority = priority;
         this.eventType = eventType;
-        this.waitEventStartTiming = waitEventStartTiming;
         this.waitTime = waitTime;
     }
 
     /// <summary> 데이터 리셋 </summary>
     public void DataReset()
     {
-        priority = eUnitEventPriority.None;
+        priority = eUnitEventPriority.WaitState;
         eventType = eUnitSituation.None;
-        waitEventStartTiming = eUnitWaitEventStartTiming.StartAnim;
         waitTime = 0;
     }
 }

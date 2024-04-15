@@ -8,100 +8,87 @@ public abstract class UnitAI
 {
     /// <summary> 현재 유닛 [unit.AI하면 this가 호출되는 상호참조의 관계라 조심해서 사용] </summary>
     protected Unit unit;
-    /// <summary> 유닛 정보 </summary>
-    protected UnitData unitData;
-
-    #region 대기 이벤트
 
     /// <summary> 이벤트 예약 </summary>
-    public bool isReservation;
-
+    protected bool isReservation;
     /// <summary> 지난 시간 </summary>
     protected float curWaitTime;
-
     /// <summary> 현재 진행중인 일의 우선순위 </summary>
-    public eUnitEventPriority curStatePriority;
-
+    protected eUnitEventPriority curStatePriority;
     /// <summary> 현재 대기중인 이벤트 </summary>
-    public UnitEventData waitUnitEvent;
+    protected UnitEventData waitUnitEvent;
 
-    /// <summary> 대기 이벤트 실행 </summary>
-    protected virtual void WaitEvent()
-    {
-        //실행한 이벤트 데이터 리셋 및 반환
-        if(null != waitUnitEvent)
-        {
-            UnitMgr.UnitEventReturn(waitUnitEvent);
-        }
-
-        //현재 이벤트 해제
-        waitUnitEvent = null;
-    }
-
-    /// <summary> 대기 이벤트 세팅 </summary>
-    /// <param name="priority"> 이벤트 우선순위 </param>
-    /// <param name="waitType"> 실행할 대기 이벤트 </param>
-    /// <param name="timing"> 이벤트 시작 타이밍 </param>
-    /// <param name="waitTime"> 이벤트 시간 </param>
-    public virtual void SettingWaitEvent(
-        eUnitEventPriority priority,
-        eUnitSituation evnetType,
-        eUnitWaitEventStartTiming timing,
-        float waitTime)
-    {
-        if(evnetType != eUnitSituation.None)
-        {
-            waitUnitEvent = UnitMgr.GetUnitEvent();
-
-            waitUnitEvent.SetData(priority, evnetType, timing, waitTime);
-        }
-    }
-
-    #endregion 대기 이벤트
-
-    #region 세팅
-
-    /// <summary> AI 정보 세팅 </summary>
+    /// <summary> AI 세팅 </summary>
     /// <param name="unit"> 유닛 데이터 </param>
-    public virtual void Setting(Unit unit)
+    public UnitAI(Unit unit)
     {
         this.unit = unit;
-        unitData = unit.data;
-        curStatePriority = eUnitEventPriority.None;
+        curStatePriority = eUnitEventPriority.WaitState;
 
         //유닛 정보가 없을 경우 강제종료
-        if (unit == null || unitData == null)
+        if (unit == null)
         {
             Debug.LogError("AI의 행동기준이 될 유닛의 데이터가 존재하지 않습니다.");
             return;
         }
     }
 
-    #endregion 세팅
-
-    #region 업데이트
-
-    /// <summary> 현재 상황에 맞게 상태 갱신 </summary>
-    /// <param name="eventType"> 유닛의 월드와 한 상호작용 타입 </param>
-    /// <returns> 흠... </returns>
-    public abstract void Refresh();
-
-    /// <summary> 유닛의 정보를 업데이트 </summary>
-    public virtual void Update()
+    /// <summary> AI 세팅 </summary>
+    /// <param name="unit"> 유닛 데이터 </param>
+    public virtual void Init(Unit unit)
     {
-        WaitEventUpdate();
+        this.unit = unit;
+        curStatePriority = eUnitEventPriority.WaitState;
+
+        //유닛 정보가 없을 경우 강제종료
+        if (unit == null)
+        {
+            Debug.LogError("AI의 행동기준이 될 유닛의 데이터가 존재하지 않습니다.");
+            return;
+        }
     }
 
-    /// <summary> 대기 이벤트 상황 업데이트 </summary>
-    public virtual void WaitEventUpdate()
+    /// <summary> AI 캐싱 해제 </summary>
+    public void Release()
     {
-        //대기 트리거가 걸려있는 경우
-        if (null != waitUnitEvent)
+        unit = null;
+
+        if(waitUnitEvent != null)
+        {
+            UnitMgr.UnitEventReturn(waitUnitEvent);
+            waitUnitEvent = null;
+        }
+    }
+
+    /// <summary> 대기 이벤트 세팅 </summary>
+    /// <param name="priority"> 이벤트 우선순위 </param>
+    /// <param name="evnetType"> 실행할 이벤트 타입 </param>
+    /// <param name="waitTime"> 이벤트 시간 </param>
+    public virtual void SettingWaitEvent(eUnitEventPriority priority, eUnitSituation evnetType, float waitTime)
+    {
+        if(evnetType != eUnitSituation.None)
+        {
+            waitUnitEvent = UnitMgr.GetUnitEvent();
+            waitUnitEvent.SetData(priority, evnetType, waitTime);
+            isReservation = true;
+        }
+    }
+
+    /// <summary> 현재 상황에 맞게 상태 갱신 </summary>
+    public abstract void Refresh();
+
+    /// <summary> 유닛의 정보를 업데이트 [유닛의 UnitUpdate()에서 처리] </summary>
+    public virtual void Update()
+    {
+        //대기중인 이벤트가 있을 경우
+        if (isReservation && waitUnitEvent != null)
         {
             // 대기중일 경우
             if (curWaitTime >= waitUnitEvent.waitTime)
             {
-                WaitEvent();
+                isReservation = false;
+                curWaitTime = 0;
+                Refresh();
             }
             else
             {
@@ -109,17 +96,17 @@ public abstract class UnitAI
             }
         }
     }
-
-    #endregion 업데이트
 }
 
 /// <summary> 인간형 보스 고티죠? </summary>
 public class NormalHumanAI : UnitAI
 {
-    public override void Setting(Unit unit)
+    public NormalHumanAI(Unit unit) : base(unit) { }
+
+    public override void Init(Unit unit)
     {
         //유닛 데이터 세팅
-        base.Setting(unit);
+        base.Init(unit);
     }
 
     /// <summary> 이벤트 갱신 </summary>
@@ -130,22 +117,21 @@ public class NormalHumanAI : UnitAI
         {
             return;
         }
-        // 잘못된 명령일 경우
-        else if(waitUnitEvent.priority == eUnitEventPriority.None)
+        // 대기중인 명령이 없을 경우
+        else if(null == waitUnitEvent)
         {
-            Debug.LogError($"잘못된 명령 : {waitUnitEvent.priority}");
+            Debug.LogError($"대기중인 명령이 없습니다.");
             return;
         }
-        // 우선순위에서 밀리는 명령일 경우
-        else if(waitUnitEvent != null && curStatePriority < waitUnitEvent.priority)
+        // 현재 WaitState가 아니고 우선순위에서 밀리는 명령일 경우
+        else if (curStatePriority != eUnitEventPriority.WaitState && waitUnitEvent.priority > curStatePriority)
         {
             Debug.LogError($"우선순위가 낮은 명령 :[Cur:{curStatePriority}] [New:{waitUnitEvent.priority}]");
             return;
         }
         
-        // 이벤트 타입
-        eUnitActionEvent actionType = eUnitActionEvent.Idle;
         // 외부 이벤트에 맞는 상황 타입으로 변환
+        eUnitActionEvent actionType = eUnitActionEvent.Idle;
         switch (waitUnitEvent.eventType)
         {
             //상황 종료
@@ -267,7 +253,7 @@ public class NormalHumanAI : UnitAI
         if (isDetailCheck)
         {
             //착용중인 무기 타입에 따라 세팅
-            switch (unitData.weaponTbl.WeaponType)
+            switch (unit.data.weaponTbl.WeaponType)
             {
                 case 0: // 맨손
                     subAnimKey = "_NoWeapon";
@@ -302,20 +288,16 @@ public class NormalHumanAI : UnitAI
                 });
         }
     }
-
-    /// <summary> 대기 이벤트 </summary>
-    protected override void WaitEvent()
-    {
-        base.WaitEvent();
-    }
 }
 
 public class NomalZombieAI : UnitAI
 {
-    public override void Setting(Unit unit)
+    public NomalZombieAI(Unit unit) : base(unit) {}
+
+    public override void Init(Unit unit)
     {
         //유닛 데이터 세팅
-        base.Setting(unit);
+        base.Init(unit);
     }
 
     /// <summary> 이벤트 갱신 </summary>
@@ -450,20 +432,5 @@ public class NomalZombieAI : UnitAI
             //
             waitUnitEvent = null;
         }
-    }
-
-    /// <summary> 대기 이벤트(StartWaitEvent 종료시 실행) </summary>
-    protected override void WaitEvent()
-    {
-        //switch (curUnitEvent.waitEventType)
-        //{
-        //    case eUnitWaitEvent.EndObjectEmotion:
-        //
-        //        //미확인 물체 is 적
-        //        Refresh(eUnitSituation.StrikeCommand);
-        //        break;
-        //}
-
-        base.WaitEvent();
     }
 }
