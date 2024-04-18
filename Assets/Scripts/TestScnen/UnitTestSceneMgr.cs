@@ -100,7 +100,7 @@ public class UnitTestSceneMgr : MonoBehaviour
     /// <summary> 캐릭터 세팅 </summary>
     public void OnClickResettingBtn()
     {
-        if (UnitMgr.unitList.Count <= 0)
+        if (UnitMgr.activeUnits.Count <= 0)
         {
             Debug.LogError("세팅할 캐릭터가 없습니다.");
             return;
@@ -115,7 +115,7 @@ public class UnitTestSceneMgr : MonoBehaviour
     /// <summary> 대기 모션 버튼 </summary>
     public void OnClickIdleBtn()
     {
-        if (UnitMgr.unitList.Count <= 0)
+        if (UnitMgr.activeUnits.Count <= 0)
         {
             Debug.LogError("세팅할 캐릭터가 없습니다.");
             return;
@@ -130,7 +130,7 @@ public class UnitTestSceneMgr : MonoBehaviour
     /// <summary> 이동 모션 버튼 </summary>
     public void OnClickMoveBtn()
     {
-        if (UnitMgr.unitList.Count <= 0)
+        if (UnitMgr.activeUnits.Count <= 0)
         {
             Debug.LogError("이동 모션을 실행할 캐릭터가 없습니다.");
             return;
@@ -145,7 +145,7 @@ public class UnitTestSceneMgr : MonoBehaviour
     /// <summary> 공격 준비 모션 버튼 </summary>
     public void OnClickBattleReadyBtn()
     {
-        if (UnitMgr.unitList.Count <= 0)
+        if (UnitMgr.activeUnits.Count <= 0)
         {
             Debug.LogError("공격 준비 모션을 실행할 캐릭터가 없습니다.");
             return;
@@ -160,7 +160,7 @@ public class UnitTestSceneMgr : MonoBehaviour
     /// <summary> 공격 모션 버튼 </summary>
     public void OnClickAttackBtn()
     {
-        if (UnitMgr.unitList.Count <= 0)
+        if (UnitMgr.activeUnits.Count <= 0)
         {
             Debug.LogError("공격 모션을 실행할 캐릭터가 없습니다.");
             return;

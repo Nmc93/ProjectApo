@@ -17,7 +17,7 @@ public class UnitMgr : MgrBase
 
     [Header("[활성화된 유닛 목록]"), Tooltip("활성화된 유닛 목록")]
     /// <summary> 생성된 유닛 목록 </summary>
-    public static List<Unit> unitList = new List<Unit>();
+    public static Dictionary<int, Unit> activeUnits = new Dictionary<int, Unit>();
 
     [Header("[비활성화된 유닛 목록]"),Tooltip("비활성화된 유닛 목록")]
     public static Queue<Unit> unitPool = new Queue<Unit>();
@@ -92,18 +92,29 @@ public class UnitMgr : MgrBase
         UnitData unitData = CreateUnitData(id, weaponID);
         eUnitType unitType = unitData.unitType;
 
-        //놀고 있는 유닛을 찾아서 세팅, 없다면 생성
+        //유닛 호출, 생성 - 놀고 있는 유닛을 찾아서 세팅, 없다면 생성
         if (!GetDeActiveUnit(out Unit unit))
         {
             // 유닛 생성
             GameObject unitObj = AssetsMgr.LoadResourcesPrefab("Char/Human");
             unitObj.transform.SetParent(instance.transform);
             unit = unitObj.GetComponent<Unit>();
+        }
 
-            // 캐릭터 오브젝트의 이름은 지정된 TID로 세팅(유닛을 구분하는데 사용할 예정)
-            unitObj.name = NextCharUID.ToString();
-            unit.UID = NextCharUID;
-            NextCharUID++;
+        //유닛 UID 세팅 - 중복 검사 및 세팅
+        while (true)
+        {
+            //없는 번호일 경우에 사용
+            if (activeUnits.ContainsKey(NextCharUID) == false)
+            {
+                unit.gameObject.name = NextCharUID.ToString();
+                unit.UID = NextCharUID++;
+                break;
+            }
+            else
+            {
+                ++NextCharUID;
+            }
         }
 
         //유닛 정보 세팅
@@ -111,8 +122,9 @@ public class UnitMgr : MgrBase
 
         //생성 지점 세팅
         unit.transform.position = pos;
+
         //생성된 유닛을 활성화된 유닛 리스트에 세팅
-        unitList.Add(unit);
+        activeUnits.Add(unit.UID, unit);
     }
 
     /// <summary> 유닛데이터만 생성해서 반환 </summary>
@@ -217,17 +229,13 @@ public class UnitMgr : MgrBase
     #region Get
 
     /// <summary> 해당 TID를 가진 유닛의 타입을 반환 </summary>
-    /// <param name="tid"> 유닛의 TID </param>
+    /// <param name="uid"> 유닛의 TID </param>
     /// <returns> TID가 없을 경우 eUnitType.None 반환 </returns>
-    public static eUnitType GetUnitType(int tid)
+    public static eUnitType GetUnitType(int uid)
     {
-        //인덱스를 검색
-        for(int i = 0; i < unitList.Count; ++i)
+        if(activeUnits.TryGetValue(uid, out var unit))
         {
-            if(unitList[i].UID == tid)
-            {
-                return unitList[i].data.unitType;
-            }
+            return unit.data.unitType;
         }
 
         return eUnitType.None;
@@ -241,6 +249,12 @@ public class UnitMgr : MgrBase
     public void AttackUnit(int targetUID, int damage)
     {
         //TODO: 유닛 공격 처리 작업 필요
+
+        //유닛이 실존한다면 데미지 넣음
+        if (activeUnits.TryGetValue(targetUID, out var unit))
+        {
+            unit.CurHP -= damage;
+        }
     }
 
     #endregion 유닛 상호작용

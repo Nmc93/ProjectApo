@@ -63,6 +63,23 @@ public class Unit : MonoBehaviour
     /// <summary> 행동 콜백 </summary>
     private Action animCallBack;
 
+    /// <summary> 현재 HP </summary>
+    public int CurHP
+    {
+        set
+        {
+            //현재 HP 세팅
+            data.f_CurHp = value;
+
+            //현재 사망 체크
+            if(value <= 0)
+            {
+                //TODO: 유닛 사망 작업
+            }
+        }
+        get => data.f_CurHp;
+    }
+
     /// <summary> 데이터 및 기초 세팅 </summary>
     public void Init(UnitData data)
     {
@@ -101,7 +118,7 @@ public class Unit : MonoBehaviour
         //머리 세팅 (애니메이션 컨트롤러)
         uHeadAnimator.SetAnimatior(data.headAnimID);
         //몸, 팔 세팅 (애니메이션 컨트롤러)
-        uBodyAnimator.SetAnimatior(data.bodyAnimID);
+        uBodyAnimator.SetAnimatior(data.bodyAnimID, this);
 
         //스탯 계산 및 적용
         RefreshStat();
@@ -199,11 +216,13 @@ public class Unit : MonoBehaviour
 
         //기본 상태로 변경
         uState = eUnitActionEvent.Idle;
-        
+
+        Type t = typeof(NormalHumanAI);
+
         //타입에 맞는 AI 세팅
         switch (data.unitType)
         {
-            case eUnitType.Human:
+            case eUnitType.Human:   //인간 AI 생성
                 {
                     if(ai != null)
                     {
@@ -223,7 +242,7 @@ public class Unit : MonoBehaviour
                     }
                 }
                 break;
-            case eUnitType.Zombie:
+            case eUnitType.Zombie:  //좀비 AI 생성
                 {
                     if (ai != null)
                     {
@@ -266,18 +285,23 @@ public class Unit : MonoBehaviour
 
     /// <summary> 상태 변경 </summary>
     /// <param name="state"> 변경 상태 </param>
-    /// <param name="key"> 변경 애니메이션 키 </param>
-    public void ChangeState(eUnitActionEvent state, string[] key)
+    /// <param name="animIDs"> 변경 애니메이션 키 </param>
+    public void ChangeState(eUnitActionEvent state, int[] animIDs)
     {
         //상태 변경
         uState = state;
 
         //머리, 얼굴 애니메이션 변경
-        uHeadAnimator.SetTrigger(key[0]);
-        uHeadAnimator.SetTrigger(key[1]);
+        uHeadAnimator.SetTrigger(animIDs[0]);
+        uHeadAnimator.SetTrigger(animIDs[1]);
         //몸 + 다리, 팔 애니메이션 변경
-        uBodyAnimator.SetTrigger(key[2]);
-        uBodyAnimator.SetTrigger(key[3]);
+        uBodyAnimator.SetTrigger(animIDs[2]);
+        uBodyAnimator.SetTrigger(animIDs[3]);
+    }
+
+    void AttackUnit()
+    {
+        UnitMgr.instance.AttackUnit(tagetEnemyID, 0);
     }
 
     #endregion 행동

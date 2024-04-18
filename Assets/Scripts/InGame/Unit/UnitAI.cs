@@ -279,12 +279,12 @@ public class NormalHumanAI : UnitAI
             //유닛의 상태 및 애니메이션 변경
             unit.ChangeState(
                 actionType,
-                new string[]
+                new int[]
                 {
-                    $"{actionKey}_Head",
-                    $"{actionKey}_Face",
-                    $"{actionKey}_Body",
-                    $"{actionKey}_Arm{subAnimKey}"
+                    Animator.StringToHash($"{actionKey}_Head"),
+                    Animator.StringToHash($"{actionKey}_Face"),
+                    Animator.StringToHash($"{actionKey}_Body"),
+                    Animator.StringToHash($"{actionKey}_Arm{subAnimKey}")
                 });
         }
     }
@@ -421,12 +421,12 @@ public class NomalZombieAI : UnitAI
             // 애니메이션
             unit.ChangeState(
                 actionType,
-                new string[]
+                new int[]
                 {
-                    $"{actionKey}_Head",
-                    $"{actionKey}_Face{unit.data.headAnimID}",
-                    $"{actionKey}_Body",
-                    $"{actionKey}_Arm"
+                    Animator.StringToHash($"{actionKey}_Head"),
+                    Animator.StringToHash($"{actionKey}_Face{unit.data.headAnimID}"),
+                    Animator.StringToHash($"{actionKey}_Body"),
+                    Animator.StringToHash($"{actionKey}_Arm")
                 });
 
             //
