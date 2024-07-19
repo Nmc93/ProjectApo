@@ -1,3 +1,3 @@
-﻿int,int,string
-0,0,None
-1,1,pistal02
+﻿int,int,string,int,int
+0,0,None,0,0
+1,1,pistal02,32,200

@@ -70,12 +70,12 @@ public class UnitTestSceneMgr : MonoBehaviour
         //유닛 생성 테스트중일 경우에만 사용
         if (isCreateUnit)
         {
-            if (!btnActive && count >= 2)
+            if (!btnActive && count >= 1)
             {
                 btnActive = true;
                 count = 0;
             }
-            else if (!btnActive && count < 2)
+            else if (!btnActive && count < 1)
             {
                 count += Time.deltaTime;
             }

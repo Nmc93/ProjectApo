@@ -129,6 +129,10 @@ namespace GEnum
         Creature_Encounter,
         /// <summary> 지점, 대상 공격 </summary>
         Strike_Command,
+        /// <summary> 체력 0 상태 </summary>
+        HP_Zero,
+        /// <summary> 유닛을 풀로 되돌림 </summary>
+        Return_Unit,
     }
 
     /// <summary> 유닛의 상태 </summary>

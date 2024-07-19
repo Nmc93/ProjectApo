@@ -22,6 +22,11 @@ public class UnitMgr : MgrBase
     [Header("[비활성화된 유닛 목록]"),Tooltip("비활성화된 유닛 목록")]
     public static Queue<Unit> unitPool = new Queue<Unit>();
 
+    /// <summary> 활성화된 유닛의 부모 TF </summary>
+    private static Transform activeUnitParent;
+    /// <summary> 비활성화된 유닛의 부모 TF </summary>
+    private static Transform deactiveUnitParent;
+
     #endregion 인스펙터
 
     #region 변수
@@ -43,6 +48,10 @@ public class UnitMgr : MgrBase
     {
         DontDestroyOnLoad(gameObject);
         instance = this;
+        activeUnitParent = new GameObject("ActiveUnit").transform;
+        activeUnitParent.SetParent(transform);
+        deactiveUnitParent = new GameObject("DeactiveUnit").transform;
+        deactiveUnitParent.SetParent(transform);
     }
 
     #endregion 오버라이드, 기본 세팅
@@ -51,12 +60,20 @@ public class UnitMgr : MgrBase
 
     /// <summary> 캐릭터의 업데이트문 이벤트 </summary>
     public static List<System.Action> charUpdateList = new List<System.Action>();
+    /// <summary> 삭제할 이벤트 목록 </summary>
+    private static Queue<System.Action> delActions = new Queue<System.Action>();
     private void Update()
     {
         //커스텀 업데이트
         foreach(var item in charUpdateList)
         {
             item();
+        }
+
+        //이벤트 삭제
+        while (delActions.Count > 0)
+        {
+            charUpdateList.Remove(delActions.Dequeue());
         }
     }
 
@@ -74,10 +91,7 @@ public class UnitMgr : MgrBase
     /// <param name="updateAction"> 업데이트 함수 </param>
     public static void RemoveUpdateEvent(System.Action updateAction)
     {
-        if(charUpdateList.Contains(updateAction))
-        {
-            charUpdateList.Remove(updateAction);
-        }
+        delActions.Enqueue(updateAction);
     }
 
     #endregion 유닛 업데이트
@@ -87,17 +101,17 @@ public class UnitMgr : MgrBase
     /// <summary> 테이블의 ID에 맞는 유닛을 생성 </summary>
     /// <param name="id"> UnitRandomTableData 테이블 ID </param>
     /// <param name="weaponID"> 무기 ID 없을 경우 맨손 </param>
-    public static void CreateUnit(Vector3 pos, int id,int weaponID = 0)
+    public static void CreateUnit(Vector3 pos, int id, int weaponID = 0)
     {
         UnitData unitData = CreateUnitData(id, weaponID);
         eUnitType unitType = unitData.unitType;
 
         //유닛 호출, 생성 - 놀고 있는 유닛을 찾아서 세팅, 없다면 생성
-        if (!GetDeActiveUnit(out Unit unit))
+        if (GetUnitFromPool(out Unit unit) == false)
         {
             // 유닛 생성
             GameObject unitObj = AssetsMgr.LoadResourcesPrefab("Char/Human");
-            unitObj.transform.SetParent(instance.transform);
+            unitObj.transform.SetParent(activeUnitParent);
             unit = unitObj.GetComponent<Unit>();
         }
 
@@ -127,20 +141,14 @@ public class UnitMgr : MgrBase
         activeUnits.Add(unit.UID, unit);
     }
 
-    /// <summary> 유닛데이터만 생성해서 반환 </summary>
-    public static UnitData CreateUnitDate(int id, int weaponID = 0)
-    {
-       return CreateUnitData(id, weaponID);
-    }
-
     #endregion 유닛 생성
 
-    #region 풀에 저장된 유닛 반환
+    #region 유닛 풀 Dequeue, Enqueue
 
-    /// <summary> 풀 안에 비활성화 된 유닛이 있다면 저장하고 성공 여부를 반환 </summary>
+    /// <summary> 풀에 유닛이 있다면 유닛을 풀에서 꺼내서 반환 </summary>
     /// <param name="unit"> 찾은 유닛을 저장할 유닛 변수 </param>
     /// <returns> 비활성화된 유닛을 저장에 성공한다면 True 반환 </returns>
-    private static bool GetDeActiveUnit(out Unit unit)
+    private static bool GetUnitFromPool(out Unit unit)
     {
         unit = null;
 
@@ -151,7 +159,28 @@ public class UnitMgr : MgrBase
 
         return unit != null;
     }
-    #endregion 풀에 저장된 유닛 반환
+
+    /// <summary> 유닛을 풀로 반환 </summary>
+    public static void ReturnUnitToPool(Unit unit)
+    {
+        //유닛의 상태가 정상적인 경우에만 사용
+        if(unit != null && activeUnits.ContainsKey(unit.UID))
+        {
+            //유닛을 사용중인 유닛 목록에서 제거
+            activeUnits.Remove(unit.UID);
+
+            //비활성화된 유닛을 특정 지점으로 옮기고 비활성화
+            unit.transform.localPosition = new Vector3(20f,20f,0f);
+            unit.gameObject.SetActive(false);
+            //비활성화 라인으로 이동
+            unit.transform.SetParent(deactiveUnitParent);
+
+            //비활성화 유닛 풀로 이동
+            unitPool.Enqueue(unit);
+        }
+    }
+
+    #endregion 유닛 풀 Dequeue, Enqueue
 
     #region 유닛 데이터 생성
 
@@ -177,25 +206,8 @@ public class UnitMgr : MgrBase
             }
         }
 
-        int[] stats = ranData.GetRanStats;
         //데이터를 랜덤으로 삽입
-        unitData = new UnitData(
-            ranData.unitType,
-            ranData.GetRanHeads,
-            ranData.GetRanHat,
-            ranData.GetRanHair,
-            ranData.GetRanBackHair,
-            ranData.GetRanHeadAnim,
-            ranData.GetRanFaceDeco,
-            ranData.GetRanBodyAnim,
-            stats[0],               //피
-            stats[1],               //공
-            stats[2],               //방
-            (float)stats[3] / 100,  //공속
-            (float)stats[4] / 100,  //이속
-            (float)stats[5] / 100,  //반응속도
-            stats[6],               //탐지범위
-            weaponID);              //무기
+        unitData = new UnitData(ranData, weaponID);
 
         return unitData;
     }
@@ -226,14 +238,14 @@ public class UnitMgr : MgrBase
 
     #endregion 유닛 이벤트 풀
 
-    #region Get
+    #region Get, Is
 
     /// <summary> 해당 TID를 가진 유닛의 타입을 반환 </summary>
-    /// <param name="uid"> 유닛의 TID </param>
+    /// <param name="uID"> 유닛의 TID </param>
     /// <returns> TID가 없을 경우 eUnitType.None 반환 </returns>
-    public static eUnitType GetUnitType(int uid)
+    public static eUnitType GetUnitType(int uID)
     {
-        if(activeUnits.TryGetValue(uid, out var unit))
+        if(activeUnits.TryGetValue(uID, out var unit))
         {
             return unit.data.unitType;
         }
@@ -241,7 +253,21 @@ public class UnitMgr : MgrBase
         return eUnitType.None;
     }
 
-    #endregion Get
+    /// <summary> 해당 UID를 가진 유닛이 살아있는 경우 </summary>
+    /// <returns> 죽었거나 없을 경우 false </returns>
+    public static bool IsUnitAlive(int uID)
+    {
+        //해당 유닛이 존재하고 아직 살아있는 경우
+        if (activeUnits.TryGetValue(uID, out var unit) &&
+            unit.uState != eUnitActionEvent.Die)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    #endregion Get, Is
 
     #region 유닛 상호작용
 

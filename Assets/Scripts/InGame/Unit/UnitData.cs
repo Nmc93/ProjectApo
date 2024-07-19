@@ -8,49 +8,34 @@ using GEnum;
 [Serializable]
 public class UnitData
 {
-    public UnitData(
-        int unitType,
-        int headID,
-        int hatID,
-        int hairID,
-        int backHairID,
-        int headAnimID,
-        int faceDecoID,
-        int bodyAnimID,
-        int maxHp,
-        int attack,
-        int defence,
-        float attackSpeed,
-        float moveSpeed,
-        float reActionSpeed,
-        int detectionRange,
-        int weaponID = 0)
+    public UnitData(UnitRandomData ranData, int weaponID = 0)
     {
         //유닛의 타입 세팅
-        switch(unitType)
+        switch (ranData.unitType)
         {
-            case 0: this.unitType = eUnitType.None; break;
-            case 1: this.unitType = eUnitType.Human; break;
-            case 2: this.unitType = eUnitType.Zombie; break;
+            case 0: unitType = eUnitType.None; break;
+            case 1: unitType = eUnitType.Human; break;
+            case 2: unitType = eUnitType.Zombie; break;
         }
 
         //외형 세팅
-        this.headID = headID;
-        this.hatID = hatID;
-        this.hairID = hairID;
-        this.backHairID = backHairID;
-        this.headAnimID = headAnimID;
-        this.faceDecoID = faceDecoID;
-        this.bodyAnimID = bodyAnimID;
-        
+        headID = ranData.GetRanHeads;
+        hatID = ranData.GetRanHat;
+        hairID = ranData.GetRanHair;
+        backHairID = ranData.GetRanBackHair;
+        headAnimID = ranData.GetRanHeadAnim;
+        faceDecoID = ranData.GetRanFaceDeco;
+        bodyAnimID = ranData.GetRanBodyAnim;
+
         //베이스 스탯 세팅
-        tbl_MaxHp = maxHp;
-        tbl_Attack = attack;
-        tbl_Defence = defence;
-        tbl_ASpeed = attackSpeed;
-        tbl_MSpeed = moveSpeed;
-        tbl_RSpeed = reActionSpeed;
-        tbl_DetectionRange = detectionRange;
+        int[] stats = ranData.GetRanStats;
+        tbl_MaxHp = stats[0];               //피
+        tbl_Attack = stats[1];              //공
+        tbl_Defence = stats[2];             //방
+        tbl_ASpeed = (float)stats[3] / 100; //공속
+        tbl_MSpeed = (float)stats[4] / 100; //이속
+        tbl_RSpeed = (float)stats[5] / 100; //반응속도
+        tbl_DetectionRange = stats[6];      //탐지범위
 
         //무기 세팅
         weaponTbl = TableMgr.Get<UnitWeaponTableData>(weaponID);
@@ -148,23 +133,70 @@ public class UnitData
     /// <summary> 현재 기본 스탯을 기반으로 스탯 계산 </summary>
     public void RefreshStat(bool isCreate = false)
     {
-        f_MaxHp = tbl_MaxHp;          // 최대 체력
+        // 최대 체력
+        f_MaxHp = tbl_MaxHp;
 
-        f_Damage = tbl_Attack;                  // + 총기 데미지
-        f_Defence = tbl_Defence;                // + 추가적인 무언가
+        // 공격력
+        f_Damage = GetF_Damage();
+        // 방어력
+        f_Defence = tbl_Defence;
 
-        f_ASpeed = tbl_ASpeed;                  // 장비 특성에 따라 비율 조절 추가
-        f_MSpeed = tbl_MSpeed;                  // 장비 특성에 따라 비율 조절 추가
-        f_RSpeed = tbl_RSpeed;                  // 장비 특성에 따라 비율 조절 추가
+        // 반응속도
+        f_RSpeed = tbl_RSpeed;
+        // 공격속도
+        f_ASpeed = GetF_ASpeed();
+        // 이동속도
+        f_MSpeed = tbl_MSpeed;
 
-        f_DetectionRange = tbl_DetectionRange; // 장비나 특성에 따라 비율 조절 추가
+        // 장비나 특성에 따라 비율 조절 추가
+        f_DetectionRange = tbl_DetectionRange;
 
-        // 첫 생성의 경우 현재 체력 == 최대 체력
-        if(isCreate)
+        // 첫 생성이거나 현재 체력이 최대 체력보다 많은 경우
+        if(isCreate || f_CurHp > f_MaxHp)
         {
+            //현재 체력 == 최대 체력
             f_CurHp = f_MaxHp;
         }
     }
+
+    #region 공식
+
+    /// <summary> 현재 공격력을 계산 후 반환 </summary>
+    private int GetF_Damage()
+    {
+        int fDamage = tbl_Attack;
+
+        if (weaponTbl.WeaponType != 0)
+        {
+            int limit = weaponTbl.Damage / 20;
+            int plusDamage = tbl_Attack > limit ? limit : tbl_Attack;
+            f_Damage = weaponTbl.Damage + plusDamage;
+        }
+
+        return fDamage < 0 ? 0 : fDamage;
+    }
+
+    /// <summary> 현재 공격속도를 계산 후 반환 </summary>
+    private float GetF_ASpeed()
+    {
+        float speed = 0;
+
+        //무기를 들었을 경우
+        if (weaponTbl.WeaponType != 0)
+        {
+            speed = f_RSpeed + (weaponTbl.Speed / 100);
+            speed -= (speed * tbl_ASpeed);
+        }
+        //들지 않았을 경우
+        else
+        {
+            speed = f_RSpeed - (f_RSpeed * tbl_ASpeed);
+        }
+
+        return speed < 0 ? 0 : speed;
+    }
+
+    #endregion 공식
 }
 
 /// <summary> 명령,외.내부에서 들어온 이벤트 데이터 </summary>
@@ -172,7 +204,7 @@ public class UnitEventData
 {
     /// <summary> 우선순위 </summary>
     public eUnitEventPriority priority;
-    /// <summary> 타입 </summary>
+    /// <summary> 현재 유닛에게 들어온 상황 타입 </summary>
     public eUnitSituation eventType;
     /// <summary> 대기 시간 </summary>
     public float waitTime;
@@ -180,7 +212,6 @@ public class UnitEventData
     /// <summary> 이벤트 데이터 세팅 </summary>
     /// <param name="priority"> 우선순위 </param>
     /// <param name="eventType"> 이벤트 타입 </param>
-    /// <param name="waitEventStartTiming"> 실행 타이밍 </param>
     /// <param name="waitTime"> 시작 전 대기 시간 </param>
     public void SetData(eUnitEventPriority priority, eUnitSituation eventType, float waitTime)
     {

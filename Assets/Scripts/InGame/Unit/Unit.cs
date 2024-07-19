@@ -48,21 +48,12 @@ public class Unit : MonoBehaviour
     /// <summary> 현재 유닛의 행동 </summary>
     public eUnitActionEvent uState;
 
-    [Header("[타겟]")]
-    /// <summary> 공격 대상 적 ID [적이 없을 경우 : -1]</summary>
-    public int tagetEnemyID = -1;
-    /// <summary> 서치 범위안에 있는 적 ID 목록 </summary>
-    public List<int> searchEnemyList = new List<int>();
-
     [Header("[목표 지점]")]
     /// <summary> 목적지 포인트 </summary>
     public Vector2 targetPoint;
     /// <summary> 해당 유닛의 아틀라스 타입 </summary>
     private eAtlasType atlasType;
-
-    /// <summary> 행동 콜백 </summary>
-    private Action animCallBack;
-
+    
     /// <summary> 현재 HP </summary>
     public int CurHP
     {
@@ -74,10 +65,19 @@ public class Unit : MonoBehaviour
             //현재 사망 체크
             if(value <= 0)
             {
-                //TODO: 유닛 사망 작업
+                ai.SettingWaitEvent(
+                        eUnitEventPriority.WaitState,
+                        eUnitSituation.HP_Zero);
             }
         }
         get => data.f_CurHp;
+    }
+
+    private void Start()
+    {
+        //공격 이벤트 세팅
+        uBodyAnimator.attackEvent = TargetAttackEvnet;
+        uBodyAnimator.endAnimEvent = EndAnimEvent;
     }
 
     /// <summary> 데이터 및 기초 세팅 </summary>
@@ -118,7 +118,11 @@ public class Unit : MonoBehaviour
         //머리 세팅 (애니메이션 컨트롤러)
         uHeadAnimator.SetAnimatior(data.headAnimID);
         //몸, 팔 세팅 (애니메이션 컨트롤러)
-        uBodyAnimator.SetAnimatior(data.bodyAnimID, this);
+        uBodyAnimator.SetAnimatior(data.bodyAnimID);
+
+        //애니메이션 Play
+        uHeadAnimator.SetPlay(true);
+        uBodyAnimator.SetPlay(true);
 
         //스탯 계산 및 적용
         RefreshStat();
@@ -160,47 +164,25 @@ public class Unit : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        //센서는 감지하지 않음
+        //레이어 타입 11(센서)은 감지하지 않음
         if(collision.gameObject.layer == 11)
         {
             return;
         }
 
         // 유닛의 이름은 UID로 유효하고 해당 UID를 가진 유닛이 적대적인 경우
-        if (int.TryParse(collision.name, out int uID) && UnitMgr.GetUnitType(uID) != data.unitType)
+        if (int.TryParse(collision.name, out int uID))
         {
-            //발견된 대상이 
-            if (false == searchEnemyList.Contains(uID))
-            {
-                searchEnemyList.Add(uID);
-
-                //현재 타겟이 없을 경우
-                if(searchEnemyList.Count == 1 && tagetEnemyID == -1)
-                {
-                    //타겟 지정 및 이벤트 세팅
-                    tagetEnemyID = searchEnemyList[0];
-
-                    ai.SettingWaitEvent(
-                        eUnitEventPriority.Situation_Response,
-                        eUnitSituation.Creature_Encounter,
-                        0f);
-                }
-            }
+            //발견된 타겟을 체크, 공격 대상일 경우 저장
+            ai.AddTarget(uID);
         }
     }
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (false == int.TryParse(collision.name, out int tid))
+        if (int.TryParse(collision.name, out int uID))
         {
-            return;
-        }
-
-        //벗어난 대상을 목록에서 제거
-        if (searchEnemyList.Contains(tid))
-        {
-            searchEnemyList.Remove(tid);
-            //tid를 이용해서 추적 및 탐색을 할지 선택함
+            ai.RemoveTarget(uID);
         }
     }
 
@@ -211,9 +193,6 @@ public class Unit : MonoBehaviour
     /// <summary> 타입에 맞는 AI를 생성 및 세팅 </summary>
     private void SetAI()
     {
-        tagetEnemyID = -1;
-        searchEnemyList.Clear();
-
         //기본 상태로 변경
         uState = eUnitActionEvent.Idle;
 
@@ -267,8 +246,7 @@ public class Unit : MonoBehaviour
         // 대기 내부 이벤트 실행
         ai.SettingWaitEvent(
             eUnitEventPriority.WaitState,
-            eUnitSituation.Standby_Command,
-            0f);
+            eUnitSituation.Standby_Command);
     }
 
     /// <summary> 유닛 업데이트 함수 </summary>
@@ -281,8 +259,6 @@ public class Unit : MonoBehaviour
         }
     }
 
-    #region 행동
-
     /// <summary> 상태 변경 </summary>
     /// <param name="state"> 변경 상태 </param>
     /// <param name="animIDs"> 변경 애니메이션 키 </param>
@@ -292,19 +268,62 @@ public class Unit : MonoBehaviour
         uState = state;
 
         //머리, 얼굴 애니메이션 변경
-        uHeadAnimator.SetTrigger(animIDs[0]);
-        uHeadAnimator.SetTrigger(animIDs[1]);
+        uHeadAnimator.ChangeAnimation(animIDs[0]);
+        uHeadAnimator.ChangeAnimation(animIDs[1]);
         //몸 + 다리, 팔 애니메이션 변경
-        uBodyAnimator.SetTrigger(animIDs[2]);
-        uBodyAnimator.SetTrigger(animIDs[3]);
+        uBodyAnimator.ChangeAnimation(animIDs[2]);
+        uBodyAnimator.ChangeAnimation(animIDs[3]);
     }
 
-    void AttackUnit()
+    #region 상태 이벤트
+
+    /// <summary> 타겟 공격 실행 이벤트 </summary>
+    void TargetAttackEvnet()
     {
-        UnitMgr.instance.AttackUnit(tagetEnemyID, 0);
+        UnitMgr.instance.AttackUnit(ai.tagetEnemyID, data.f_Damage);
     }
 
-    #endregion 행동
+    /// <summary> 애니메이션 종료 이벤트 </summary>
+    void EndAnimEvent(eUnitActionEvent type)
+    {
+        eUnitSituation nextSituation;
+        float waitTime;
+        switch (type)
+        {
+            case eUnitActionEvent.Attack:
+                {
+                    nextSituation = eUnitSituation.Standby_Command;
+                    waitTime = 0;
+                }
+                break;
+            case eUnitActionEvent.Die:
+                {
+                    nextSituation = eUnitSituation.Return_Unit;
+                    waitTime = 2f;
+                    uHeadAnimator.SetPlay(false);
+                    uBodyAnimator.SetPlay(false);
+                }
+                break;
+            default:
+                {
+                    nextSituation = eUnitSituation.Situation_Clear;
+                    waitTime = 0;
+                    Debug.LogError($"{type} 타입은 대응하지 않습니다.");
+                }
+                break;
+        }
+
+        if(nextSituation != eUnitSituation.None)
+        {
+            // 대기 내부 이벤트 실행
+            ai.SettingWaitEvent(
+                ai.CurStatePriority,    // 공격을 실행시켰던 우선순위를 계승
+                nextSituation,          // 공격 대기 상태로 변환
+                waitTime);              // 이벤트 실행까지의 대기 시간
+        }
+    }
+
+    #endregion 상태 이벤트
 
     #endregion AI
 
@@ -345,30 +364,4 @@ public class Unit : MonoBehaviour
         }
     }
     #endregion 이미지 변경
-
-    #region 테스트 코드
-
-    //public void testInit()
-    //{
-    //    Init(UnitMgr.CreateUnitDate(0, 1));
-    //}
-    //
-    //public void testIdle()
-    //{
-    //    ai.Refresh(eUnitSituation.StandbyCommand);
-    //}
-    //public void testMove()
-    //{
-    //    ai.Refresh(eUnitSituation.MoveCommand);
-    //}
-    //public void testBattleReady()
-    //{
-    //    ai.Refresh(eUnitSituation.CreatureEncounter);
-    //}
-    //public void testAttack()
-    //{
-    //    ai.Refresh(eUnitSituation.StrikeCommand);
-    //}
-
-    #endregion 테스트 코드
 }
