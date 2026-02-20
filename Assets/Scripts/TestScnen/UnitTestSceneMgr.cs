@@ -11,10 +11,10 @@ public class UnitTestSceneMgr : MonoBehaviour
     /// <summary> 매니저 클래스 저장 </summary>
     public static Dictionary<eMgr, MgrBase> mgrDic = new Dictionary<eMgr, MgrBase>();
 
-    [Header("[생성할 유닛과 무기의 ID]"),Tooltip("유닛의 ID")]
-    public int unitID = 0;
-    [Tooltip("무기의 ID")]
-    public int weaponID = 0;
+    /// <summary> 유닛의 ID </summary>
+    public int UnitID = 0;
+    /// <summary> 무기의 ID </summary>
+    public int WeaponID = 0;
 
     /// <summary> 시작시 최초 매니저 세팅 </summary>
     private void Awake()
@@ -93,7 +93,7 @@ public class UnitTestSceneMgr : MonoBehaviour
         Vector3 v3 = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         v3.z = 0;
 
-        UnitMgr.CreateUnit(v3, unitID, weaponID);
+        UnitMgr.CreateUnit(v3, UnitID, WeaponID);
         btnActive = false;
     }
 

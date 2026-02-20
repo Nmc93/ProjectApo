@@ -192,7 +192,7 @@ public class UnitMgr : MgrBase
         UnitData unitData = null;
 
         //해당 ID의 랜덤데이터 검색 - 없을 경우 생성 후 캐싱
-        if(!dicRandomData.TryGetValue(unitRanID, out UnitRandomData ranData))
+        if(dicRandomData.TryGetValue(unitRanID, out UnitRandomData ranData) == false)
         {
             if (TableMgr.Get(unitRanID, out UnitRandomTableData tbl))
             {
