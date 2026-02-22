@@ -7,17 +7,18 @@ public class UnitRandomTableData : TableBase
 	public override string TableName { get => "UnitRandomTable"; }
 	public override object GetKey { get => iD; }
 
-	public UnitRandomTableData (int iD, int unitType, string head, string hair, string backHair, string faceDeco, string hat, string headAnim, string bodyAnim, string stat) 
+	public UnitRandomTableData (int iD, int unitType, string head, string face, string hair, string backHair, string faceDeco, string hat, string headLib, string bodyLib, string stat) 
 	{
 		this.iD = iD;
 		this.unitType = unitType;
 		this.head = head;
+		this.face = face;
 		this.hair = hair;
 		this.backHair = backHair;
 		this.faceDeco = faceDeco;
 		this.hat = hat;
-		this.headAnim = headAnim;
-		this.bodyAnim = bodyAnim;
+		this.headLib = headLib;
+		this.bodyLib = bodyLib;
 		this.stat = stat;
 	}
 	
@@ -32,6 +33,10 @@ public class UnitRandomTableData : TableBase
 	[SerializeField]
 	private string head;
 	public string Head { get => head; }
+	
+	[SerializeField]
+	private string face;
+	public string Face { get => face; }
 	
 	[SerializeField]
 	private string hair;
@@ -50,12 +55,12 @@ public class UnitRandomTableData : TableBase
 	public string Hat { get => hat; }
 	
 	[SerializeField]
-	private string headAnim;
-	public string HeadAnim { get => headAnim; }
+	private string headLib;
+	public string HeadLib { get => headLib; }
 	
 	[SerializeField]
-	private string bodyAnim;
-	public string BodyAnim { get => bodyAnim; }
+	private string bodyLib;
+	public string BodyLib { get => bodyLib; }
 	
 	[SerializeField]
 	private string stat;

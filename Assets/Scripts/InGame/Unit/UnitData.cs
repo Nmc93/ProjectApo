@@ -11,7 +11,7 @@ public class UnitData
     public UnitData(UnitRandomData ranData, int weaponID = 0)
     {
         //유닛의 타입 세팅
-        switch (ranData.unitType)
+        switch (ranData.UnitType)
         {
             case 0: unitType = eUnitType.None; break;
             case 1: unitType = eUnitType.Human; break;
@@ -166,7 +166,7 @@ public class UnitData
     {
         int fDamage = tbl_Attack;
 
-        if (weaponTbl.WeaponType != 0)
+        if (weaponTbl.Category != "None")
         {
             int limit = weaponTbl.Damage / 20;
             int plusDamage = tbl_Attack > limit ? limit : tbl_Attack;
@@ -182,7 +182,7 @@ public class UnitData
         float speed = 0;
 
         //무기를 들었을 경우
-        if (weaponTbl.WeaponType != 0)
+        if (weaponTbl.Category != "None")
         {
             speed = f_RSpeed + (weaponTbl.Speed / 100);
             speed -= (speed * tbl_ASpeed);

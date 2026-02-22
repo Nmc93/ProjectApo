@@ -7,11 +7,11 @@ public class UnitWeaponTableData : TableBase
 	public override string TableName { get => "UnitWeaponTable"; }
 	public override object GetKey { get => iD; }
 
-	public UnitWeaponTableData (int iD, int weaponType, string path, int damage, int speed) 
+	public UnitWeaponTableData (int iD, string category, string label, int damage, int speed) 
 	{
 		this.iD = iD;
-		this.weaponType = weaponType;
-		this.path = path;
+		this.category = category;
+		this.label = label;
 		this.damage = damage;
 		this.speed = speed;
 	}
@@ -21,12 +21,12 @@ public class UnitWeaponTableData : TableBase
 	public int ID { get => iD; }
 	
 	[SerializeField]
-	private int weaponType;
-	public int WeaponType { get => weaponType; }
+	private string category;
+	public string Category { get => category; }
 	
 	[SerializeField]
-	private string path;
-	public string Path { get => path; }
+	private string label;
+	public string Label { get => label; }
 	
 	[SerializeField]
 	private int damage;

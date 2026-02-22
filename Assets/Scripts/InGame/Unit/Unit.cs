@@ -3,36 +3,35 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using GEnum;
+using UnityEngine.U2D.Animation;
 
 [Serializable]
 public class Unit : MonoBehaviour
 {
-    #region 인스펙터
-
     [Header("탐색 범위")]
     [SerializeField] BoxCollider2D searchArea;
 
-    [Header("[유닛 스프라이트]")]
-    [Tooltip("머리")]
-    [SerializeField] SpriteRenderer head;
-    [Tooltip("얼굴 데코")]
-    [SerializeField] SpriteRenderer faceDeco;
-    [Tooltip("머리카락")]
-    [SerializeField] SpriteRenderer hair;
-    [Tooltip("뒷머리")]
-    [SerializeField] SpriteRenderer backHair;
-    [Tooltip("모자")]
-    [SerializeField] SpriteRenderer hat;
+    [Header("[머리 이미지]")]
+    [SerializeField] SpriteLibrary headLib;
+    [SerializeField] SpriteResolver head;
+    [SerializeField] SpriteResolver faceDeco;
+    [SerializeField] SpriteResolver hair;
+    [SerializeField] SpriteResolver backHair;
+    [SerializeField] SpriteResolver hat;
+
+    [Header("[몸통 이미지]")]
+    [SerializeField] SpriteLibrary bodyLib;
+    [SerializeField] SpriteResolver body;
+    [SerializeField] SpriteResolver frontArm;
+    [SerializeField] SpriteResolver backArm;
 
     [Tooltip("무기")]
-    [SerializeField] SpriteRenderer weapon;
+    [SerializeField] SpriteResolver weapon;
 
     [Header("[유닛 애니메이션]"),Tooltip("머리 애니메이션")]
     [SerializeField] UnitHeadAnimator uHeadAnimator;
     [Tooltip("몸통 애니메이션")]
     [SerializeField] UnitBodyAnimator uBodyAnimator;
-
-    #endregion 인스펙터
 
     #region 데이터
 
@@ -110,9 +109,9 @@ public class Unit : MonoBehaviour
         ChangeSprite(hat, data.hatID);
 
         //무기 세팅(맨손일 경우 세팅하지 않음)
-        if (data.weaponTbl.Path != "None" && atlasType == eAtlasType.Unit_Human)
+        if (data.unitType == eUnitType.Human && data.weaponTbl.Category != "None")
         {
-            weapon.sprite = AssetsMgr.GetSprite(eAtlasType.Unit_Human, data.weaponTbl.Path);
+            weapon.SetCategoryAndLabel(data.weaponTbl.Category, data.weaponTbl.Label);
         }
 
         //머리 세팅 (애니메이션 컨트롤러)
@@ -331,18 +330,21 @@ public class Unit : MonoBehaviour
     /// <summary> 스프라이트랜더러의 스프라이트를 변경 </summary>
     /// <param name="renderer"> 변경할 스프라이트 랜더러 </param>
     /// <param name="id"> UnitSpriteTableData의 ID 참조 </param>
-    private void ChangeSprite(SpriteRenderer renderer, int id)
+    private void ChangeSprite(SpriteResolver resolver, int id)
     {
         //테이블이 없거나 None일 경우 비활성화 후 종료
-        if (!TableMgr.Get(id, out UnitSpriteTableData tbl) || tbl.Path == "None")
+        if (TableMgr.Get(id, out UnitSpriteTableData tbl) == false || tbl.Category == "None")
         {
-            renderer.gameObject.SetActive(false);
+            resolver.gameObject.SetActive(false);
             return;
         }
 
+        //tbl.
+
         //이미지 및 애니메이션 변경
-        renderer.sprite = AssetsMgr.GetSprite(atlasType, tbl.Path);
-        renderer.gameObject.SetActive(true);
+        resolver.SetCategoryAndLabel(resolver.GetCategory(), tbl.Label);
+        //resolver.sprite = AssetsMgr.GetSprite(atlasType, tbl.Path);
+        resolver.gameObject.SetActive(true);
     }
 
     /// <summary> 무기 변경 </summary>
@@ -353,9 +355,9 @@ public class Unit : MonoBehaviour
         data.SetWeaponData(weaponID);
 
         //이미지 및 애니메이션 변경
-        if (data.weaponTbl.Path == "None")
+        if (data.weaponTbl.Category == "None")
         {
-            weapon.sprite = AssetsMgr.GetSprite(eAtlasType.Unit_Human, data.weaponTbl.Path);
+            weapon.SetCategoryAndLabel(data.weaponTbl.Category, data.weaponTbl.Label);
             weapon.gameObject.SetActive(true);
         }
         else

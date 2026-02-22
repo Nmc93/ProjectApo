@@ -7,13 +7,13 @@ public class UnitSpriteTableData : TableBase
 	public override string TableName { get => "UnitSpriteTable"; }
 	public override object GetKey { get => iD; }
 
-	public UnitSpriteTableData (int iD, int groupID, int unitType, int partType, string path) 
+	public UnitSpriteTableData (int iD, int groupID, int unitType, string category, string label) 
 	{
 		this.iD = iD;
 		this.groupID = groupID;
 		this.unitType = unitType;
-		this.partType = partType;
-		this.path = path;
+		this.category = category;
+		this.label = label;
 	}
 	
 	[SerializeField]
@@ -29,10 +29,10 @@ public class UnitSpriteTableData : TableBase
 	public int UnitType { get => unitType; }
 	
 	[SerializeField]
-	private int partType;
-	public int PartType { get => partType; }
+	private string category;
+	public string Category { get => category; }
 	
 	[SerializeField]
-	private string path;
-	public string Path { get => path; }
+	private string label;
+	public string Label { get => label; }
 }

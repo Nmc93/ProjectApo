@@ -393,16 +393,15 @@ public class NormalHumanAI : UnitAI
         if (isDetailCheck)
         {
             //착용중인 무기 타입에 따라 세팅
-            switch (unit.data.weaponTbl.WeaponType)
+            switch (unit.data.weaponTbl.Category)
             {
-                case 0: // 맨손
+                case "None": // 맨손
                     subAnimKey = "_NoWeapon";
                     break;
-                case 1: // 권총
+                case "Pistal": // 권총
                     subAnimKey = "_Pistol";
                     break;
-                case 2: // 반자동
-                case 3: // 연사총
+                case "LongGun": // 반자동, 연사총
                     subAnimKey = "_LongGun";
                     break;
             }

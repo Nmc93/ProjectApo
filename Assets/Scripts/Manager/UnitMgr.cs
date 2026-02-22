@@ -299,17 +299,17 @@ public class UnitRandomData
             return;
         }
 
-        id = tbl.ID;
-        unitType = tbl.UnitType;
+        ID = tbl.ID;
+        UnitType = tbl.UnitType;
 
-        heads = Convert(tbl.Head);
-        hairs = Convert(tbl.Hair);
-        backHairs = Convert(tbl.BackHair);
-        faceDecos = Convert(tbl.FaceDeco);
-        hats = Convert(tbl.Hat);
-        headAnims = Convert(tbl.HeadAnim);
-        bodyAnims = Convert(tbl.BodyAnim);
-        stats = Convert(tbl.Stat);
+        Heads = Convert(tbl.Head);
+        Hairs = Convert(tbl.Hair);
+        BackHairs = Convert(tbl.BackHair);
+        FaceDecos = Convert(tbl.FaceDeco);
+        Hats = Convert(tbl.Hat);
+        HeadLibs = Convert(tbl.HeadLib);
+        BodyLibs = Convert(tbl.BodyLib);
+        Stats = Convert(tbl.Stat);
     }
 
     public int[] Convert(string str)
@@ -330,25 +330,25 @@ public class UnitRandomData
         return result;
     }
 
-    public int id;
-    public int unitType;
+    public int ID;
+    public int UnitType;
 
-    public int[] heads;
-    public int[] hairs;
-    public int[] backHairs;
-    public int[] faceDecos;
-    public int[] hats;
-    public int[] headAnims;
-    public int[] bodyAnims;
-    public int[] stats;
+    public int[] Heads;
+    public int[] Hairs;
+    public int[] BackHairs;
+    public int[] FaceDecos;
+    public int[] Hats;
+    public int[] HeadLibs;
+    public int[] BodyLibs;
+    public int[] Stats;
 
-    public int GetRanHeads => heads[Random.Range(0, heads.Length)];
-    public int GetRanHair => hairs[Random.Range(0, hairs.Length)];
-    public int GetRanBackHair => backHairs[Random.Range(0, backHairs.Length)];
-    public int GetRanFaceDeco => faceDecos[Random.Range(0, faceDecos.Length)];
-    public int GetRanHat => hats[Random.Range(0, hats.Length)];
-    public int GetRanHeadAnim => headAnims[Random.Range(0, headAnims.Length)];
-    public int GetRanBodyAnim => bodyAnims[Random.Range(0, bodyAnims.Length)];
+    public int GetRanHeads => Heads[Random.Range(0, Heads.Length)];
+    public int GetRanHair => Hairs[Random.Range(0, Hairs.Length)];
+    public int GetRanBackHair => BackHairs[Random.Range(0, BackHairs.Length)];
+    public int GetRanFaceDeco => FaceDecos[Random.Range(0, FaceDecos.Length)];
+    public int GetRanHat => Hats[Random.Range(0, Hats.Length)];
+    public int GetRanHeadAnim => HeadLibs[Random.Range(0, HeadLibs.Length)];
+    public int GetRanBodyAnim => BodyLibs[Random.Range(0, BodyLibs.Length)];
 
     /// <summary> [0 : 체력]<br/>[1 : 공격력]<br/>[2 : 방어력]
     /// <br/>[3 : 공격속도]<br/>[4 : 이동속도]<br/>[5 : 반응속도]
@@ -357,7 +357,7 @@ public class UnitRandomData
     {
         get
         {
-            if (!TableMgr.Get(Random.Range(0, stats.Length), out UnitStatTableData tbl))
+            if (!TableMgr.Get(Random.Range(0, Stats.Length), out UnitStatTableData tbl))
             {
                 return null;
             }
