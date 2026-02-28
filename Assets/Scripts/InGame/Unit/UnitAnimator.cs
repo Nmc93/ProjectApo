@@ -6,10 +6,10 @@ public abstract class UnitAnimator : MonoBehaviour
     [SerializeField] private Animator anim;
 
     /// <summary> 애니메이터 세팅 </summary>
-    /// <param name="animID"> 애니메이션 ID <br/> UnitAnimatorTable 참조 </param>
-    public virtual void SetAnimatior(int animID)
+    /// <param name="name"> 애니메이션 ID <br/> UnitAnimatorTable 참조 </param>
+    public virtual void SetAnimatior(string name)
     {
-        anim.runtimeAnimatorController = AssetsMgr.GetUnitRuntimeAnimatorController(animID);
+        anim.runtimeAnimatorController = AssetsMgr.GetRuntimeAnimatorController(name);
     }
 
     /// <summary> 애니메이션 </summary>

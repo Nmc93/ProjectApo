@@ -13,6 +13,9 @@ public class UnitBodyAnimator : UnitAnimator
     /// <summary> 애니메이션 종료 이벤트 </summary>
     public Action<eUnitActionEvent> endAnimEvent;
 
+    public Action<string> OnPlayBodyAim;
+    public Action<string> OnPlayArmAim;
+
     /// <summary> 적 공격 이벤트 </summary>
     public void OnEnemyAttackEvent()
     {
@@ -24,5 +27,15 @@ public class UnitBodyAnimator : UnitAnimator
     public void OnEndAnimEvent(eUnitActionEvent type)
     {
         endAnimEvent(type);
+    }
+
+    public void OnBodyEvent(string str)
+    {
+        OnPlayBodyAim?.Invoke(str);
+    }
+
+    public void OnArmEvent(string str)
+    {
+        OnPlayArmAim?.Invoke(str);
     }
 }

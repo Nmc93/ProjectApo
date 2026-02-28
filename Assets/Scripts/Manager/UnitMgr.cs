@@ -247,7 +247,7 @@ public class UnitMgr : MgrBase
     {
         if(activeUnits.TryGetValue(uID, out var unit))
         {
-            return unit.data.unitType;
+            return unit.Data.unitType;
         }
 
         return eUnitType.None;

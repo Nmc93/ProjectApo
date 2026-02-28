@@ -19,13 +19,13 @@ public class UnitData
         }
 
         //외형 세팅
-        headID = ranData.GetRanHeads;
-        hatID = ranData.GetRanHat;
-        hairID = ranData.GetRanHair;
-        backHairID = ranData.GetRanBackHair;
-        headAnimID = ranData.GetRanHeadAnim;
-        faceDecoID = ranData.GetRanFaceDeco;
-        bodyAnimID = ranData.GetRanBodyAnim;
+        HeadID = ranData.GetRanHeads;
+        HatID = ranData.GetRanHat;
+        HairID = ranData.GetRanHair;
+        BackHairID = ranData.GetRanBackHair;
+        HeadLibID = ranData.GetRanHeadAnim;
+        FaceDecoID = ranData.GetRanFaceDeco;
+        BodyLibID = ranData.GetRanBodyAnim;
 
         //베이스 스탯 세팅
         int[] stats = ranData.GetRanStats;
@@ -67,19 +67,19 @@ public class UnitData
 
     #region 외형 정보
     /// <summary> 머리 타입 </summary>
-    public int headID;
+    public int HeadID;
     /// <summary> 모자 타입 </summary>
-    public int hatID;
+    public int HatID;
     /// <summary> 머리카락 타입 </summary>
-    public int hairID;
+    public int HairID;
     /// <summary> 뒷머리 타입 </summary>
-    public int backHairID;
-    /// <summary> 얼굴 타입 </summary>
-    public int headAnimID;
+    public int BackHairID;
     /// <summary> 얼굴 장식 타입(콧수염 등) </summary>
-    public int faceDecoID;
+    public int FaceDecoID;
+    /// <summary> 얼굴 타입 </summary>
+    public int HeadLibID;
     /// <summary> 몸 타입 </summary>
-    public int bodyAnimID;
+    public int BodyLibID;
     #endregion 외형 정보 
 
     #region 스텟 정보

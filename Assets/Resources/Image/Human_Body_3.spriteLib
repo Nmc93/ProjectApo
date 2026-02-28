@@ -17,6 +17,21 @@ MonoBehaviour:
     m_Hash: 548928296
     m_CategoryList: []
     m_OverrideEntries:
+    - m_Name: none
+      m_Hash: 1066401999
+      m_Sprite: {fileID: 0}
+      m_FromMain: 1
+      m_SpriteOverride: {fileID: 0}
+    - m_Name: arm_longgun
+      m_Hash: 701934569
+      m_Sprite: {fileID: 0}
+      m_FromMain: 1
+      m_SpriteOverride: {fileID: 0}
+    - m_Name: arm_pistal
+      m_Hash: 270098633
+      m_Sprite: {fileID: 0}
+      m_FromMain: 1
+      m_SpriteOverride: {fileID: 0}
     - m_Name: arm1
       m_Hash: 874964628
       m_Sprite: {fileID: 21300000, guid: 3b1fe770fb9d9954f85597b2d3f522e4, type: 3}
@@ -33,6 +48,11 @@ MonoBehaviour:
     m_Hash: 999990412
     m_CategoryList: []
     m_OverrideEntries:
+    - m_Name: none
+      m_Hash: 1066401999
+      m_Sprite: {fileID: 0}
+      m_FromMain: 1
+      m_SpriteOverride: {fileID: 0}
     - m_Name: attack
       m_Hash: 130035003
       m_Sprite: {fileID: 21300000, guid: c39f5122cda6fce408d90e0cc78af692, type: 3}
@@ -79,13 +99,18 @@ MonoBehaviour:
     m_Hash: 361264911
     m_CategoryList: []
     m_OverrideEntries:
-    - m_Name: arm-longgun
-      m_Hash: 128138500
+    - m_Name: none
+      m_Hash: 1066401999
+      m_Sprite: {fileID: 0}
+      m_FromMain: 1
+      m_SpriteOverride: {fileID: 0}
+    - m_Name: arm_longgun
+      m_Hash: 701934569
       m_Sprite: {fileID: 21300000, guid: abe58c03272fbd047937edb8785b811c, type: 3}
       m_FromMain: 1
       m_SpriteOverride: {fileID: 21300000, guid: b57e814a17b855c468f6968ba85f6676, type: 3}
-    - m_Name: arm-pistal
-      m_Hash: 737059275
+    - m_Name: arm_pistal
+      m_Hash: 270098633
       m_Sprite: {fileID: 21300000, guid: 57e090b875452824d82e935b8fc8f79c, type: 3}
       m_FromMain: 1
       m_SpriteOverride: {fileID: 21300000, guid: f3e202d4720495f43ba404df29c907ad, type: 3}
@@ -102,5 +127,5 @@ MonoBehaviour:
     m_FromMain: 1
     m_EntryOverrideCount: 4
   m_PrimaryLibraryGUID: 4dc2edca30d0a6140af6a7786897a0ae
-  m_ModificationHash: 639073229786583352
+  m_ModificationHash: 639079254946158097
   m_Version: 1

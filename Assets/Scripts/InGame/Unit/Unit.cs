@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using GEnum;
 using UnityEngine.U2D.Animation;
@@ -40,9 +38,9 @@ public class Unit : MonoBehaviour
     public int UID;
 
     /// <summary> 해당 유닛의 정보 </summary>
-    public UnitData data;
+    public UnitData Data;
     /// <summary> 해당 유닛의 AI </summary>
-    public UnitAI ai;
+    public UnitAI AI;
 
     /// <summary> 현재 유닛의 행동 </summary>
     public eUnitActionEvent uState;
@@ -50,26 +48,27 @@ public class Unit : MonoBehaviour
     [Header("[목표 지점]")]
     /// <summary> 목적지 포인트 </summary>
     public Vector2 targetPoint;
-    /// <summary> 해당 유닛의 아틀라스 타입 </summary>
-    private eAtlasType atlasType;
-    
+
+    private const string HeadAnimKey = "_Head";
+    private const string BodyAnimKey = "_Body";
+
     /// <summary> 현재 HP </summary>
     public int CurHP
     {
         set
         {
             //현재 HP 세팅
-            data.f_CurHp = value;
+            Data.f_CurHp = value;
 
             //현재 사망 체크
             if(value <= 0)
             {
-                ai.SettingWaitEvent(
+                AI.SettingWaitEvent(
                         eUnitEventPriority.WaitState,
                         eUnitSituation.HP_Zero);
             }
         }
-        get => data.f_CurHp;
+        get => Data.f_CurHp;
     }
 
     private void Start()
@@ -77,47 +76,40 @@ public class Unit : MonoBehaviour
         //공격 이벤트 세팅
         uBodyAnimator.attackEvent = TargetAttackEvnet;
         uBodyAnimator.endAnimEvent = EndAnimEvent;
+        uBodyAnimator.OnPlayBodyAim = SetBodySprite;
+        uBodyAnimator.OnPlayArmAim = SetArmSprite;
     }
 
     /// <summary> 데이터 및 기초 세팅 </summary>
     public void Init(UnitData data)
     {
-        if(data == null)
-        {
+        if (data == null)
             return;
-        }
 
         //유닛 데이터 세팅
-        this.data = data;
+        Data = data;
 
-        atlasType = data.unitType switch
-        {
-            eUnitType.Human => eAtlasType.Unit_Human,
-            eUnitType.Zombie => eAtlasType.Unit_Zombie,
-            _ => eAtlasType.Unit_Human,
-        };
+        var unitTypeStr = data.unitType.ToString();
+        // 머리 라이브러리
+        SetLib(headLib, $"{unitTypeStr}{HeadAnimKey}_{data.HeadLibID}");
+        // 몸통 라이브러리
+        SetLib(bodyLib, $"{unitTypeStr}{BodyAnimKey}_{data.BodyLibID}");
 
-        // 머리 세팅
-        ChangeSprite(head, data.headID);
-        //얼굴 장식
-        ChangeSprite(faceDeco, data.faceDecoID);
-        //머리카락 세팅
-        ChangeSprite(hair, data.hairID);
-        //뒷머리 세팅
-        ChangeSprite(backHair, data.backHairID);
-        //모자 세팅
-        ChangeSprite(hat, data.hatID);
+        // 머리, 얼굴, 머리카락, 뒷머리, 모자 세팅
+        SetSprite(head, data.HeadID);
+        SetSprite(faceDeco, data.FaceDecoID);
+        SetSprite(hair, data.HairID);
+        SetSprite(backHair, data.BackHairID);
+        SetSprite(hat, data.HatID);
 
-        //무기 세팅(맨손일 경우 세팅하지 않음)
-        if (data.unitType == eUnitType.Human && data.weaponTbl.Category != "None")
-        {
-            weapon.SetCategoryAndLabel(data.weaponTbl.Category, data.weaponTbl.Label);
-        }
+        // 무기 세팅
+        SetWeaponSprite();
 
         //머리 세팅 (애니메이션 컨트롤러)
-        uHeadAnimator.SetAnimatior(data.headAnimID);
+        uHeadAnimator.SetAnimatior($"{unitTypeStr}{HeadAnimKey}");
+
         //몸, 팔 세팅 (애니메이션 컨트롤러)
-        uBodyAnimator.SetAnimatior(data.bodyAnimID);
+        uBodyAnimator.SetAnimatior($"{unitTypeStr}{BodyAnimKey}");
 
         //애니메이션 Play
         uHeadAnimator.SetPlay(true);
@@ -134,11 +126,11 @@ public class Unit : MonoBehaviour
     private void RefreshStat()
     {
         //스탯 계산
-        data.RefreshStat();
+        Data.RefreshStat();
 
         // 탐색 범위 적용
-        searchArea.size = new Vector2(data.f_DetectionRange, 1);
-        searchArea.offset = new Vector2(-((float)data.f_DetectionRange / 2), 0);
+        searchArea.size = new Vector2(Data.f_DetectionRange, 1);
+        searchArea.offset = new Vector2(-((float)Data.f_DetectionRange / 2), 0);
     }
 
     #endregion 데이터
@@ -173,7 +165,7 @@ public class Unit : MonoBehaviour
         if (int.TryParse(collision.name, out int uID))
         {
             //발견된 타겟을 체크, 공격 대상일 경우 저장
-            ai.AddTarget(uID);
+            AI.AddTarget(uID);
         }
     }
 
@@ -181,7 +173,7 @@ public class Unit : MonoBehaviour
     {
         if (int.TryParse(collision.name, out int uID))
         {
-            ai.RemoveTarget(uID);
+            AI.RemoveTarget(uID);
         }
     }
 
@@ -198,52 +190,52 @@ public class Unit : MonoBehaviour
         Type t = typeof(NormalHumanAI);
 
         //타입에 맞는 AI 세팅
-        switch (data.unitType)
+        switch (Data.unitType)
         {
             case eUnitType.Human:   //인간 AI 생성
                 {
-                    if(ai != null)
+                    if(AI != null)
                     {
-                        if(ai is NormalHumanAI)
+                        if(AI is NormalHumanAI)
                         {
-                            ai.Init(this);
+                            AI.Init(this);
                         }
                         else
                         {
-                            ai.Release();
-                            ai = new NormalHumanAI(this);
+                            AI.Release();
+                            AI = new NormalHumanAI(this);
                         }
                     }
                     else
                     {
-                        ai = new NormalHumanAI(this);
+                        AI = new NormalHumanAI(this);
                     }
                 }
                 break;
             case eUnitType.Zombie:  //좀비 AI 생성
                 {
-                    if (ai != null)
+                    if (AI != null)
                     {
-                        if (ai is NomalZombieAI)
+                        if (AI is NomalZombieAI)
                         {
-                            ai.Init(this);
+                            AI.Init(this);
                         }
                         else
                         {
-                            ai.Release();
-                            ai = new NomalZombieAI(this);
+                            AI.Release();
+                            AI = new NomalZombieAI(this);
                         }
                     }
                     else
                     {
-                        ai = new NomalZombieAI(this);
+                        AI = new NomalZombieAI(this);
                     }
                 }
                 break;
         }
 
         // 대기 내부 이벤트 실행
-        ai.SettingWaitEvent(
+        AI.SettingWaitEvent(
             eUnitEventPriority.WaitState,
             eUnitSituation.Standby_Command);
     }
@@ -252,9 +244,9 @@ public class Unit : MonoBehaviour
     private void UnitUpdate()
     {
         //AI의 업데이트
-        if (ai != null)
+        if (AI != null)
         {
-            ai.Update();
+            AI.Update();
         }
     }
 
@@ -279,7 +271,7 @@ public class Unit : MonoBehaviour
     /// <summary> 타겟 공격 실행 이벤트 </summary>
     void TargetAttackEvnet()
     {
-        UnitMgr.instance.AttackUnit(ai.tagetEnemyID, data.f_Damage);
+        UnitMgr.instance.AttackUnit(AI.tagetEnemyID, Data.f_Damage);
     }
 
     /// <summary> 애니메이션 종료 이벤트 </summary>
@@ -315,8 +307,8 @@ public class Unit : MonoBehaviour
         if(nextSituation != eUnitSituation.None)
         {
             // 대기 내부 이벤트 실행
-            ai.SettingWaitEvent(
-                ai.CurStatePriority,    // 공격을 실행시켰던 우선순위를 계승
+            AI.SettingWaitEvent(
+                AI.CurStatePriority,    // 공격을 실행시켰던 우선순위를 계승
                 nextSituation,          // 공격 대기 상태로 변환
                 waitTime);              // 이벤트 실행까지의 대기 시간
         }
@@ -327,24 +319,65 @@ public class Unit : MonoBehaviour
     #endregion AI
 
     #region 이미지 변경
-    /// <summary> 스프라이트랜더러의 스프라이트를 변경 </summary>
-    /// <param name="renderer"> 변경할 스프라이트 랜더러 </param>
-    /// <param name="id"> UnitSpriteTableData의 ID 참조 </param>
-    private void ChangeSprite(SpriteResolver resolver, int id)
+    
+    /// <summary> 스프라이트 라이브러리 변경 </summary>
+    public void SetLib(SpriteLibrary spriteLib, string name)
+    {
+        spriteLib.spriteLibraryAsset = AssetsMgr.GetSpriteLibraryAsset(name);
+    }
+
+    /// <summary> SpriteResolver의 Sprite 변경 </summary>
+    private void SetSprite(SpriteResolver resolver, int label)
     {
         //테이블이 없거나 None일 경우 비활성화 후 종료
-        if (TableMgr.Get(id, out UnitSpriteTableData tbl) == false || tbl.Category == "None")
-        {
-            resolver.gameObject.SetActive(false);
-            return;
-        }
+        //if (TableMgr.Get(id, out UnitSpriteTableData tbl) == false || tbl.Category == "None")
+        //{
+        //    resolver.gameObject.SetActive(false);
+        //    return;
+        //}
 
         //tbl.
 
         //이미지 및 애니메이션 변경
-        resolver.SetCategoryAndLabel(resolver.GetCategory(), tbl.Label);
+        resolver.SetCategoryAndLabel(resolver.GetCategory(), label.ToString());
+        resolver.ResolveSpriteToSpriteRenderer();
         //resolver.sprite = AssetsMgr.GetSprite(atlasType, tbl.Path);
         resolver.gameObject.SetActive(true);
+    }
+
+    private void SetBodySprite(string label)
+    {
+        body.SetCategoryAndLabel(body.GetCategory(), label);
+
+        if (body.GetLabel() == label)
+            body.ResolveSpriteToSpriteRenderer();
+    }
+
+    private void SetArmSprite(string label)
+    {
+        frontArm.SetCategoryAndLabel(frontArm.GetCategory(), label);
+        frontArm.ResolveSpriteToSpriteRenderer();
+
+        if (frontArm.GetLabel() == label)
+            frontArm.ResolveSpriteToSpriteRenderer();
+
+        backArm.SetCategoryAndLabel(backArm.GetCategory(), label);
+        backArm.ResolveSpriteToSpriteRenderer();
+
+        if (backArm.GetLabel() == label)
+            backArm.ResolveSpriteToSpriteRenderer();
+    }
+
+    private void SetWeaponSprite()
+    {
+        if (Data == null)
+            return;
+
+        //무기 세팅(맨손일 경우 세팅하지 않음)
+        if (Data.unitType == eUnitType.Human && Data.weaponTbl.Category != "None")
+        {
+            weapon.SetCategoryAndLabel(Data.weaponTbl.Category, Data.weaponTbl.Label);
+        }
     }
 
     /// <summary> 무기 변경 </summary>
@@ -352,12 +385,12 @@ public class Unit : MonoBehaviour
     private void ChangeWeapon(int weaponID)
     {
         //무기 정보 변경
-        data.SetWeaponData(weaponID);
+        Data.SetWeaponData(weaponID);
 
         //이미지 및 애니메이션 변경
-        if (data.weaponTbl.Category == "None")
+        if (Data.weaponTbl.Category == "None")
         {
-            weapon.SetCategoryAndLabel(data.weaponTbl.Category, data.weaponTbl.Label);
+            weapon.SetCategoryAndLabel(Data.weaponTbl.Category, Data.weaponTbl.Label);
             weapon.gameObject.SetActive(true);
         }
         else

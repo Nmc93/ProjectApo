@@ -64,7 +64,7 @@ MonoBehaviour:
   uHeadAnimator: {fileID: 7819837540832590935}
   uBodyAnimator: {fileID: 7419544078534131127}
   UID: 0
-  data:
+  Data:
     unitType: 0
     weaponTbl:
       iD: 0
@@ -73,13 +73,13 @@ MonoBehaviour:
       damage: 0
       speed: 0
     name: 
-    headID: 0
-    hatID: 0
-    hairID: 0
-    backHairID: 0
-    headAnimID: 0
-    faceDecoID: 0
-    bodyAnimID: 0
+    HeadID: 0
+    HatID: 0
+    HairID: 0
+    BackHairID: 0
+    FaceDecoID: 0
+    HeadLibID: 0
+    BodyLibID: 0
     tbl_MaxHp: 0
     tbl_Attack: 0
     tbl_Defence: 0
@@ -734,7 +734,7 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 0.26, y: 0.6}
+  m_Size: {x: 0.25, y: 0.6}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -752,7 +752,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Unity.2D.Animation.Runtime::UnityEngine.U2D.Animation.SpriteResolver
   m_CategoryHash: 3.1167607e-19
-  m_labelHash: 0.00000015543839
+  m_labelHash: 3.024849e-29
   m_SpriteKey: 0
   m_SpriteHash: 398096533
 --- !u!1 &4230868470198331307
@@ -955,7 +955,7 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 0.49, y: 0.76}
+  m_Size: {x: 0.5, y: 0.76}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -986,7 +986,7 @@ Animator:
   m_Controller: {fileID: 9100000, guid: fbae112942a5bc54084b920ea5351cb2, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
-  m_ApplyRootMotion: 0
+  m_ApplyRootMotion: 1
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
   m_AnimatePhysics: 0
@@ -1220,7 +1220,7 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 0.22, y: 0.56}
+  m_Size: {x: 0.65, y: 0.28}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -1238,7 +1238,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Unity.2D.Animation.Runtime::UnityEngine.U2D.Animation.SpriteResolver
   m_CategoryHash: 5.5117804e-26
-  m_labelHash: 0.00000015543839
+  m_labelHash: 3.024849e-29
   m_SpriteKey: 0
   m_SpriteHash: 1051438364
 --- !u!1 &6778532060629480094
@@ -1360,7 +1360,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed8b1ae4e4e52b34ea557c1c11e076fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.2D.Animation.Runtime::UnityEngine.U2D.Animation.SpriteResolver
-  m_CategoryHash: 1.1469215e-13
+  m_CategoryHash: 0.007751943
   m_labelHash: 1.2985474e-36
   m_SpriteKey: 0
   m_SpriteHash: 23396218
@@ -1522,7 +1522,7 @@ Animator:
   m_Controller: {fileID: 9100000, guid: 16c8438a94f8bac408d300b342ad2a8a, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
-  m_ApplyRootMotion: 0
+  m_ApplyRootMotion: 1
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
   m_AnimatePhysics: 0

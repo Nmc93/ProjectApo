@@ -17,6 +17,16 @@ MonoBehaviour:
     m_Hash: 548928296
     m_CategoryList: []
     m_OverrideEntries:
+    - m_Name: arm_longgun
+      m_Hash: 701934569
+      m_Sprite: {fileID: 0}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 0}
+    - m_Name: arm_pistal
+      m_Hash: 270098633
+      m_Sprite: {fileID: 0}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 0}
     - m_Name: arm1
       m_Hash: 874964628
       m_Sprite: {fileID: 21300000, guid: 3b1fe770fb9d9954f85597b2d3f522e4, type: 3}
@@ -28,7 +38,7 @@ MonoBehaviour:
       m_FromMain: 0
       m_SpriteOverride: {fileID: 21300000, guid: a5c34367fe73103409e18a2bc0fe93fb, type: 3}
     m_FromMain: 0
-    m_EntryOverrideCount: 2
+    m_EntryOverrideCount: 4
   - m_Name: Body
     m_Hash: 999990412
     m_CategoryList: []
@@ -79,13 +89,13 @@ MonoBehaviour:
     m_Hash: 361264911
     m_CategoryList: []
     m_OverrideEntries:
-    - m_Name: arm-longgun
-      m_Hash: 128138500
+    - m_Name: arm_longgun
+      m_Hash: 701934569
       m_Sprite: {fileID: 21300000, guid: abe58c03272fbd047937edb8785b811c, type: 3}
       m_FromMain: 0
       m_SpriteOverride: {fileID: 21300000, guid: abe58c03272fbd047937edb8785b811c, type: 3}
-    - m_Name: arm-pistal
-      m_Hash: 737059275
+    - m_Name: arm_pistal
+      m_Hash: 270098633
       m_Sprite: {fileID: 21300000, guid: 57e090b875452824d82e935b8fc8f79c, type: 3}
       m_FromMain: 0
       m_SpriteOverride: {fileID: 21300000, guid: 57e090b875452824d82e935b8fc8f79c, type: 3}
@@ -102,5 +112,5 @@ MonoBehaviour:
     m_FromMain: 0
     m_EntryOverrideCount: 4
   m_PrimaryLibraryGUID: 
-  m_ModificationHash: 639073225382767951
+  m_ModificationHash: 639079261802106282
   m_Version: 1

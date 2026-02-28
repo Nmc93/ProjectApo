@@ -117,7 +117,7 @@ public abstract class UnitAI
     public virtual bool AddTarget(int uID)
     {
         // 유닛의 이름은 UID로 유효하고 해당 UID를 가진 유닛이 적대적인 경우
-        if (UnitMgr.GetUnitType(uID) != unit.data.unitType)
+        if (UnitMgr.GetUnitType(uID) != unit.Data.unitType)
         {
             //발견된 대상이 
             if (false == searchEnemyList.Contains(uID))
@@ -393,7 +393,7 @@ public class NormalHumanAI : UnitAI
         if (isDetailCheck)
         {
             //착용중인 무기 타입에 따라 세팅
-            switch (unit.data.weaponTbl.Category)
+            switch (unit.Data.weaponTbl.Category)
             {
                 case "None": // 맨손
                     subAnimKey = "_NoWeapon";
@@ -441,7 +441,7 @@ public class NormalHumanAI : UnitAI
             case eUnitActionEvent.BattleReady:
                 {
                     nextSituation = eUnitSituation.Strike_Command;
-                    waitTime = unit.data.f_ASpeed;
+                    waitTime = unit.Data.f_ASpeed;
                 }
                 break;
         }
@@ -627,7 +627,7 @@ public class NomalZombieAI : UnitAI
                 new int[]
                 {
                     Animator.StringToHash($"{actionKey}_Head"),
-                    Animator.StringToHash($"{actionKey}_Face{unit.data.headAnimID}"),
+                    Animator.StringToHash($"{actionKey}_Face{unit.Data.HeadLibID}"),
                     Animator.StringToHash($"{actionKey}_Body"),
                     Animator.StringToHash($"{actionKey}_Arm")
                 });

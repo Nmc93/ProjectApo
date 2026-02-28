@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.U2D;
+using UnityEngine.U2D.Animation;
 
 public class AssetsMgr : MgrBase
 {
@@ -19,6 +20,8 @@ public class AssetsMgr : MgrBase
     private const string UIPrefabPath = "Prefab/";
     /// <summary> 아틀라스 기본 경로 </summary>
     private const string AtlasPath = "Image/";
+    /// <summary> 스프라이트 라이브러리 경로 </summary>
+    private const string LibPath = "Image/";
     /// <summary> 애니메이터 컨트롤러 기본 경로 </summary>
     private const string AniCtlrPath = "Ani/";
     #endregion 기본 경로
@@ -58,17 +61,18 @@ public class AssetsMgr : MgrBase
 
     #endregion 프리팹
 
-    #region 아틀라스
+    #region 스프라이트
 
     /// <summary> 아틀라스 저장 딕셔너리 <br/>[Key : 아틀라스 내 스프라이트 경로] </summary>
-    private static Dictionary<string, SpriteAtlas> dicAtlas = new Dictionary<string, SpriteAtlas>();
+    private static Dictionary<string, SpriteAtlas> _dicAtlas = new();
+    private static Dictionary<string, SpriteLibraryAsset> _dicLib = new();
 
     /// <summary> 해당 아틀라스 </summary>
     /// <param name="atlasType"> SpriteAtlas 경로 </param>
     /// <param name="spritePath"> SpriteAtlas에 캐싱된 Sprite 경로 </param>
     public static Sprite GetSprite(eAtlasType atlasType, string spritePath)
     {
-        if(spritePath == "None")
+        if(string.IsNullOrEmpty(spritePath) || spritePath == "None")
         {
             return null;
         }
@@ -76,7 +80,7 @@ public class AssetsMgr : MgrBase
         //경로, 아틀라스 딕셔너리 키
         string key = $"{AtlasPath}{ConvertEnumToPathStr(atlasType)}";
 
-        if (!dicAtlas.TryGetValue(key, out SpriteAtlas atlas))
+        if (_dicAtlas.TryGetValue(key, out SpriteAtlas atlas) == false)
         {
             atlas = Resources.Load<SpriteAtlas>(key);
 
@@ -88,7 +92,7 @@ public class AssetsMgr : MgrBase
             }
 
             //아틀라스 캐싱
-            dicAtlas.Add(key, atlas);
+            _dicAtlas.Add(key, atlas);
         }
 
         Sprite sprite = atlas.GetSprite(spritePath);
@@ -117,30 +121,58 @@ public class AssetsMgr : MgrBase
         }
     }
 
-    #endregion 아틀라스
-
-    #region 애니메이터 컨트롤러
-
-    /// <summary> Animator의 컨트롤러를 반환 </summary>
-    /// <param name="animType"> 애니메이션 타입 </param>
-    public static RuntimeAnimatorController GetUnitRuntimeAnimatorController(int animType)
+    public static SpriteLibraryAsset GetSpriteLibraryAsset(string name)
     {
-        if(!TableMgr.Get(animType, out UnitAnimatorTableData tbl))
+        if (string.IsNullOrEmpty(name) || name == "None")
         {
-            Debug.LogError($"{animType}의 ID를 가진 UnitAnimatorTableData가 없습니다.");
             return null;
         }
 
-        return GetRuntimeAnimatorController(tbl.Path);
+        //경로, 라이브러리 딕셔너리 키
+        string key = $"{LibPath}{name}";
+
+        if (_dicLib.TryGetValue(key, out SpriteLibraryAsset lib) == false)
+        {
+            lib = Resources.Load<SpriteLibraryAsset>(key);
+
+            //해당 경로에 아틀라스가 없을 경우
+            if (_dicLib == null)
+            {
+                Debug.LogError($"{key}에 경로에 해당 스프라이트 라이브러리에셋이 없습니다.");
+                return null;
+            }
+
+            //아틀라스 캐싱
+            _dicLib.Add(key, lib);
+        }
+
+        return lib;
     }
 
-    /// <summary> Animator의 컨트롤러를 반환 </summary>
-    /// <param name="path"> 경로 </param>
-    public static RuntimeAnimatorController GetRuntimeAnimatorController(string path)
-    {
-        path = $"{AniCtlrPath}{path}";
+    #endregion 스프라이트
 
-        RuntimeAnimatorController ctlr = Resources.Load<RuntimeAnimatorController>(path); ;
+    #region 애니메이터 컨트롤러
+
+    ///// <summary> Animator의 컨트롤러를 반환 </summary>
+    ///// <param name="animType"> 애니메이션 타입 </param>
+    //public static RuntimeAnimatorController GetUnitRuntimeAnimatorController(int animType)
+    //{
+    //    if (TableMgr.Get(animType, out UnitAnimatorTableData tbl) == false)
+    //    {
+    //        Debug.LogError($"{animType}의 ID를 가진 UnitAnimatorTableData가 없습니다.");
+    //        return null;
+    //    }
+    //
+    //    return GetRuntimeAnimatorController(tbl.Path);
+    //}
+
+    /// <summary> Animator의 컨트롤러를 반환 </summary>
+    /// <param name="name"> 경로 </param>
+    public static RuntimeAnimatorController GetRuntimeAnimatorController(string name)
+    {
+        name = $"{AniCtlrPath}{name}";
+
+        RuntimeAnimatorController ctlr = Resources.Load<RuntimeAnimatorController>(name); ;
 
         return ctlr;
     }
